@@ -53,7 +53,7 @@ var svg = d3.select("body").append("svg")
     .attr("height", height)
 var g = svg.append("g");
 
-d3.json("createMap/WorldMap110m/world.json", function(error, world) {
+d3.json("world.json", function(error, world) {
   if (error) return console.error(error);
   var subunits = topojson.feature(world, world.objects.subunits);
   var projection = d3.geo.mercator()
@@ -87,7 +87,8 @@ d3.json("createMap/WorldMap110m/world.json", function(error, world) {
       .enter()
       .append("path")
         .datum( function(d){
-          return {type: "LineString", coordinates: [[d.originLon, d.originLat], [d.destLon,d.destLat]]}
+          if(d.custom=="yes") return {type: "LineString", coordinates: [[d.originLon, d.originLat], [d.midDestLon1,d.midDestLat1], [d.midDestLon2,d.midDestLat2], [d.midDestLon3,d.midDestLat3], [d.destLon,d.destLat]]};
+          else return {type: "LineString", coordinates: [[d.originLon, d.originLat], [d.destLon,d.destLat]]};
         })
         .attr("class", "links")
         //.attr("id","arc1")
