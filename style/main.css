@@ -1,0 +1,112 @@
+/*************************** Histogram Style *****************************/
+#multipleHistogram{
+	  font: 10px sans-serif;
+    position: relative;
+    height: 503px;
+    overflow-y: scroll;
+    display: inline-block;
+    padding-left: 1px;
+}
+#multipleHistogram .xAxis{
+	font: 8px sans-serif;
+}
+
+#multipleHistogram thead{
+	background-color:rgba(232, 157, 77, 0.9);
+	overflow:hidden; 
+}
+
+#multipleHistogram .bar rect {
+  fill: rgba(52, 100, 222, 1);
+  shape-rendering: crispEdges;
+}
+
+#multipleHistogram .xAxis path, .xAxis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#multipleHistogram .col1{
+
+}
+/*************************** END Histogram Style *****************************/
+/*************************** LineChart Style *****************************/
+#lineChart {
+  font: 10px sans-serif;
+  display: inline-block;
+}
+
+#lineChart .axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+#lineChart .x.axis path {
+  display: none;
+}
+
+#lineChart .line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+/*************************** END Histogram Style *****************************/
+
+/*************************** Map Style *****************************/
+#map{
+  border: 1px solid black;
+  width:800px;
+  height:500px;
+  display: inline-block; 
+}
+#map path {
+  stroke: black;
+  stroke-width: 0.30px;
+  fill: rgba(225,239,224,1);
+}
+
+#map .arc {
+	fill:none;
+	stroke: green;
+  	stroke-width: 2px;
+}
+
+#map #arc1 {
+	fill:none;
+	stroke: green;
+  	stroke-width: 2px;
+}
+
+#map #arc2 {
+	fill:none;
+	stroke: orange;
+  	stroke-width: 3px;
+}
+
+#map .links {
+	fill:none;
+	stroke: rgba(255,0,0,0.4);
+  stroke-width: 3px;
+}
+
+#map #arc4 {
+	fill:none;
+	stroke: orange;
+  stroke-width: 5px;
+}
+
+#map .shadows{
+  stroke: rgba(0,0,0,0.1) ;
+  stroke-width: 2px;
+}
+
+#map .customLinks{
+  fill:none;
+  stroke: rgba(255,0,0,0.4);
+  stroke-width: 3px;
+}
+
+/*************************** END Histogram Style *****************************/
