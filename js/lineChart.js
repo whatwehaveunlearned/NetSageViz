@@ -4,8 +4,8 @@ function lineGraph(){
 			var inputClean=[];
 			var outputClean=[];
 			for (each in tsdsObject.results.input){
-				if(tsdsObject.results.input[each][1]!=null) inputClean.push(tsdsObject.results.input[each][1]/1000000);
-				if(tsdsObject.results.output[each][1]!=null) outputClean.push(tsdsObject.results.output[each][1]/1000000);
+				if(tsdsObject.results.input[each][1]!=null) inputClean.push(tsdsObject.results.input[each][1]/1000000000);
+				if(tsdsObject.results.output[each][1]!=null) outputClean.push(tsdsObject.results.output[each][1]/1000000000);
 			}
 			return [inputClean,outputClean];
 		}
@@ -14,8 +14,8 @@ function lineGraph(){
 			var inputClean=[];
 			var outputClean=[];
 			for (each in tsdsObject.results.input){
-				if(tsdsObject.results.input[each][1]!=null) inputClean.push([ new Date(tsdsObject.results.input[each][0] * 1000), tsdsObject.results.input[each][1]/1000000 ]);
-				if(tsdsObject.results.output[each][1]!=null) outputClean.push( [new Date(tsdsObject.results.input[each][0] * 1000),tsdsObject.results.output[each][1]/1000000 ]);
+				if(tsdsObject.results.input[each][1]!=null) inputClean.push([ new Date(tsdsObject.results.input[each][0] * 1000), tsdsObject.results.input[each][1]/1000000000 ]);
+				if(tsdsObject.results.output[each][1]!=null) outputClean.push( [new Date(tsdsObject.results.input[each][0] * 1000),tsdsObject.results.output[each][1]/1000000000 ]);
 			}
 			return [inputClean,outputClean];
 		}
@@ -58,16 +58,22 @@ function lineGraph(){
 	    var parseDate = d3.time.format("%Y%m%d").parse;
 	    
 	    var x = d3.time.scale()
-	    .range([0, width]);
+	    .range([0, width])
+	    .nice();
 
 		var y = d3.scale.linear()
 		    .range([height, 0]);
 
 		var color = d3.scale.category10();
+		color.domain(data);
+		/*var color = d3.scale.ordinal()
+							.domain(data)
+							.range([{color: "red", opacity: .1}, {color: "green", opacity: 1}]);*/
 
 		var xAxis = d3.svg.axis()
 		    .scale(x)
 		    .orient("bottom");
+		    //.ticks(20);
 
 		var yAxis = d3.svg.axis()
 		    .scale(y)
@@ -79,8 +85,6 @@ function lineGraph(){
 		    	return x(d[0]); })
 		    .y(function(d) { 
 		    	return y(d[1]); });
-
-		color.domain(data);
 
 		//Calculate Max values for scales
 	    var maxX=[];
@@ -121,7 +125,7 @@ function lineGraph(){
 		      .attr("y", 6)
 		      .attr("dy", ".71em")
 		      .style("text-anchor", "end")
-		      .text("Mbs/s");
+		      .text("Gb/s");
 
 		  var inputNode = svgInput.selectAll(".node")
 		      .data(data)
@@ -133,7 +137,8 @@ function lineGraph(){
 		      .attr("class", "line")
 		      .attr("d", function(d) { 
 		      	return line(d[0]); })
-		      .style("stroke", function(d,i) { return color(data[i]); });
+		      .style("stroke", function(d,i) { 
+		      	return color(data[i]); });
 
 		//INPUT
 		var svgOutput = lineChart.append("svg")
@@ -156,7 +161,7 @@ function lineGraph(){
 		      .attr("y", 6)
 		      .attr("dy", ".71em")
 		      .style("text-anchor", "end")
-		      .text("Mbs/s");
+		      .text("Gb/s");
 
 		  var outputNode = svgOutput.selectAll(".node")
 		      .data(data)

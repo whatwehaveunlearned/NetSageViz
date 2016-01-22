@@ -134,7 +134,7 @@ function histogramTableGraph(){
 	        .append("tr")
 	        .attr("id", function(d,i){return i })
 	        .style("background-color", function(d,i){
-	        	return ((i % 2 == 0) ? "rgba(170, 186, 215, 1)" : "rgba(170, 186, 215, 0.5)");});
+	        	return ((i % 2 == 0) ? "rgba(63, 191, 127, 0.4)" : "rgba(63, 191, 127, 0.2)");});
 
 	    var cells = rows.selectAll("td")
 	        .data(columns)
@@ -162,8 +162,8 @@ function histogramTableGraph(){
 			var inputClean=[];
 			var outputClean=[];
 			for (each in tsdsObject.results.input){
-				if(tsdsObject.results.input[each][1]!=null) inputClean.push(tsdsObject.results.input[each][1]/1000000);
-				if(tsdsObject.results.output[each][1]!=null) outputClean.push(tsdsObject.results.output[each][1]/1000000);
+				if(tsdsObject.results.input[each][1]!=null) inputClean.push(tsdsObject.results.input[each][1]/1000000000);
+				if(tsdsObject.results.output[each][1]!=null) outputClean.push(tsdsObject.results.output[each][1]/1000000000);
 			}
 			return [inputClean,outputClean];
 		}

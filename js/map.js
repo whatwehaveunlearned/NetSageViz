@@ -57,7 +57,7 @@ function mapGraph(){
           .attr("class", "links")
           //.attr("id","arc1")
           .attr("d", path);
-      map.selectAll(".shadows")
+     /* map.selectAll(".shadows")
         .data(data)
         .enter()
         .append("line")
@@ -74,6 +74,7 @@ function mapGraph(){
           return projection([d.destLon,d.destLat])[1];
         })
         .attr("class","shadows")
+        */
      });
 
     d3.csv("customLinks.csv",function(error,data){
@@ -84,7 +85,7 @@ function mapGraph(){
         })
         .attr('d',customLine)
         .attr("class","customLinks")
-      map.selectAll(".shadows")
+     /* map.selectAll(".shadows")
         .data(data)
         .enter()
         .append("line")
@@ -101,6 +102,7 @@ function mapGraph(){
           return projection([d.destLon,d.destLat])[1];
         })
         .attr("class","shadows")
+      */
    });
    
   /* d3.csv("histogram.csv",function(error,data){

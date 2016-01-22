@@ -1,5 +1,6 @@
 /*************************** Histogram Style *****************************/
 #multipleHistogram{
+    border: 1px solid black;
 	  font: 10px sans-serif;
     position: relative;
     height: 503px;
@@ -33,6 +34,7 @@
 /*************************** END Histogram Style *****************************/
 /*************************** LineChart Style *****************************/
 #lineChart {
+  border: 1px solid black;
   font: 10px sans-serif;
   display: inline-block;
 }
@@ -44,14 +46,11 @@
   shape-rendering: crispEdges;
 }
 
-#lineChart .x.axis path {
-  display: none;
-}
-
 #lineChart .line {
   fill: none;
   stroke: steelblue;
   stroke-width: 1.5px;
+  stroke-opacity:0.4;
 }
 /*************************** END Histogram Style *****************************/
 
