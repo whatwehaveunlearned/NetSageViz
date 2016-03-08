@@ -71,14 +71,18 @@ function LoadData(){
 				links = data.results;
 				nodes = createNodes(nodes);
 				mapGraph(nodes,links);
-			});
-		//Query to retrieve bandwith values
-		url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input, 60, average) as input, aggregate(values.output, 60, average) as output between(' + dateInterval + ') by node, intf from interface where ( ( node = "mct02.miami.ampath.net" and intf = "ethernet2/5" ) or ( node = "mct01.miami.ampath.net" and intf = "ethernet2/5" ) or ( node = "rtr.losa.transpac.org" and intf = "xe-0/0/0" ) or ( node = "andeslight.sdn.amlight.net" and intf = "ethernet2/2" ) )'
-		d3.json(url)
-			.on("beforesend", function (request) {request.withCredentials = true;})
-			.get(function(error,data)
-			{
-				histogramTableGraph(data.results);
+				//Query to retrieve bandwith values
+				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input, 60, average) as input, aggregate(values.output, 60, average) as output between(' + dateInterval + ') by node, intf from interface where ( '
+				for (var each in links){
+					if (each != links.length-1) url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") or ';
+					else url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") )';
+				}
+				d3.json(url)
+				.on("beforesend", function (request) {request.withCredentials = true;})
+				.get(function(error,data)
+				{
+					histogramTableGraph(data.results);
+				});
 			});
 	}
 	//#################################### END AUX FUNCTIONS ############################
