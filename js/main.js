@@ -1,6 +1,6 @@
+//Global Variables
+var nodes = [];
+var links;
 function main (){
-	//tsdsQuery();
-	mapGraph();
-	histogramTableGraph();
-	lineGraph();
+	LoadData();
 }

@@ -34,8 +34,14 @@ thead{
 }
 
 </style>
+<link rel="stylesheet" type="text/css" href="js/jquery-ui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="js/dragtable/dragtable.css">
+
 <body>
-<script src="d3.js"></script>
+<script src="js/d3.js"></script>
+<script src="js/jquery-1.12.0.min.js"></script>
+<script src="js/jquery-ui-1.11.4/jquery-ui.js"></script>
+<script src="js/dragtable/jquery.dragtable.js"></script>
 <script>
 	function histogram(data,bins){
 	    //Number of bins
@@ -79,7 +85,7 @@ thead{
 	    var yAxis = d3.svg.axis()
 	      	.scale(y)
 	      	.orient("left");
-	    
+
 	    //Input
 		var svg=d3.selectAll(".col1").append("svg")
 		   	.attr({
@@ -110,7 +116,7 @@ thead{
 	        .attr("y", 6)
 	        .attr("x", x(dataLayouts[i][0].dx) / 2)
 	        .attr("text-anchor", "middle")
-	        .text(function(d) { 
+	        .text(function(d) {
 	          return formatCount(d.y); });*/
 	    graph.append("g")
 	      .attr("class", "xAxis")
@@ -144,18 +150,21 @@ thead{
 	        .attr("y", 6)
 	        .attr("x", x(dataLayouts[i][0].dx) / 2)
 	        .attr("text-anchor", "middle")
-	        .text(function(d) { 
+	        .text(function(d) {
 	          return formatCount(d.y); });*/
 	    graph.append("g")
 	      .attr("class", "xAxis")
 	      .attr("transform", "translate(0," + height + ")")
 	      .call(xAxis);
+	//Convert table to dragTable
+	$('#histTable').dragtable();
 	}
 
 	function table(columns,elements,data){
 		d3.select("body").append("div")
 			.attr("id","multipleHistogram");
 		var table = d3.select("#multipleHistogram").append("table")
+			.attr("id","histTable")
 			thead = table.append("thead"),
 		    tbody = table.append("tbody");
 
@@ -194,7 +203,7 @@ thead{
 	    	.append("text")
 	    	.text(function(d,i){return elements[i]})
 	   	histogram(data,40);
-	  
+
 	}
 	function parseQuery(){
 		function parseHistogram (tsdsObject){

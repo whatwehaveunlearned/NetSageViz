@@ -130,15 +130,37 @@ function lineGraph(){
 		  var inputNode = svgInput.selectAll(".node")
 		      .data(data)
 		    .enter().append("g")
-		      .attr("id",function(d,i){ return i;})
-		      .attr("class", "node");
+		      .attr("class",function(d,i){ return "node" + i + " node";})
+		      .attr("id", function(d,i){ return "input"+i });
 
 		  inputNode.append("path")
-		      .attr("class", "line")
+		      .attr("class", function(d,i){ return "line " + "line" + i})
 		      .attr("d", function(d) { 
 		      	return line(d[0]); })
 		      .style("stroke", function(d,i) { 
-		      	return color(data[i]); });
+		      	return color(data[i]); 
+		      })
+		      .on('mouseover', function(d){
+		      	//Difuse other lines fading away with a transition
+		      	d3.selectAll(".node")
+		      	  .transition()
+                  .duration(1000)
+                  .style("opacity", 0.2)
+		      	//Length of path for the animation http://bl.ocks.org/duopixel/4063326
+		      	var totalLength = this.getTotalLength();
+    			//We animate the selected path
+    			d3.selectAll("."+this.classList[1])
+    				.attr("stroke-dasharray", totalLength + " " + totalLength)
+      				.attr("stroke-dashoffset", totalLength)
+      				.transition()
+        			.duration(4000)
+       				.ease("linear")
+        			.attr("stroke-dashoffset", 0)
+        		//We set the opacity of the animated path to one again so that it pops out.
+        		d3.selectAll(".node"+this.classList[1].split('line')[1])
+        		  .transition()
+                  .duration(1000).style("opacity", 1)
+			  })
 
 		//INPUT
 		var svgOutput = lineChart.append("svg")
@@ -166,13 +188,34 @@ function lineGraph(){
 		  var outputNode = svgOutput.selectAll(".node")
 		      .data(data)
 		    .enter().append("g")
-		      .attr("id",function(d,i){ return i;})
-		      .attr("class", "node");
+		      .attr("class",function(d,i){ return "node" + i + " node";})
+		      .attr("id", function(d,i){ return "output"+i });
 
 		  outputNode.append("path")
-		      .attr("class", "line")
+		      .attr("class", function(d,i){ return "line " + "line" + i})
 		      .attr("d", function(d) { 
 		      	return line(d[1]); })
-		      .style("stroke", function(d,i) { return color(data[i]); });
+		      .style("stroke", function(d,i) { return color(data[i]); })
+		       .on('mouseover', function(d){
+		      	//Difuse other lines fading away with a transition
+		      	d3.selectAll(".node")
+		      	  .transition()
+                  .duration(1000)
+                  .style("opacity", 0.2)
+		      	//Length of path for the animation http://bl.ocks.org/duopixel/4063326
+		      	var totalLength = this.getTotalLength();
+    			//We animate the selected path
+    			d3.selectAll("."+this.classList[1])
+    				.attr("stroke-dasharray", totalLength + " " + totalLength)
+      				.attr("stroke-dashoffset", totalLength)
+      				.transition()
+        			.duration(4000)
+       				.ease("linear")
+        			.attr("stroke-dashoffset", 0)
+        		//We set the opacity of the animated path to one again so that it pops out.
+        		d3.selectAll(".node"+this.classList[1].split('line')[1])
+        		  .transition()
+                  .duration(1000).style("opacity", 1)
+			  })
 	}
 }

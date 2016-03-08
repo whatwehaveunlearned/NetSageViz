@@ -1,4 +1,5 @@
-function histogramTableGraph(){	
+function histogramTableGraph(data){
+	//#################################### AUX FUNCTIONS ############################
 	function histogram(data,bins){
 	    //Number of bins
 	    var inputDataLayouts = [];
@@ -12,15 +13,12 @@ function histogramTableGraph(){
 	    var maxY=[];
 	    for (each in data){
 	    	maxX.push(d3.max([d3.max(data[each][0]),d3.max(data[each][1])]));
-			maxY.push(d3.max(inputDataLayouts[each], function(d) { return d.y; }));
-	    	maxY.push(d3.max(outputDataLayouts[each], function(d) { return d.y; }));
+			maxY.push(d3.max([d3.max(inputDataLayouts[each], function(d) { return d.y; }),d3.max(outputDataLayouts[each], function(d) { return d.y; })]));
 	    }
 	   	var maxX=d3.max(maxX);
 	   	var maxY=d3.max(maxY);
-	    // A formatter for counts.
-	    //var formatCount = d3.format(",.0f");
 
-	    var margin = {top: 4, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
+	    var margin = {top: 2, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
 	        width = 350 - margin.left - margin.right,
 	        height = 100 - margin.top - margin.bottom;
 
@@ -40,7 +38,7 @@ function histogramTableGraph(){
 	    var yAxis = d3.svg.axis()
 	      	.scale(y)
 	      	.orient("left");
-	    
+
 	    //Input
 		var svg=d3.selectAll(".col1").append("svg")
 		   	.attr({
@@ -53,26 +51,20 @@ function histogramTableGraph(){
 	    var bar = graph.append("g")
 	        .attr("class", "histogram")
 	        .selectAll(".bar")
-	        .data(function(d,i){ 
+	        .data(function(d,i){
 	        	console.log(i);
 	        	return inputDataLayouts[i];
 	        })
 	        .enter().append("g")
 	        .attr("class", "bar")
-	        .attr("transform", function(d) { 
+	        .attr("transform", function(d) {
 	        	return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
 	    bar.append("rect")
 	        .attr("x", 1)
-	        .attr("width", function(d,i){ 
+	        .attr("width", function(d,i){
 	          return x(d.dx) - 1})
 	        .attr("height", function(d) { return height - y(d.y); });
-	    /*bar.append("text")
-	        .attr("dy", ".75em")
-	        .attr("y", 6)
-	        .attr("x", x(dataLayouts[i][0].dx) / 2)
-	        .attr("text-anchor", "middle")
-	        .text(function(d) { 
-	          return formatCount(d.y); });*/
+
 	    graph.append("g")
 	      .attr("class", "xAxis")
 	      .attr("transform", "translate(0," + height + ")")
@@ -93,27 +85,21 @@ function histogramTableGraph(){
 	        .data(function(d,i){ return outputDataLayouts[i]})
 	        .enter().append("g")
 	        .attr("class", "bar")
-	        .attr("transform", function(d) { 
+	        .attr("transform", function(d) {
 	        	return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
 	    bar.append("rect")
 	        .attr("x", 1)
-	        .attr("width", function(d,i){ 
+	        .attr("width", function(d,i){
 	          return x(d.dx) - 1})
 	        .attr("height", function(d) { return height - y(d.y); });
-	    /*bar.append("text")
-	        .attr("dy", ".75em")
-	        .attr("y", 6)
-	        .attr("x", x(dataLayouts[i][0].dx) / 2)
-	        .attr("text-anchor", "middle")
-	        .text(function(d) { 
-	          return formatCount(d.y); });*/
+
 	    graph.append("g")
 	      .attr("class", "xAxis")
 	      .attr("transform", "translate(0," + height + ")")
 	      .call(xAxis);
 	}
 
-	function table(columns,elements,data){
+	function table(columns,elements,data,bins){
 		d3.select("body").append("div")
 			.attr("id","multipleHistogram");
 		var table = d3.select("#multipleHistogram").append("table")
@@ -124,8 +110,8 @@ function histogramTableGraph(){
 			 .selectAll("th")
 			 .data(columns).enter()
 			 .append("th")
-			 .text(function(d) { 
-			 	return d; 
+			 .text(function(d) {
+			 	return d;
 			 });
 
 		var rows = tbody.selectAll("tr")
@@ -141,7 +127,7 @@ function histogramTableGraph(){
 	        .enter()
 	        .append("td")
 	        .attr("class", function(d,i){return "col" + i})
-	        .attr("id",function(d,i){ 
+	        .attr("id",function(d,i){
 	        	return this.parentElement.id + "-" +i;})
 	    var selector = d3.selectAll(".col0")
 	    	.append("input")
@@ -153,46 +139,73 @@ function histogramTableGraph(){
 	    	})
 	    var names = d3.selectAll(".col0")
 	    	.append("text")
-	    	.text(function(d,i){return elements[i]})
-	   	histogram(data,40);
-	  
+	    	.text(function(d,i){return elements[i]});
+	   	histogram(data,bins);
 	}
+
 	function parseQuery(){
-		function parseHistogram (tsdsObject){
+		function scaleAndClean (dataPoint){
 			var inputClean=[];
 			var outputClean=[];
-			for (each in tsdsObject.results.input){
-				if(tsdsObject.results.input[each][1]!=null) inputClean.push(tsdsObject.results.input[each][1]/1000000000);
-				if(tsdsObject.results.output[each][1]!=null) outputClean.push(tsdsObject.results.output[each][1]/1000000000);
+			for (each in dataPoint.input){
+				if(dataPoint.input[each][1]!=null) inputClean.push(dataPoint.input[each][1]/8/1024/1024); // bit/bytes/Kbs/Mbs/Gbs
+				if(dataPoint.output[each][1]!=null) outputClean.push(dataPoint.output[each][1]/8/1024/1024);
 			}
+			//Some Statistical values
+			data[element].input.max = inputClean.sort()[inputClean.length-1];
+			data[element].input.min = inputClean.sort()[0];
+			data[element].input.avg = avg(inputClean);
+			data[element].input.median = median(inputClean);
+			data[element].input.percentile25 = percentile(inputClean,25);
+			data[element].input.percentile75 = percentile(inputClean,75);
+			data[element].output.avg = avg(outputClean);
+			data[element].output.median = median(outputClean);
+			data[element].output.percentile25 = percentile(outputClean,25);
+			data[element].output.percentile75 = percentile(outputClean,75);
+			data[element].input.max = outputClean.sort()[inputClean.length-1];
+			data[element].input.min = outputClean.sort()[0];
 			return [inputClean,outputClean];
 		}
-		d3.json("tsdTest.json",function(error,data){
-			//Array to hold data from each node
-			var tsdsObjects = [];
-			for (each in data){
-				//The input and output key is based on the query LOOK FOR THE DIFFERENT QUERIES!
-				var input = data[each].query.split(', ')[2] + "," + data[each].query.split(',')[3] + "," + data[each].query.split(',')[4];
-				var output = input.split("input")[0] + "output" + input.split("input")[1];
-				var tsds = {
-					total_raw: data[each].total_raw,
-					query: data[each].query,
-					total:data[each].total,
-					results: {
-						input: data[each].results[0][input],
-						output: data[each].results[0][output]
-					}
-				};
-				tsdsObjects.push(tsds);
+		function sortHistograms(data){
+			var averages = [];
+			for (histogram in data){
+				averages.push(avg(data[histogram][0]));
 			}
-			//Prepare data for histograms
-			var histogramData = [];
-			for (each in tsdsObjects){
-				histogramData.push(parseHistogram(tsdsObjects[each]));
+			average = averages.sort(sortNumber);
+			console.log("ss")
+		}
+
+		function bins(data,type){
+			var bins;
+			switch(type){
+				case "sqrRoot":
+					bins = Math.ceil(Math.sqrt(data[0].input.length));
+					break;
+				case "rice":
+					bins = Math.ceil(2 * Math.pow(data[0].input.length, 1/3));
+					break;
+				case "fd":
+					bins = Math.ceil(2 * (data[0].input.percentile75 - data[0].input.percentile25)/ Math.pow(data[0].input.length, 1/3));
+					break;
+				//Sturges
+				default:
+					bins= Math.ceil(Math.log2(data[0].input.length+1));
+					break;
 			}
-			table(["Link","Input", "Output"],["US LHCNet","ASGCNet","CSTNet","TransPAC3","AARNet"],histogramData)
-		});
+			return bins;
+		}
+		//Prepare data for histograms
+		var histogramData = [];
+		var links = [];
+		var bins;
+		for (element in data){
+			histogramData.push(scaleAndClean(data[element]));
+			links.push(data[element].node)
+		}
+		bins = bins(data,"fd");
+		sortObjects(data);
+		table(["Link","Input", "Output"],links,histogramData,bins)
 	}
-	//Variable to hold the data from query to TSDS and that will be passed to the different graph functions
-	parseQuery();
+	//#################################### END AUX FUNCTIONS ############################
+	parseQuery(data);
 }
