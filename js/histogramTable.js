@@ -5,14 +5,14 @@ function histogramTableGraph(data){
 	    var inputDataLayouts = [];
 	    var outputDataLayouts = [];
 	    for (j=0;j<data.length;j++){
-	      inputDataLayouts.push(d3.layout.histogram().bins(bins)(data[j][0]));
-	      outputDataLayouts.push(d3.layout.histogram().bins(bins)(data[j][1]));
+	      inputDataLayouts.push(d3.layout.histogram().bins(bins)(data[j].input.histogram));
+	      outputDataLayouts.push(d3.layout.histogram().bins(bins)(data[j].input.histogram));
 	    }
 	    //Calculate Max values for scales
 	    var maxX=[];
 	    var maxY=[];
 	    for (each in data){
-	    	maxX.push(d3.max([d3.max(data[each][0]),d3.max(data[each][1])]));
+	    	maxX.push(d3.max([d3.max(data[each].input.histogram),d3.max(data[each].input.histogram)]));
 			maxY.push(d3.max([d3.max(inputDataLayouts[each], function(d) { return d.y; }),d3.max(outputDataLayouts[each], function(d) { return d.y; })]));
 	    }
 	   	var maxX=d3.max(maxX);
@@ -21,7 +21,7 @@ function histogramTableGraph(data){
 	    var margin = {top: 2, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
 	        width = 350 - margin.left - margin.right,
 	        height = 100 - margin.top - margin.bottom;
-
+	    //Set up scales
 	    var x = d3.scale.linear()
 	        .domain([0, maxX])
 	        .range([0, width])
@@ -52,7 +52,6 @@ function histogramTableGraph(data){
 	        .attr("class", "histogram")
 	        .selectAll(".bar")
 	        .data(function(d,i){
-	        	console.log(i);
 	        	return inputDataLayouts[i];
 	        })
 	        .enter().append("g")
@@ -97,9 +96,11 @@ function histogramTableGraph(data){
 	      .attr("class", "xAxis")
 	      .attr("transform", "translate(0," + height + ")")
 	      .call(xAxis);
+	    //Converto to dragtable
+	    $('table').dragtable();
 	}
 
-	function table(columns,elements,data,bins){
+	function table(columns,data,bins){
 		d3.select("body").append("div")
 			.attr("id","multipleHistogram");
 		var table = d3.select("#multipleHistogram").append("table")
@@ -115,7 +116,7 @@ function histogramTableGraph(data){
 			 });
 
 		var rows = tbody.selectAll("tr")
-	        .data(elements)
+	        .data(data)
 	        .enter()
 	        .append("tr")
 	        .attr("id", function(d,i){return i })
@@ -139,7 +140,7 @@ function histogramTableGraph(data){
 	    	})
 	    var names = d3.selectAll(".col0")
 	    	.append("text")
-	    	.text(function(d,i){return elements[i]});
+	    	.text(function(d,i){return data[i].node});
 	   	histogram(data,bins);
 	}
 
@@ -151,7 +152,10 @@ function histogramTableGraph(data){
 				if(dataPoint.input[each][1]!=null) inputClean.push(dataPoint.input[each][1]/8/1024/1024); // bit/bytes/Kbs/Mbs/Gbs
 				if(dataPoint.output[each][1]!=null) outputClean.push(dataPoint.output[each][1]/8/1024/1024);
 			}
-			//Some Statistical values
+			//Save the cleaned values in the data
+			data[element].input.histogram = inputClean;
+			data[element].output.histogram = outputClean;
+			//Create other helper Statistical values
 			data[element].input.max = inputClean.sort()[inputClean.length-1];
 			data[element].input.min = inputClean.sort()[0];
 			data[element].input.avg = avg(inputClean);
@@ -165,14 +169,6 @@ function histogramTableGraph(data){
 			data[element].input.max = outputClean.sort()[inputClean.length-1];
 			data[element].input.min = outputClean.sort()[0];
 			return [inputClean,outputClean];
-		}
-		function sortHistograms(data){
-			var averages = [];
-			for (histogram in data){
-				averages.push(avg(data[histogram][0]));
-			}
-			average = averages.sort(sortNumber);
-			console.log("ss")
 		}
 
 		function bins(data,type){
@@ -196,15 +192,14 @@ function histogramTableGraph(data){
 		}
 		//Prepare data for histograms
 		var histogramData = [];
-		var links = [];
 		var bins;
 		for (element in data){
-			histogramData.push(scaleAndClean(data[element]));
-			links.push(data[element].node)
+			scaleAndClean(data[element]);
 		}
 		bins = bins(data,"fd");
-		sortObjects(data);
-		table(["Link","Input", "Output"],links,histogramData,bins)
+		//Order the data
+		data = sortObjects(data,"inc");
+		table(["Link","Input", "Output"],data,bins)
 	}
 	//#################################### END AUX FUNCTIONS ############################
 	parseQuery(data);

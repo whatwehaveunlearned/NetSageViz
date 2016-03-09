@@ -1,19 +1,21 @@
-function sortObjects (arr){
-	var list = [];
-	for(var element in arr){
-		list.push([arr[element].node, arr[element].input.avg])
+function sortObjects (arr,type){
+	var sort;
+	switch(type){
+		case "dec":
+			sort = arr.sort(function(a, b) {return b.input.avg - a.input.avg});
+			break;
+		case "inc":
+			sort = arr.sort(function(a, b) {return a.input.avg - b.input.avg});
+			break;
+		//increasing order as default
+		default:
+			sort = arr.sort(function(a, b) {return b.input.avg - a.input.avg});
+			break;
 	}
-	list.sort(function(a, b) {return a[1] - b[1]})
-	var maxSpeed = {car:300, bike:60, motorbike:200, airplane:1000,
-    helicopter:400, rocket:8*60*60}
-    var list =[];
-	var sortable = [];
-	for (var vehicle in maxSpeed)
-      sortable.push([vehicle, maxSpeed[vehicle]])
-	sortable.sort(function(a, b) {return a[1] - b[1]})
+	return sort;
 }
 
-function sortNumber(a,b) {
+function sortNumber(a,b,type) {
     return a - b;
 }
 
