@@ -56,7 +56,6 @@ function lineGraph(){
 	    	width = 810 - margin.left - margin.right,
 	    	height = 500 - margin.top - margin.bottom;
 	    var parseDate = d3.time.format("%Y%m%d").parse;
-	    
 	    var x = d3.time.scale()
 	    .range([0, width])
 	    .nice();
@@ -90,12 +89,12 @@ function lineGraph(){
 	    var maxX=[];
 	    for (node in data){
 	    	for (type in data[node]){
-	    		maxX.push(d3.max(data[node][type], function(d) { 
+	    		maxX.push(d3.max(data[node][type], function(d) {
 		  			return d[1]; }))
 	    	}
 	    }
 
-		x.domain(d3.extent(data[0][0], function(d) { 
+		x.domain(d3.extent(data[0][0], function(d) {
 		  	return d[0]; }));
     	y.domain([0,d3.max(maxX)])
     	  	.nice();
@@ -103,7 +102,6 @@ function lineGraph(){
 
     	var lineChart = d3.select("body").append("div")
     	  .attr("id","lineChart")
-		
 		//INPUT
 		var svgInput = lineChart.append("svg")
 			.attr("id","input")

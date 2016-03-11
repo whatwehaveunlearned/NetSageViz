@@ -14,7 +14,8 @@
 
 #multipleHistogram thead{
 	background-color:rgba(232, 157, 77, 0.9);
-	overflow:hidden; 
+	overflow:hidden;
+  font: 15px sans-serif;
 }
 
 #multipleHistogram .bar rect {
@@ -28,9 +29,6 @@
   shape-rendering: crispEdges;
 }
 
-#multipleHistogram .col1{
-
-}
 /*************************** END Histogram Style *****************************/
 /*************************** LineChart Style *****************************/
 #lineChart {
@@ -59,7 +57,7 @@
   border: 1px solid black;
   width:800px;
   height:500px;
-  display: inline-block; 
+  display: inline-block;
 }
 #map path {
   stroke: black;
@@ -106,6 +104,22 @@
   fill:none;
   stroke: rgba(255,0,0,0.4);
   stroke-width: 3px;
+}
+
+#mapTooltip {
+    position: absolute;
+    text-align: center;
+    padding: 1px;
+    font: 10px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 4px;
+    pointer-events: none;
+    font: 10px sans-serif;
+}
+
+#mapTooltipname{
+  font: 12px sans-serif;
 }
 
 /*************************** END Histogram Style *****************************/

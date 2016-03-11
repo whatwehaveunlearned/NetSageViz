@@ -1,4 +1,30 @@
 function mapGraph(nodes,links){
+  //#################################### AUX FUNCTIONS ############################
+  function handleMouseOver(d,i){
+    var nodeLinks="";
+    div = d3.select("#mapTooltip");
+    div.transition()
+       .duration(200)
+       .style("opacity", .9);
+    //Get the text for the links
+    for (var each in d.links){
+      nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "</p>")
+    }
+    div.html("<p id ='mapTooltipname'>"+ d.name + "</p>"+ nodeLinks )
+       .style("left", (d3.event.pageX + 5) + "px")
+       .style("top", (d3.event.pageY - 28) + "px");
+  }
+  function handleMouseOut(d,i){
+    /*div = d3.select("#mapTooltip");
+    div.transition()
+       .duration(500)
+       .style("opacity", 0);*/
+  }
+  //#################################### END AUX FUNCTIONS ########################
+  // Define the div for the tooltip
+  var div = d3.select("body").append("div")
+    .attr("id", "mapTooltip")
+    .style("opacity", 0);
   var margin = {top: 0, right: 0, bottom: 0, left: -25},
         width = 800 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
@@ -41,19 +67,21 @@ function mapGraph(nodes,links){
           id: function (d) { return d.name; }
        })
        .style("fill", "red")
+       .on("mouseover",handleMouseOver)
+       .on("mouseout",handleMouseOut);
 
     //Create Links
     map.selectAll(".links")
       .data(links)
       .enter()
       .append("path")
-        .datum( function(d){
+      .datum( function(d){
           return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]]};
-        })
-        .attr({
-          class:"links",
-          d:path,
-          id: function (d,i) { return i ; }
-          })
+      })
+      .attr({
+        class:"links",
+        d:path,
+        id: function (d,i) { return i ; }
+      })
   });
 }

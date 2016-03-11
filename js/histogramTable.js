@@ -1,5 +1,6 @@
 function histogramTableGraph(data){
 	//#################################### AUX FUNCTIONS ############################
+	//#################################### END AUX FUNCTIONS ########################
 	function histogram(data,bins){
 	    //Number of bins
 	    var inputDataLayouts = [];
@@ -198,7 +199,7 @@ function histogramTableGraph(data){
 		}
 		bins = bins(data,"fd");
 		//Order the data
-		data = sortObjects(data,"inc");
+		data = sortObjects(data);
 		table(["Link","Input", "Output"],data,bins)
 	}
 	//#################################### END AUX FUNCTIONS ############################
