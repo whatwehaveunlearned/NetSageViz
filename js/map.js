@@ -10,15 +10,11 @@ function mapGraph(nodes,links){
     for (var each in d.links){
       nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "</p>")
     }
-    div.html("<p id ='mapTooltipname'>"+ d.name + "</p>"+ nodeLinks )
+    div.html("<p id ='mapTooltipname'>" + d.name + "<hr>" + "</p>"+ nodeLinks )
        .style("left", (d3.event.pageX + 5) + "px")
        .style("top", (d3.event.pageY - 28) + "px");
   }
   function handleMouseOut(d,i){
-    /*div = d3.select("#mapTooltip");
-    div.transition()
-       .duration(500)
-       .style("opacity", 0);*/
   }
   //#################################### END AUX FUNCTIONS ########################
   // Define the div for the tooltip

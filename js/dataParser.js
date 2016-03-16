@@ -62,6 +62,9 @@ function LoadData(){
 		//Set up the date
 		var dateToday = ' "02/26/2016 00:00:00 UTC", "02/26/2016 00:00:00 UTC" ';
 		var dateInterval = ' "02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC" ';
+		var today = new Date();
+		var interval = { first: new Date("02/26/2016 00:00:00 UTC"), second: new Date("02/26/2016 01:00:00 UTC") }
+		var avgOver = 60;
 		//Query to retrieve metadata values
 		var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between(' + dateToday + ') by node, intf from interface where a_endpoint != null and z_endpoint != null'
 		d3.json(url)
@@ -72,7 +75,7 @@ function LoadData(){
 				nodes = createNodes(nodes);
 				mapGraph(nodes,links);
 				//Query to retrieve bandwith values
-				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input, 60, average) as input, aggregate(values.output, 60, average) as output between(' + dateInterval + ') by node, intf from interface where ( '
+				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input,' + avgOver + ', average) as input, aggregate(values.output,' + avgOver + ', average) as output between(' + dateInterval + ') by node, intf from interface where ( '
 				for (var each in links){
 					if (each != links.length-1) url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") or ';
 					else url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") )';
