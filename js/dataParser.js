@@ -60,13 +60,13 @@ function LoadData(){
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
 	function OverviewTSDSQuery(url){
 		//Set up the date
-		var dateToday = ' "02/26/2016 00:00:00 UTC", "02/26/2016 00:00:00 UTC" ';
-		var dateInterval = ' "02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC" ';
+		var date = ["02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC"];
 		var today = new Date();
-		var interval = { first: new Date("02/26/2016 00:00:00 UTC"), second: new Date("02/26/2016 01:00:00 UTC") }
+		var interval = { first: new Date(date[0]), second: new Date(date[1]) }
+		var sizeIntervalSeconds = (interval.second - interval.first)/1000
 		var avgOver = 60;
 		//Query to retrieve metadata values
-		var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between(' + dateToday + ') by node, intf from interface where a_endpoint != null and z_endpoint != null'
+		var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where a_endpoint != null and z_endpoint != null'
 		d3.json(url)
 			.on("beforesend", function (request) {request.withCredentials = true;})
 			.get(function(error,data)
@@ -75,7 +75,7 @@ function LoadData(){
 				nodes = createNodes(nodes);
 				mapGraph(nodes,links);
 				//Query to retrieve bandwith values
-				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input,' + avgOver + ', average) as input, aggregate(values.output,' + avgOver + ', average) as output between(' + dateInterval + ') by node, intf from interface where ( '
+				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input,' + avgOver + ', average) as input, aggregate(values.output,' + avgOver + ', average) as output between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where ( '
 				for (var each in links){
 					if (each != links.length-1) url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") or ';
 					else url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") )';
@@ -84,7 +84,7 @@ function LoadData(){
 				.on("beforesend", function (request) {request.withCredentials = true;})
 				.get(function(error,data)
 				{
-					histogramTableGraph(data.results);
+					histogramTableGraph(data.results,sizeIntervalSeconds);
 				});
 			});
 	}

@@ -64,7 +64,6 @@ function mapGraph(nodes,links){
        })
        .style("fill", "red")
        .on("mouseover",handleMouseOver)
-       .on("mouseout",handleMouseOut);
 
     //Create Links
     map.selectAll(".links")

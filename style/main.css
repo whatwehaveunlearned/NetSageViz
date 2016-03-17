@@ -28,7 +28,25 @@
   stroke: #000;
   shape-rendering: crispEdges;
 }
+#multipleHistogram rect{
+  fill: rgba(52, 100, 222, 1);
+  shape-rendering: crispEdges;
+}
+#multipleHistogram .totalDataBar{
+  fill: none;
+  stroke:#000;
+}
 
+#tableTooltip {
+    position: absolute;
+    text-align: center;
+    padding-left: 3px;
+    padding-right: 3px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    pointer-events: none;
+}
 /*************************** END Histogram Style *****************************/
 /*************************** LineChart Style *****************************/
 #lineChart {
