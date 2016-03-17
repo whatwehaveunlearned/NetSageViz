@@ -60,7 +60,7 @@ function mapGraph(nodes,links){
           cy: function (d) { return projection([d.lon, d.lat])[1]; },
           r: 5,
           class: "nodes",
-          id: function (d) { return d.name; }
+          id: function (d,i) { return "node"+i; }
        })
        .style("fill", "red")
        .on("mouseover",handleMouseOver)
@@ -76,7 +76,7 @@ function mapGraph(nodes,links){
       .attr({
         class:"links",
         d:path,
-        id: function (d,i) { return i ; }
+        id: function (d,i) { return "link"+i ; }
       })
   });
 }

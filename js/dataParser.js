@@ -60,7 +60,12 @@ function LoadData(){
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
 	function OverviewTSDSQuery(url){
 		//Set up the date
+		//one hour date
 		var date = ["02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC"];
+		//one day date
+		//var date = ["02/26/2016 00:00:00 UTC", "02/27/2016 00:00:00 UTC"];
+		//one month date
+		//var date = ["01/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC"];
 		var today = new Date();
 		var interval = { first: new Date(date[0]), second: new Date(date[1]) }
 		var sizeIntervalSeconds = (interval.second - interval.first)/1000

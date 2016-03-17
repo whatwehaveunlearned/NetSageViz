@@ -9,21 +9,16 @@ function histogramTableGraph(data,sizeInterval){
 	    			div.transition()
 	       				.duration(200)
 	       				.style("opacity", .9);
-	       			if(this.classList[0]=="iData"){
-	       				div.html("<p>"+ d[0].toFixed(2) +" GB</p> <p>"+ (100*d[0]/totalDataIn).toFixed(2) + " %" )
-				       .style("left", (d3.event.pageX + 5) + "px")
-				       .style("top", (d3.event.pageY - 28) + "px");
-				   }else if(this.classList[0]=="oData"){
-				   		div.html("<p>"+ d[1].toFixed(2) +" GB</p> <p>"+ (100*d[1]/totalDataIn).toFixed(2) + " %" )
-				       .style("left", (d3.event.pageX + 5) + "px")
-				       .style("top", (d3.event.pageY - 28) + "px");
-				   }
-				   else{
 				   	div.html("<p>"+ avg(d).toFixed(2) +" MB/s</p> <p>"+ d.length + " elements" )
 				       .style("left", (d3.event.pageX + 5) + "px")
 				       .style("top", (d3.event.pageY - 28) + "px");
-				   }
 		    	}
+		    	function handleMouseOut(d,i){
+    		    	div = d3.select("#tableTooltip");
+			    	div.transition()
+			       .duration(500)
+			       .style("opacity", 0);
+	    		}
 		    	function createLegend(type){
 		    		var histogramLegend = {width:width-50,height:16}
 			    	var histoLegend = graph.append("g")
@@ -82,7 +77,8 @@ function histogramTableGraph(data,sizeInterval){
 			        .attr("width", function(d,i){
 			          return x(d.dx) - 1})
 			        .attr("height", function(d) { return height - y(d.y); })
-			        .on("mouseover",handleMouseOver);
+			        .on("mouseover",handleMouseOver)
+				  	.on("mouseout",handleMouseOut)
 
 			    graph.append("g")
 			      .attr("class", "xAxis")
@@ -141,7 +137,7 @@ function histogramTableGraph(data,sizeInterval){
 			       .style("left", (d3.event.pageX + 5) + "px")
 			       .style("top", (d3.event.pageY - 28) + "px");
 			   }else{
-			   		div.html("<p>"+ d[1].toFixed(2) +" GB</p> <p>"+ (100*d[1]/totalDataIn).toFixed(2) + " %" )
+			   		div.html("<p>"+ d[1].toFixed(2) +" GB</p> <p>"+ (100*d[1]/totalDataOut).toFixed(2) + " %" )
 			       .style("left", (d3.event.pageX + 5) + "px")
 			       .style("top", (d3.event.pageY - 28) + "px");
 			   }
@@ -207,6 +203,7 @@ function histogramTableGraph(data,sizeInterval){
 				    return x(d[0]);
 				  })
 				  .on("mouseover",handleMouseOver)
+				  .on("mouseout",handleMouseOut)
 			totalInput.append("text")
 		      .attr("x", -40)
 		      .attr("y", position.position1)
@@ -265,6 +262,14 @@ function histogramTableGraph(data,sizeInterval){
 	}
 
 	function table(columns,data,bins){
+		function handleMouseOver(d,i){
+    		d3.select("#link"+this.id)
+    		 	.style("stroke", "blue");
+    	}
+    	function handleMouseOut(d,i){
+			d3.select("#link"+this.id)
+    		  	.style("stroke", "rgba(255,0,0,0.5)");
+		}
 		d3.select("body").append("div")
 			.attr("id","multipleHistogram");
 		var table = d3.select("#multipleHistogram").append("table")
@@ -285,7 +290,9 @@ function histogramTableGraph(data,sizeInterval){
 	        .append("tr")
 	        .attr("id", function(d,i){return i })
 	        .style("background-color", function(d,i){
-	        	return ((i % 2 == 0) ? "rgba(63, 191, 127, 0.4)" : "rgba(63, 191, 127, 0.2)");});
+	        	return ((i % 2 == 0) ? "rgba(63, 191, 127, 0.4)" : "rgba(63, 191, 127, 0.2)");})
+	       	.on("mouseover",handleMouseOver)
+	       	.on("mouseout",handleMouseOut);
 
 	    var cells = rows.selectAll("td")
 	        .data(columns)
