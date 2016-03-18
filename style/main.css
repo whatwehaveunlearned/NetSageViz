@@ -42,7 +42,7 @@
     text-align: center;
     padding-left: 3px;
     padding-right: 3px;
-    font: 12px sans-serif;
+    font: 10px sans-serif;
     background: lightsteelblue;
     border: 0px;
     pointer-events: none;
@@ -76,6 +76,7 @@
   width:800px;
   height:500px;
   display: inline-block;
+  background: #F8F8FF;
 }
 #map path {
   stroke: black;
@@ -85,8 +86,7 @@
 
 #map .links {
 	fill:none;
-	stroke: rgba(255,0,0,0.4);
-  stroke-width: 3px;
+	stroke: blue;
 }
 
 #mapTooltip {
@@ -94,15 +94,19 @@
     text-align: center;
     padding-left: 3px;
     padding-right: 3px;
-    font: 8px sans-serif;
+    font: 10px sans-serif;
     background: lightsteelblue;
     border: 0px;
-    border-radius: 4px;
     pointer-events: none;
 }
 
 #mapTooltipname{
   font: 10px sans-serif;
+}
+
+#map .nodes{
+  fill:white;
+  stroke: black;
 }
 
 /*************************** END Histogram Style *****************************/

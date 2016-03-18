@@ -1,4 +1,4 @@
-function histogramTableGraph(data,sizeInterval){
+function histogramTableGraph(data){
 	//#################################### AUX FUNCTIONS histogramTable ############################
 	function fillTable(data,bins,columns){
 		//#################################### AUX FUNCTIONS fillTable ############################
@@ -33,7 +33,7 @@ function histogramTableGraph(data,sizeInterval){
 			    			   		class: "max"
 			    				})
 			    			   .text(function(d,i){
-			    						return "Max: " + eval("data[i]." + type + ".max.toFixed(2)") + " Mb/s"
+			    						return "Max: " + eval("data[i]." + type + ".max.toFixed(2)") + " MB/s"
 			    				});
 			    	histoLegend.append("tspan")
 			    			   .attr({
@@ -42,7 +42,7 @@ function histogramTableGraph(data,sizeInterval){
 			    			   		dy: 15
 			    				})
 			    			   .text(function(d,i){
-			    						return "Avg: " + eval("data[i]." + type + ".avg.toFixed(2)") + " Mb/s"
+			    						return "Avg: " + eval("data[i]." + type + ".avg.toFixed(2)") + " MB/s"
 			    				});
 			    	histoLegend.append("tspan")
 			    			   .attr({
@@ -51,7 +51,7 @@ function histogramTableGraph(data,sizeInterval){
 			    			   		dy: 15
 			    				})
 			    			   .text(function(d,i){
-			    						return "Min: " + eval("data[i]." + type + ".min.toFixed(2)")+ " Mb/s"
+			    						return "Min: " + eval("data[i]." + type + ".min.toFixed(2)")+ " MB/s"
 			    				});
 		    	}
 		    	var svg=d3.selectAll(colName).append("svg")
@@ -263,12 +263,13 @@ function histogramTableGraph(data,sizeInterval){
 
 	function table(columns,data,bins){
 		function handleMouseOver(d,i){
+			linkColor = d3.select("#link"+this.id)[0][0].style["stroke"]
     		d3.select("#link"+this.id)
-    		 	.style("stroke", "blue");
+    		 	.style("stroke", "red");
     	}
     	function handleMouseOut(d,i){
 			d3.select("#link"+this.id)
-    		  	.style("stroke", "rgba(255,0,0,0.5)");
+    		  	.style("stroke", linkColor);
 		}
 		d3.select("body").append("div")
 			.attr("id","multipleHistogram");
@@ -317,66 +318,32 @@ function histogramTableGraph(data,sizeInterval){
 	    //FillTable
 	   	fillTable(data,bins,columns);
 	}
-
-	function parseQuery(){
-		function scaleAndClean (dataPoint,sizeInterval){
-			var inputClean=[];
-			var outputClean=[];
-			for (each in dataPoint.input){
-				if(dataPoint.input[each][1]!=null) inputClean.push(dataPoint.input[each][1]/8/1024/1024); // bit/bytes/KBs/MBs/
-				if(dataPoint.output[each][1]!=null) outputClean.push(dataPoint.output[each][1]/8/1024/1024);
-			}
-			//Save the cleaned scaled values in the data
-			dataPoint.input.histogram = inputClean;
-			dataPoint.output.histogram = outputClean;
-			//Create other helper Statistical values
-			dataPoint.input.max = d3.max(inputClean);
-			dataPoint.input.min = d3.min(inputClean);
-			dataPoint.input.avg = avg(inputClean);
-			dataPoint.input.median = median(inputClean);
-			dataPoint.input.percentile25 = percentile(inputClean,25);
-			dataPoint.input.percentile75 = percentile(inputClean,75);
-			dataPoint.output.avg = avg(outputClean);
-			dataPoint.output.median = median(outputClean);
-			dataPoint.output.percentile25 = percentile(outputClean,25);
-			dataPoint.output.percentile75 = percentile(outputClean,75);
-			dataPoint.output.max = d3.max(outputClean);
-			dataPoint.output.min = d3.min(outputClean);
-			dataPoint.totalData = [avg(inputClean)*sizeInterval,avg(outputClean)*sizeInterval];
-		}
-
-		function bins(data,type){
-			var bins;
-			switch(type){
-				case "sqrRoot":
-					bins = Math.ceil(Math.sqrt(data[0].input.length));
-					break;
-				case "rice":
-					bins = Math.ceil(2 * Math.pow(data[0].input.length, 1/3));
-					break;
-				case "fd":
-					bins = Math.ceil(2 * (data[0].input.percentile75 - data[0].input.percentile25)/ Math.pow(data[0].input.length, 1/3));
-					break;
-				default://Sturges
-					bins= Math.ceil(Math.log2(data[0].input.length+1));
-					break;
-			}
-			return bins;
-		}
-		//Prepare data for histograms
-		var histogramData = [];
+	function bins(data,type){
 		var bins;
-		for (element in data){
-			scaleAndClean(data[element],sizeInterval);
+		switch(type){
+			case "sqrRoot":
+				bins = Math.ceil(Math.sqrt(data[0].input.length));
+				break;
+			case "rice":
+				bins = Math.ceil(2 * Math.pow(data[0].input.length, 1/3));
+				break;
+			case "fd":
+				bins = Math.ceil(2 * (data[0].input.percentile75 - data[0].input.percentile25)/ Math.pow(data[0].input.length, 1/3));
+				break;
+			default://Sturges
+				bins= Math.ceil(Math.log2(data[0].input.length+1));
+				break;
 		}
-		//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		data.splice(5,1);
-		bins = bins(data,"fd");
-		//Order the data
-		data = sortObjects(data);
-		table(["Link","Input Bandwidth", "Output Bandwidth","Total Data"],data,bins)
+		return bins;
 	}
 	//#################################### END AUX FUNCTIONS ############################
-	var sizeInterval = sizeInterval;
-	parseQuery(data,sizeInterval);
+	//Hold the initial link color before selection
+	var linkColor;
+	//Prepare data for histograms
+	var histogramData = [];
+	var bins;
+	bins = bins(data,"fd");
+	//Order the data
+	data = sortObjects(data);
+	table(["Link","Input Bandwidth", "Output Bandwidth","Total Data"],data,bins)
 }

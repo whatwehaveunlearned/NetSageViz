@@ -57,6 +57,31 @@ function LoadData(){
 		}
 		return uniqNodes(nodes);
 	}
+	function scaleAndClean (dataPoint,sizeInterval){
+		var inputClean=[];
+		var outputClean=[];
+		for (each in dataPoint.input){
+			if(dataPoint.input[each][1]!=null) inputClean.push(dataPoint.input[each][1]/8/1024/1024); // bit/bytes(div by 8)/KBs/MBs/
+			if(dataPoint.output[each][1]!=null) outputClean.push(dataPoint.output[each][1]/8/1024/1024);
+		}
+		//Save the cleaned scaled values in the data
+		dataPoint.input.histogram = inputClean;
+		dataPoint.output.histogram = outputClean;
+		//Create other helper Statistical values
+		dataPoint.input.max = d3.max(inputClean);
+		dataPoint.input.min = d3.min(inputClean);
+		dataPoint.input.avg = avg(inputClean);
+		dataPoint.input.median = median(inputClean);
+		dataPoint.input.percentile25 = percentile(inputClean,25);
+		dataPoint.input.percentile75 = percentile(inputClean,75);
+		dataPoint.output.avg = avg(outputClean);
+		dataPoint.output.median = median(outputClean);
+		dataPoint.output.percentile25 = percentile(outputClean,25);
+		dataPoint.output.percentile75 = percentile(outputClean,75);
+		dataPoint.output.max = d3.max(outputClean);
+		dataPoint.output.min = d3.min(outputClean);
+		dataPoint.totalData = [avg(inputClean)*sizeInterval,avg(outputClean)*sizeInterval];
+	}
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
 	function OverviewTSDSQuery(url){
 		//Set up the date
@@ -77,8 +102,11 @@ function LoadData(){
 			.get(function(error,data)
 			{
 				links = data.results;
+				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				links.splice(8,1);
+				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				data.results.splice(5,1);
 				nodes = createNodes(nodes);
-				mapGraph(nodes,links);
 				//Query to retrieve bandwith values
 				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input,' + avgOver + ', average) as input, aggregate(values.output,' + avgOver + ', average) as output between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where ( '
 				for (var each in links){
@@ -89,14 +117,16 @@ function LoadData(){
 				.on("beforesend", function (request) {request.withCredentials = true;})
 				.get(function(error,data)
 				{
-					histogramTableGraph(data.results,sizeIntervalSeconds);
+					for (element in data.results){
+						scaleAndClean(data.results[element],sizeIntervalSeconds);
+					}
+					queryData = data;
+					mapGraph(nodes,links,data);
+					histogramTableGraph(data.results);
 				});
 			});
 	}
 	//#################################### END AUX FUNCTIONS ############################
-	////Query to retrive metadata information
+	////First Query to retrive metadata information and create overview
 	OverviewTSDSQuery();
 }
-
-//var url= 'https://netsage-archive.grnoc.iu.edu/tsds/services/query.cgi?method=query;query=get%20intf,%20node,%20aggregate(values.input,%20300,%20average),%20aggregate(values.output,%20300,%20average)%20between(%2201/24/2016%2000:00:00%20UTC%22,%2201/25/2016%2000:00:00%20UTC%22)%20by%20node%20from%20interface%20where%20(%20node%20=%20%22rtr.losa.transpac.org%22)';
-	//var url ='https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get intf, node, aggregate(values.input, 300, average) as input, aggregate(values.output, 300, average) as output between("01/24/2016 00:00:00 UTC","01/25/2016 00:00:00 UTC") by node, intf from interface where ( node = "rtr.losa.transpac.org" and intf = "xe-0/0/0")';
