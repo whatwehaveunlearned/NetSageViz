@@ -5,6 +5,7 @@
     position: relative;
     height: 503px;
     overflow-y: scroll;
+    overflow-x: scroll;
     display: inline-block;
     padding-left: 1px;
 }
@@ -40,10 +41,10 @@
 #tableTooltip {
     position: absolute;
     text-align: center;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
     font: 10px sans-serif;
-    background: lightsteelblue;
+    background: rgba(232, 157, 77, 0.8);
     border: 0px;
     pointer-events: none;
 }
@@ -92,16 +93,17 @@
 #mapTooltip {
     position: absolute;
     text-align: center;
-    padding-left: 3px;
-    padding-right: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
     font: 10px sans-serif;
-    background: lightsteelblue;
+    background: rgba(232, 157, 77, 0.8);
     border: 0px;
     pointer-events: none;
 }
 
 #mapTooltipname{
   font: 10px sans-serif;
+  font-weight: bold;
 }
 
 #map .nodes{

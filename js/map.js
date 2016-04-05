@@ -9,7 +9,8 @@ function mapGraph(nodes,links,data){
     d3.select(this)
       .transition()
       .duration(200)
-      .attr('fill', "blue")
+      .style('stroke','rgba(232, 157, 77, 0.9)')
+      .style('stroke-width','2')
       .attr('r',10)
     div = d3.select("#mapTooltip");
     div.transition()
@@ -17,11 +18,11 @@ function mapGraph(nodes,links,data){
        .style("opacity", .9);
     //Get the text for the links
     for (var each in d.links){
-      nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "</p>")
+      nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "- " + links[d.links[each]].intf + "</p>")
     }
     div.html("<p id ='mapTooltipname'>" + d.name + "</p>"+ nodeLinks )
-       .style("left", (d3.event.pageX + 5) + "px")
-       .style("top", (d3.event.pageY - 28) + "px");
+       .style("left", (d3.event.pageX + 15) + "px")
+       .style("top", (d3.event.pageY ) + "px");
   }
   function handleMouseOut(d,i){
     //return events on lines
@@ -30,7 +31,8 @@ function mapGraph(nodes,links,data){
     d3.select(this)
       .transition()
       .duration(200)
-      .attr('fill', "blue")
+      .style('stroke','black')
+      .style('stroke-width','1')
       .attr('r',5)
     var nodeLinks="";
     div = d3.select("#mapTooltip");
@@ -94,9 +96,8 @@ function mapGraph(nodes,links,data){
         id: function (d,i) { return "link"+i ; }
       })
       .style({
-        "stroke-width": function(d,i){ console.log(i);return ((links[i].max_bandwidth/100000000000)+2)},
-        "stroke": function(d,i){
-          console.log("num:" + i + " " + color(avg([queryData.results[i].input.avg,queryData.results[i].output.avg])));return color(avg([queryData.results[i].input.avg,queryData.results[i].output.avg]))}
+        "stroke-width": function(d,i){ return ((links[i].max_bandwidth/100000000000)+2)},
+        "stroke": function(d,i){ return color(avg([queryData.results[i].input.avg,queryData.results[i].output.avg]))}
       })
 
     //Create ExchangePoints
