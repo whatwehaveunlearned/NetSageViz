@@ -40,7 +40,7 @@ function LoadData(){
 	//Helper function to create nodes Object
 	function createNodes(){
 		var allNodes;
-		for (i in links){
+		for (var i in links){
 			var linkArray =[];
 			nodes.push ( {
 				name: links[i]["description"].split("<->")[0],
@@ -103,7 +103,7 @@ function LoadData(){
 			{
 				links = data.results;
 				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				links.splice(8,1);
+				//links.splice(8,1);
 				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				data.results.splice(5,1);
 				nodes = createNodes(nodes);
@@ -121,6 +121,7 @@ function LoadData(){
 						scaleAndClean(data.results[element],sizeIntervalSeconds);
 					}
 					queryData = data;
+					console.log(data.results);
 					mapGraph(nodes,links,data);
 					histogramTableGraph(data.results);
 				});

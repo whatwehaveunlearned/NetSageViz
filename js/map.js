@@ -93,7 +93,8 @@ function mapGraph(nodes,links,data){
       .attr({
         class:"links",
         d:path,
-        id: function (d,i) { return "link"+i ; }
+        id: function (d,i) {
+          return "link"+links[i].node.split(".")[0] ; }
       })
       .style({
         "stroke-width": function(d,i){ return ((links[i].max_bandwidth/100000000000)+2)},

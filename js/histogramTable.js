@@ -18,6 +18,7 @@ function histogramTableGraph(data){
 	bins = bins(data,"fd");
 	//Order the data
 	data = sortObjects(data);
+	console.log(data);
 	// Create margins
     var margin = {top: 2, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
     width = 350 - margin.left - margin.right,
@@ -34,7 +35,8 @@ function histogramTableGraph(data){
 	        .data(data)
 	        .enter()
 	        .append("tr")
-	        .attr("id", function(d,i){return i })
+	        .attr("id", function(d,i){
+	        	return d.node.split(".")[0] })
 	        .style("background-color", function(d,i){
 	        	return ((i % 2 == 0) ? "rgba(63, 191, 127, 0.4)" : "rgba(63, 191, 127, 0.2)");})
 	       	.on("mouseover",handleMouseOver)
@@ -82,7 +84,7 @@ function histogramTableGraph(data){
 			.text(function(d) {
 			 	return d;
 			 });
-	    var cells = rows.selectAll(".col"+ i + "-" + group)
+	    var cells = rows.selectAll()
 	        .data(columns)
 	        .enter()
 	        .append("td")
