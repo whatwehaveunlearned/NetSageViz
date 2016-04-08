@@ -1,5 +1,5 @@
 /*************************** Histogram Style *****************************/
-#multipleHistogram{
+.multipleHistogram{
     border: 1px solid black;
 	  font: 10px sans-serif;
     position: relative;
@@ -9,36 +9,36 @@
     display: inline-block;
     padding-left: 1px;
 }
-#multipleHistogram .xAxis{
+.multipleHistogram .xAxis{
 	font: 8px sans-serif;
 }
 
-#multipleHistogram thead{
+.multipleHistogram thead{
 	background-color:rgba(232, 157, 77, 0.9);
 	overflow:hidden;
   font: 15px sans-serif;
 }
 
-#multipleHistogram .bar rect {
+.multipleHistogram .bar rect {
   fill: rgba(52, 100, 222, 1);
   shape-rendering: crispEdges;
 }
 
-#multipleHistogram .xAxis path, .xAxis line {
+.multipleHistogram .xAxis path, .xAxis line {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
 }
-#multipleHistogram rect{
+.multipleHistogram rect{
   fill: rgba(52, 100, 222, 1);
   shape-rendering: crispEdges;
 }
-#multipleHistogram .totalDataBar{
+.multipleHistogram .totalDataBar{
   fill: none;
   stroke:#000;
 }
 
-#tableTooltip {
+.tableTooltip {
     position: absolute;
     text-align: center;
     padding-left: 10px;

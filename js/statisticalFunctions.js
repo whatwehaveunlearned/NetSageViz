@@ -2,14 +2,14 @@ function sortObjects (arr,type){
 	var sort;
 	switch(type){
 		case "dec":
-			sort = arr.sort(function(a, b) {return b.input.avg - a.input.avg});
+			sort = arr.sort(function(a, b) {return b.data.input.avg - a.data.input.avg});
 			break;
 		case "inc":
-			sort = arr.sort(function(a, b) {return a.input.avg - b.input.avg});
+			sort = arr.sort(function(a, b) {return a.data.input.avg - b.data.input.avg});
 			break;
 		//increasing order as default
 		default:
-			sort = arr.sort(function(a, b) {return b.input.avg - a.input.avg});
+			sort = arr.sort(function(a, b) {return b.data.input.avg - a.data.input.avg});
 			break;
 	}
 	return sort;

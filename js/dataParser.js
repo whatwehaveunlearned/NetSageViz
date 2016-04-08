@@ -13,11 +13,27 @@ function LoadData(){
 	               seen[item] = 1;
 	               out[j++] = object;
 	         }else{
-	         	for(each in out){
+	         	for(var each in out){
 	         		//Save unique links conected to this node
-	         		if(out[each].lat == item) uniqFast(out[each].links.push(object.links[0]))
+	         		if(out[each].lat == item){
+	         			uniqFast(out[each].links.push(object.links[0]))
+	         		}
 	         	}
 	         }
+	    }
+	    for (var element in out){
+	    	var linkData =[];
+	    	//We cleaned the data of the links so we only need to calculate the aggregate data for nodes getting it from their links.
+	    	var inputNodeData = [];
+	    	var outputNodeData = [];
+	    	for (var each in out[element].links){
+	    		linkData.push(links[parseInt(out[element].links[each])].data);
+	    		inputNodeData = inputNodeData.concat(links[parseInt(out[element].links[each])].data.input.histogram);
+	    		outputNodeData = outputNodeData.concat(links[parseInt(out[element].links[each])].data.output.histogram);
+	    	}
+	    	out[element].data.linkData = linkData;
+	    	out[element].data.input.histogram = inputNodeData;
+	    	out[element].data.output.histogram = outputNodeData;
 	    }
 	    return out;
 	}
@@ -43,21 +59,30 @@ function LoadData(){
 		for (var i in links){
 			var linkArray =[];
 			nodes.push ( {
-				name: links[i]["description"].split("<->")[0],
+				node: links[i]["description"].split("<->")[0],
 				lat: links[i]["a_endpoint.latitude"],
 				lon: links[i]["a_endpoint.longitude"],
-				links: [i]
+				links: [i],
+				data: {
+					input:{histogram:[]},
+					output:{histogram:[]}
+				}
 			})
 			nodes.push ( {
-				name: links[i]["description"].split("<->")[1],
+				node: links[i]["description"].split("<->")[1],
 				lat: links[i]["z_endpoint.latitude"],
 				lon: links[i]["z_endpoint.longitude"],
-				links: [i]
+				links: [i],
+				data: {
+					input:{histogram:[]},
+					output:{histogram:[]}
+				}
 			})
 		}
-		return uniqNodes(nodes);
+		return uniqNodes(nodes); //nodeData.concat(links[i].data.input.histogram)
 	}
-	function scaleAndClean (dataPoint,sizeInterval){
+	//Function to clean data
+	function scaleAndClean(dataPoint){
 		var inputClean=[];
 		var outputClean=[];
 		for (each in dataPoint.input){
@@ -67,21 +92,25 @@ function LoadData(){
 		//Save the cleaned scaled values in the data
 		dataPoint.input.histogram = inputClean;
 		dataPoint.output.histogram = outputClean;
-		//Create other helper Statistical values
-		dataPoint.input.max = d3.max(inputClean);
-		dataPoint.input.min = d3.min(inputClean);
-		dataPoint.input.avg = avg(inputClean);
-		dataPoint.input.median = median(inputClean);
-		dataPoint.input.percentile25 = percentile(inputClean,25);
-		dataPoint.input.percentile75 = percentile(inputClean,75);
-		dataPoint.output.avg = avg(outputClean);
-		dataPoint.output.median = median(outputClean);
-		dataPoint.output.percentile25 = percentile(outputClean,25);
-		dataPoint.output.percentile75 = percentile(outputClean,75);
-		dataPoint.output.max = d3.max(outputClean);
-		dataPoint.output.min = d3.min(outputClean);
-		dataPoint.totalData = [avg(inputClean)*sizeInterval,avg(outputClean)*sizeInterval];
 	}
+	//Function to calculate Important Statistical values
+	function calculateStatistics (dataPoint,sizeInterval){
+		//Create other helper Statistical values
+		dataPoint.input.max = d3.max(dataPoint.input.histogram);
+		dataPoint.input.min = d3.min(dataPoint.input.histogram);
+		dataPoint.input.avg = avg(dataPoint.input.histogram);
+		dataPoint.input.median = median(dataPoint.input.histogram);
+		dataPoint.input.percentile25 = percentile(dataPoint.input.histogram,25);
+		dataPoint.input.percentile75 = percentile(dataPoint.input.histogram,75);
+		dataPoint.output.avg = avg(dataPoint.output.histogram);
+		dataPoint.output.median = median(dataPoint.output.histogram);
+		dataPoint.output.percentile25 = percentile(dataPoint.output.histogram,25);
+		dataPoint.output.percentile75 = percentile(dataPoint.output.histogram,75);
+		dataPoint.output.max = d3.max(dataPoint.output.histogram);
+		dataPoint.output.min = d3.min(dataPoint.output.histogram);
+		dataPoint.totalData = [avg(dataPoint.input.histogram)*sizeInterval,avg(dataPoint.output.histogram)*sizeInterval];
+	}
+
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
 	function OverviewTSDSQuery(url){
 		//Set up the date
@@ -106,9 +135,8 @@ function LoadData(){
 				//links.splice(8,1);
 				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				data.results.splice(5,1);
-				nodes = createNodes(nodes);
-				//Query to retrieve bandwith values
-				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input,' + avgOver + ', average) as input, aggregate(values.output,' + avgOver + ', average) as output between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where ( '
+				//Query to retrieve links bandwith values
+				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input,' + avgOver + ', average) as input, aggregate(values.output,' + avgOver + ', average) as output between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where ( '
 				for (var each in links){
 					if (each != links.length-1) url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") or ';
 					else url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") )';
@@ -117,16 +145,25 @@ function LoadData(){
 				.on("beforesend", function (request) {request.withCredentials = true;})
 				.get(function(error,data)
 				{
-					for (element in data.results){
-						scaleAndClean(data.results[element],sizeIntervalSeconds);
+					for (var element in links){
+						scaleAndClean(data.results[element]);
+						//Add the data to the links object
+						links[element].data = data.results[element];
+						calculateStatistics(links[element].data,sizeIntervalSeconds);
 					}
-					queryData = data;
-					console.log(data.results);
+					//Create the nodes from the links
+					nodes = createNodes(nodes);
+					for (var element in nodes){
+						calculateStatistics(nodes[element].data,sizeIntervalSeconds);
+					}
+					//Create Map
 					mapGraph(nodes,links,data);
-					histogramTableGraph(data.results);
+					//Create Table
+					histogramTableGraph(links);
 				});
 			});
 	}
+	//https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get aggregate(values.input, 60, average) as input, aggregate(values.output, 60, average) as output between("02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC") by node, intf from interface where ( ( node = "mct01.miami.ampath.net" and intf = "ethernet2/5" ) or ( node = "mct02.miami.ampath.net" and intf = "ethernet2/5" ) )
 	//#################################### END AUX FUNCTIONS ############################
 	////First Query to retrive metadata information and create overview
 	OverviewTSDSQuery();

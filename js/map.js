@@ -8,19 +8,19 @@ function mapGraph(nodes,links,data){
     //Change size of node
     d3.select(this)
       .transition()
-      .duration(200)
+      .duration(500)
       .style('stroke','rgba(232, 157, 77, 0.9)')
       .style('stroke-width','2')
       .attr('r',10)
     div = d3.select("#mapTooltip");
     div.transition()
-       .duration(200)
+       .duration(500)
        .style("opacity", .9);
     //Get the text for the links
     for (var each in d.links){
       nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "- " + links[d.links[each]].intf + "</p>")
     }
-    div.html("<p id ='mapTooltipname'>" + d.name + "</p>"+ nodeLinks )
+    div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
        .style("left", (d3.event.pageX + 15) + "px")
        .style("top", (d3.event.pageY ) + "px");
   }
@@ -30,14 +30,14 @@ function mapGraph(nodes,links,data){
       .attr("pointer-events","auto")
     d3.select(this)
       .transition()
-      .duration(200)
+      .duration(500)
       .style('stroke','black')
       .style('stroke-width','1')
       .attr('r',5)
     var nodeLinks="";
     div = d3.select("#mapTooltip");
     div.transition()
-       .duration(200)
+       .duration(500)
        .style("opacity", 0);
   }
   //#################################### END AUX FUNCTIONS ########################
@@ -94,11 +94,11 @@ function mapGraph(nodes,links,data){
         class:"links",
         d:path,
         id: function (d,i) {
-          return "link"+links[i].node.split(".")[0] ; }
+          return "links"+i ; }
       })
       .style({
         "stroke-width": function(d,i){ return ((links[i].max_bandwidth/100000000000)+2)},
-        "stroke": function(d,i){ return color(avg([queryData.results[i].input.avg,queryData.results[i].output.avg]))}
+        "stroke": function(d,i){ return color(avg([links[i].data.input.avg,links[i].data.output.avg]))} //We are coloring links based on avg use
       })
 
     //Create ExchangePoints
@@ -111,7 +111,7 @@ function mapGraph(nodes,links,data){
           cy: function (d) { return projection([d.lon, d.lat])[1]; },
           r: 5,
           class: "nodes",
-          id: function (d,i) { return "node"+i; }
+          id: function (d,i) { return "nodes"+i; }
        })
        .on("mouseover",handleMouseOver)
        .on("mouseout",handleMouseOut)
