@@ -1,22 +1,38 @@
+/*************************** query Style *****************************/
+.querySelector{
+  font: 15px helvetica;
+}
+.querySelector img{
+  float:left;
+}
+.querySelector fieldset{
+  border: 0;
+}
+
+.querySelector #query{
+  width:800px;
+}
+
+/*************************** END query Style *****************************/
 /*************************** Histogram Style *****************************/
 .multipleHistogram{
     border: 1px solid black;
-	  font: 10px sans-serif;
+	  font: 10px helvetica;
     position: relative;
     height: 503px;
     overflow-y: scroll;
-    overflow-x: scroll;
     display: inline-block;
     padding-left: 1px;
+    text-align: center;
 }
 .multipleHistogram .xAxis{
-	font: 8px sans-serif;
+	font: 8px helvetica;
 }
 
 .multipleHistogram thead{
 	background-color:rgba(232, 157, 77, 0.9);
 	overflow:hidden;
-  font: 15px sans-serif;
+  font: 15px helvetica;
 }
 
 .multipleHistogram .bar rect {
@@ -43,7 +59,7 @@
     text-align: center;
     padding-left: 10px;
     padding-right: 10px;
-    font: 10px sans-serif;
+    font: 10px helvetica;
     background: rgba(232, 157, 77, 0.8);
     border: 0px;
     pointer-events: none;
@@ -52,7 +68,7 @@
 /*************************** LineChart Style *****************************/
 #lineChart {
   border: 1px solid black;
-  font: 10px sans-serif;
+  font: 10px helvetica;
   display: inline-block;
 }
 
@@ -95,14 +111,14 @@
     text-align: center;
     padding-left: 10px;
     padding-right: 10px;
-    font: 10px sans-serif;
+    font: 10px helvetica;
     background: rgba(232, 157, 77, 0.8);
     border: 0px;
     pointer-events: none;
 }
 
 #mapTooltipname{
-  font: 10px sans-serif;
+  font: 10px helvetica;
   font-weight: bold;
 }
 

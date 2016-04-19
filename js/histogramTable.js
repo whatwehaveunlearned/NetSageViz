@@ -1,45 +1,40 @@
 //#################################### HISTOGRAM TABLE GRAPH FUNCTION ###########################
 //This funtion wraps all the functions needed to paint the histogram table, creates the bins for the data and the dimension of the graph then it calles table function.
-function histogramTableGraph(data){
+function histogramTableGraph(queryData){
 	//Hold the initial link color before selection
 	var linkColor;
-	//Prepare data for histograms
-	var histogramData = [];
 	var bins;
-	bins = bins(data,"fd");
-	//Order the data
-	sortObjects(links);
-	sortObjects(nodes);
+	var columns;
 	// Create margins
     var margin = {top: 2, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
-    width = 350 - margin.left - margin.right,
-    height = 100 - margin.top - margin.bottom;
-    var columns = ["Link","Input Bandwidth", "Output Bandwidth","Total Data"];
-    startTable("links",links);
-    startTable("nodes",nodes);
-	//Fill nodes data
-	//Fill Links data
-	//dataGroup(1,["Link","Input Bandwidth", "Output Bandwidth","Total"],data,bins);
-	//We will add domains, insitutions columns here in the future...
+    	width = 350 - margin.left - margin.right,
+   		height = 100 - margin.top - margin.bottom;
+	//Order the data and launch tables
+	links = sortObjects(queryData.links);
+	nodes = sortObjects(queryData.nodes);
+	columns = ["Links","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
+    startTable("links-"+counter,links);
+    columns = ["Nodes","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
+    startTable("nodes-"+counter,nodes);
 	//Converto to dragtable
 	$('table').dragtable();
 
 	//#################################### AUX FUNCTIONS ###########################
 	//############### Function to create custom binnings for the data ###############
-	function bins(data,type){
+	function createBins(data,type){
 		var bins;
 		switch(type){
 			case "sqrRoot":
-				bins = Math.ceil(Math.sqrt(data[0].data.input.length));
+				bins = Math.ceil(Math.sqrt(data[0].data.input.histogram.length));
 				break;
 			case "rice":
-				bins = Math.ceil(2 * Math.pow(data[0].data.input.length, 1/3));
+				bins = Math.ceil(2 * Math.pow(data[0].data.input.histogram.length, 1/3));
 				break;
 			case "fd":
-				bins = Math.ceil(2 * (data[0].data.input.percentile75 - data[0].data.input.percentile25)/ Math.pow(data[0].data.input.length, 1/3));
+				bins = Math.ceil(2 * (data[0].data.input.percentile75 - data[0].data.input.percentile25)/ Math.pow(data[0].data.input.histogram.length, 1/3));
 				break;
 			default://Sturges
-				bins= Math.ceil(Math.log2(data[0].data.input.length+1));
+				bins= Math.ceil(Math.log2(data[0].data.input.histogram.length+1));
 				break;
 		}
 		return bins;
@@ -97,7 +92,10 @@ function histogramTableGraph(data){
 			       .style("opacity", 0);
 			}
 		}
-	    d3.select("body").append("div")
+    	//Create bining for histogram
+		bins = createBins(data,"fd");
+
+	    d3.select("#query"+counter).append("div")
 			.attr({
 				"id":"multipleHistogram-" + tableName,
 				"class":"multipleHistogram"
@@ -125,10 +123,10 @@ function histogramTableGraph(data){
 		    	"class": "tableTooltip"
 		    })
 		    .style("opacity", 0);
-	    dataGroup(tableName,0,columns,data,bins,header,rows);
+	    dataGroup(tableName,0,data,bins,header,rows);
 	}
 	//###############Function that adds columns headers and corresponding cells (columns per each row) ###############
-	function dataGroup(tableName,group,columns,data,bins,header,rows){
+	function dataGroup(tableName,group,data,bins,header,rows){
 		var group = group;
 		header.selectAll(".head"+group)
 			.data(columns)
@@ -165,27 +163,26 @@ function histogramTableGraph(data){
 	   	fillTable(tableName,group,data,bins,columns);
 	}
 	//############### Function to fill the formatted data for each column ###############
-	function fillTable(tableName,group,data,bins,columns){
+	function fillTable(tableName,group,data,bins){
 		var bins = bins;
-		var columns = columns;
 		//Create Input and OutputHistogram
 	    createHistogram(tableName,group,data);
 	    //TotalData
 	    createTotalData(tableName,group,data);
 	}
 	//############### Function to draw total data column ###############
-	function createTotalData(tableName,group){
+	function createTotalData(tableName,group,data){
     	function handleMouseOver(d,i){
     		div = d3.select("#" + tableName + "-tableTooltip");
 			div.transition()
    				.duration(200)
    				.style("opacity", .9);
    			if(this.classList[1]=="iData"){
-   				div.html("<p>"+ eval(this.classList[0]+"[0].data.totalData[0]").toFixed(2) +" GB</p> <p>"+ (100*eval(this.classList[0]+"[0].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
+   				div.html("<p>"+ (eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[0]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }else{
-		   		div.html("<p>"+ eval(this.classList[0]+"[0].data.totalData[1]").toFixed(2) +" GB</p> <p>"+ (100*eval(this.classList[0]+"[0].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
+		   		div.html("<p>"+ (eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[1]")/1024).toFixed(2) +" GB</p> <p>"+ (100*eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }
@@ -202,8 +199,8 @@ function histogramTableGraph(data){
     	//Calculate Max values for scales and Total data transmitted accross all elements
 	    var totalDataIn=0, totalDataOut=0;
 	    for (each in data){
-	    	totalDataIn += eval(tableName + "[each].data.totalData[0]");
-	    	totalDataOut += eval(tableName + "[each].data.totalData[1]");
+	    	totalDataIn += eval(tableName.split("-")[0] + "[each].data.totalData[0]");
+	    	totalDataOut += eval(tableName.split("-")[0] + "[each].data.totalData[1]");
 	    }
 	   	var maxX = d3.max([totalDataIn,totalDataOut]);
 
@@ -245,7 +242,7 @@ function histogramTableGraph(data){
 	    		"id": function(d,i){ return this.classList[0] + "-totalIn-" + i;},
 				"transform": "translate(0," + position.position1 + ")",
 				"height": barwidth,
-				"width": function(d,i){ return x(eval(this.classList[0]+"[i].data.totalData[0]")); }
+				"width": function(d,i){ return x(eval(this.classList[0].split("-")[0]+"[i].data.totalData[0]")); }
 			  })
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
@@ -262,7 +259,7 @@ function histogramTableGraph(data){
 	      		"y": position.position1 - barwidth,
 	      		"dy": barwidth/2
 	      	})
-	      	.text(function(d,i) { return (totalDataIn/1024).toFixed(2) + " GBs"; } );
+	      	.text(function(d,i) { return (totalDataIn/1024).toFixed(2) + " GB"; } );
 		//totalOutput
 		var totalOutput = graph.append("g")
 	        .attr("class", "totalOuput")
@@ -281,7 +278,7 @@ function histogramTableGraph(data){
 	    	  	"id": function(d,i){ return this.classList[0] + "-totalOut-" + i;},
 			  	"transform": "translate(0," + position.position2 + ")",
 			  	"height": barwidth,
-			  	"width": function(d,i){ return x(eval(this.classList[0]+"[i].data.totalData[1]")); }
+			  	"width": function(d,i){ return x(eval(this.classList[0].split("-")[0]+"[i].data.totalData[1]")); }
 			})
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
@@ -298,7 +295,7 @@ function histogramTableGraph(data){
 	      		"y": position.position2 - barwidth,
 	      		"dy": barwidth/2
 	     	})
-	     	.text(function(d,i) { return (totalDataOut/1024).toFixed(2) + " GBs"; });
+	     	.text(function(d,i) { return (totalDataOut/1024).toFixed(2) + " GB"; });
 	}
 	//############### Function to create the histogram ###############
 	function createHistogram(tableName,group,data){
@@ -313,7 +310,7 @@ function histogramTableGraph(data){
 		    var maxX=[];
 		    var maxY=[];
 		    for (each in data){
-		    	maxX.push(d3.max([d3.max(data[each].data.input.histogram),d3.max(data[each].data.input.histogram)]));
+		    	maxX.push(d3.max([d3.max(data[each].data.input.histogram),d3.max(data[each].data.output.histogram)]));
 				maxY.push(d3.max([d3.max(inputDataLayouts[each], function(d) { return d.y; }),d3.max(outputDataLayouts[each], function(d) { return d.y; })]));
 		    }
 		   	var maxX=d3.max(maxX);
@@ -344,11 +341,15 @@ function histogramTableGraph(data){
 	//############### function to draw the histogram Column ###############
     function fillHistogramColumn(tableName,colName,colData,legend,inputDataLayouts,outputDataLayouts,x,y,xAxis,yAxis,data){
 		function handleMouseOver(d,i){
+			var dataInColumn=[];
+			for (var i=0;i<d.y;i++){
+				dataInColumn.push(d[i]);
+			}
 			div = d3.select("#" + tableName + "-tableTooltip");
 			div.transition()
 					.duration(200)
 					.style("opacity", .9);
-		   	div.html("<p>"+ avg(d).toFixed(2) +" MB/s</p> <p>"+ d.length + " elements" )
+		   	div.html("<p>"+ avg(dataInColumn).toFixed(2) +" MB/s</p> <p>"+ d.y + " elements" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		}
@@ -373,7 +374,7 @@ function histogramTableGraph(data){
 	    			   		id: function(d,i){ return i;}
 	    				})
 	    				.text(function(d,i){
-	    						return "Max: " + eval(this.classList[0] + "[i].data." + type + ".max.toFixed(2)") + " MB/s"
+	    						return "Max: " + eval(this.classList[0].split("-")[0] + "[i].data." + type + ".max.toFixed(2)") + " MB/s"
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attr({
@@ -382,7 +383,7 @@ function histogramTableGraph(data){
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Avg: " + eval(this.classList[0] + "[i].data." + type + ".avg.toFixed(2)") + " MB/s"
+	    						return "Avg: " + eval(this.classList[0].split("-")[0] + "[i].data." + type + ".avg.toFixed(2)") + " MB/s"
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attr({
@@ -391,7 +392,7 @@ function histogramTableGraph(data){
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Min: " + eval(this.classList[0] + "[i].data." + type + ".min.toFixed(2)")+ " MB/s"
+	    						return "Min: " + eval(this.classList[0].split("-")[0] + "[i].data." + type + ".min.toFixed(2)")+ " MB/s"
 	    				});
 		}
 		var svg=d3.selectAll(colName).append("svg")

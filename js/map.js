@@ -1,4 +1,4 @@
-function mapGraph(nodes,links,data){
+function mapGraph(data){
   //#################################### AUX FUNCTIONS ############################
   function handleMouseOver(d,i){
     //Eliminate events on lines enhaces interaction with nodes
@@ -42,13 +42,15 @@ function mapGraph(nodes,links,data){
   }
   //#################################### END AUX FUNCTIONS ########################
   // Define the div for the tooltip
-  var div = d3.select("body").append("div")
-    .attr("id", "mapTooltip")
+  var div = d3.select("#query"+counter).append("div")
+    .attr({
+      "id": "mapTooltip"
+    })
     .style("opacity", 0);
   var margin = {top: 0, right: 0, bottom: 0, left: -25},
         width = 800 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
-  var svgMap = d3.select("body")
+  var svgMap = d3.select("#query"+counter)
       .append("div")
       .attr("id","map")
       .append("svg")
@@ -84,7 +86,7 @@ function mapGraph(nodes,links,data){
 
     //Create Links
     map.selectAll(".links")
-      .data(links)
+      .data(data.links)
       .enter()
       .append("path")
       .datum( function(d){
@@ -97,13 +99,13 @@ function mapGraph(nodes,links,data){
           return "links"+i ; }
       })
       .style({
-        "stroke-width": function(d,i){ return ((links[i].max_bandwidth/100000000000)+2)},
-        "stroke": function(d,i){ return color(avg([links[i].data.input.avg,links[i].data.output.avg]))} //We are coloring links based on avg use
+        "stroke-width": function(d,i){ return ((data.links[i].max_bandwidth/100000000000)+2)},
+        "stroke": function(d,i){ return color(avg([data.links[i].data.input.avg,data.links[i].data.output.avg]))} //We are coloring links based on avg use
       })
 
     //Create ExchangePoints
     map.selectAll(".nodes")
-       .data(nodes)
+       .data(data.nodes)
        .enter()
        .append("circle")
        .attr({

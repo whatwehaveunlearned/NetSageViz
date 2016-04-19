@@ -21,6 +21,7 @@ function sortNumber(a,b,type) {
 
 //Average
 function avg (arr){
+	if(Array.isArray(arr)!=true) arr = [arr];
 	var sum=0;
 	for (var each in arr){
 		sum+=arr[each];

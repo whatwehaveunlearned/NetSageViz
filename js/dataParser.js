@@ -1,4 +1,4 @@
-function LoadData(){
+function LoadData(queryDate,queryText,avgOver){
 	//#################################### AUX FUNCTIONS ############################
 	//Function return unique nodes from links
 	function uniqNodes(a) {
@@ -112,18 +112,12 @@ function LoadData(){
 	}
 
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
-	function OverviewTSDSQuery(url){
+	function OverviewTSDSQuery(avgOver){
 		//Set up the date
-		//one hour date
-		var date = ["02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC"];
-		//one day date
-		//var date = ["02/26/2016 00:00:00 UTC", "02/27/2016 00:00:00 UTC"];
-		//one month date
-		//var date = ["01/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC"];
-		var today = new Date();
+		var date = queryDate;
 		var interval = { first: new Date(date[0]), second: new Date(date[1]) }
 		var sizeIntervalSeconds = (interval.second - interval.first)/1000
-		var avgOver = 60;
+		var avgOver = avgOver;
 		//Query to retrieve metadata values
 		var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where a_endpoint != null and z_endpoint != null'
 		d3.json(url)
@@ -131,6 +125,7 @@ function LoadData(){
 			.get(function(error,data)
 			{
 				links = data.results;
+				queryObjects[counter].links = links;
 				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				//links.splice(8,1);
 				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -153,18 +148,31 @@ function LoadData(){
 					}
 					//Create the nodes from the links
 					nodes = createNodes(nodes);
+					queryObjects[counter].nodes = nodes;
 					for (var element in nodes){
 						calculateStatistics(nodes[element].data,sizeIntervalSeconds);
 					}
+					//Create query text
+					drawQueryText(queryText);
 					//Create Map
-					mapGraph(nodes,links,data);
+					mapGraph(queryObjects[counter]);
 					//Create Table
-					histogramTableGraph(links);
+					histogramTableGraph(queryObjects[counter]);
+					counter=counter+1;
 				});
 			});
+			function drawQueryText(queryText){
+				d3.select("body").append("div")
+				.attr({
+					"id": "query"+counter,
+					"class": "applicationRegion"
+				})
+				.append("p")
+				.html("Query"+ (counter+1) + ":" + queryText);
+			}
 	}
 	//https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get aggregate(values.input, 60, average) as input, aggregate(values.output, 60, average) as output between("02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC") by node, intf from interface where ( ( node = "mct01.miami.ampath.net" and intf = "ethernet2/5" ) or ( node = "mct02.miami.ampath.net" and intf = "ethernet2/5" ) )
 	//#################################### END AUX FUNCTIONS ############################
 	////First Query to retrive metadata information and create overview
-	OverviewTSDSQuery();
+	OverviewTSDSQuery(avgOver);
 }
