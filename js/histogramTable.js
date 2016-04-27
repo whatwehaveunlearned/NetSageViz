@@ -42,14 +42,14 @@ function histogramTableGraph(queryData){
 	//function to Create header of the Table, and row per data element. Creates the barebones of an html table that will fill up with the rest of the functions
 	function startTable(tableName,data){
 		function handleMouseOverRow(d,i){
-			if(this.classList[0]=="links"){
+			if(this.classList[0].split("-")[0]=="links"){
 				linkColor = d3.select("#" + this.classList[0] + this.id)[0][0].style["stroke"]
     			d3.select("#" + this.classList[0] + this.id)
     		 		.style("stroke", "red");
     		}else{
     			var nodeLinks="";
     			 //Change size of node
-			    d3.select("#nodes"+this.id)
+			    d3.select("#" + this.classList[0] + this.id)
 			      .transition()
 			      .duration(500)
 			      .style('stroke','rgba(232, 157, 77, 0.9)')
@@ -66,20 +66,21 @@ function histogramTableGraph(queryData){
 				    for (var each in d.links){
 				      nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "- " + links[d.links[each]].intf + "</p>")
 				    }
+				    div.selectAll("*").remove()
 				    div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
-				       .style("left", (d3.select("#nodes"+this.id).attr("cx") + 15) + "px")
-				       .style("top", (d3.select("#nodes"+this.id).attr("cy") ) + "px");
+				       .style("left", (parseInt(d3.select("#" + this.classList[0] + this.id).attr("cx"))) + "px")
+				       .style("top", (parseInt(d3.select("#" + this.classList[0] + this.id).attr("cy")) + d3.select("#" + this.classList[0] + this.id)[0][0].parentElement.parentElement.getBoundingClientRect().top) + "px");
   			}
     	}
     	function handleMouseOutRow(d,i){
-    		if(this.classList[0]=="links"){
+    		if(this.classList[0].split("-")[0]=="links"){
 				d3.select("#" + this.classList[0] + this.id)
     		  		.style("stroke", linkColor);
     		}else{
     			//return events on lines
 			    d3.selectAll(".links")
 			      .attr("pointer-events","auto")
-			    d3.select("#nodes"+this.id)
+			    d3.select("#" + this.classList[0] + this.id)
 			      .transition()
 			      .duration(500)
 			      .style('stroke','black')
@@ -116,13 +117,13 @@ function histogramTableGraph(queryData){
 	        .style("background-color", function(d,i){ return ((i % 2 == 0) ? "rgba(63, 191, 127, 0.4)" : "rgba(63, 191, 127, 0.2)");})
 	       	.on("mouseover",handleMouseOverRow)
 	       	.on("mouseout",handleMouseOutRow);
-	    // Define the div for the tooltip
-		var div = d3.select("body").append("div")
-		    .attr({
-		    	"id": tableName+"-tableTooltip",
-		    	"class": "tableTooltip"
-		    })
-		    .style("opacity", 0);
+			var div = d3.select("body").append("div")
+			    .attr({
+			    	"id": tableName+"-tableTooltip",
+			    	"class": "tableTooltip",
+			    	"z-index":10
+			    })
+			    .style("opacity", 0);
 	    dataGroup(tableName,0,data,bins,header,rows);
 	}
 	//###############Function that adds columns headers and corresponding cells (columns per each row) ###############
@@ -173,16 +174,17 @@ function histogramTableGraph(queryData){
 	//############### Function to draw total data column ###############
 	function createTotalData(tableName,group,data){
     	function handleMouseOver(d,i){
-    		div = d3.select("#" + tableName + "-tableTooltip");
+    		var split= this.id.split("-")
+    		div = d3.select("#" + split[0] + "-" + split[1] + "-tableTooltip");
 			div.transition()
    				.duration(200)
    				.style("opacity", .9);
    			if(this.classList[1]=="iData"){
-   				div.html("<p>"+ (eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[0]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
+   				div.html("<p>"+ (eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }else{
-		   		div.html("<p>"+ (eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[1]")/1024).toFixed(2) +" GB</p> <p>"+ (100*eval(this.classList[0]+"[" + this.id.split("-")[2] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
+		   		div.html("<p>"+ (eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }
@@ -239,7 +241,8 @@ function histogramTableGraph(queryData){
 	    totalInput.append("rect")
 	    	.attr({
 	    		"class": tableName + " iData",
-	    		"id": function(d,i){ return this.classList[0] + "-totalIn-" + i;},
+	    		"id": function(d,i){ 
+	    			return this.classList[0] + "-totalIn-" + i;},
 				"transform": "translate(0," + position.position1 + ")",
 				"height": barwidth,
 				"width": function(d,i){ return x(eval(this.classList[0].split("-")[0]+"[i].data.totalData[0]")); }

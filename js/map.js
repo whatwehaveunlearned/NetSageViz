@@ -52,7 +52,10 @@ function mapGraph(data){
         height = 500 - margin.top - margin.bottom;
   var svgMap = d3.select("#query"+counter)
       .append("div")
-      .attr("id","map")
+      .attr({
+        "id":"map"+counter,
+        "class":"map"
+      })
       .append("svg")
       .attr({
         width:width + margin.left + margin.right,
@@ -74,7 +77,7 @@ function mapGraph(data){
     map.append("path")
         .datum(subunits)
         .attr("d", path)
-        .attr("id","worlldMap");
+        .attr("id","worlldMap"+counter);
     var customLine = d3.svg.line()
                        .interpolate("basis");
 
@@ -96,7 +99,7 @@ function mapGraph(data){
         class:"links",
         d:path,
         id: function (d,i) {
-          return "links"+i ; }
+          return "links-"+ counter+ i ; }
       })
       .style({
         "stroke-width": function(d,i){ return ((data.links[i].max_bandwidth/100000000000)+2)},
@@ -113,7 +116,7 @@ function mapGraph(data){
           cy: function (d) { return projection([d.lon, d.lat])[1]; },
           r: 5,
           class: "nodes",
-          id: function (d,i) { return "nodes"+i; }
+          id: function (d,i) { return "nodes-"+counter + i; }
        })
        .on("mouseover",handleMouseOver)
        .on("mouseout",handleMouseOut)

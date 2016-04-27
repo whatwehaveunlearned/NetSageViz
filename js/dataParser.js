@@ -54,7 +54,7 @@ function LoadData(queryDate,queryText,avgOver){
 	    return out;
 	}
 	//Helper function to create nodes Object
-	function createNodes(){
+	function createNodes(nodes){
 		var allNodes;
 		for (var i in links){
 			var linkArray =[];
@@ -108,7 +108,8 @@ function LoadData(queryDate,queryText,avgOver){
 		dataPoint.output.percentile75 = percentile(dataPoint.output.histogram,75);
 		dataPoint.output.max = d3.max(dataPoint.output.histogram);
 		dataPoint.output.min = d3.min(dataPoint.output.histogram);
-		dataPoint.totalData = [avg(dataPoint.input.histogram)*sizeInterval,avg(dataPoint.output.histogram)*sizeInterval];
+		dataPoint.totalData = [d3.sum(dataPoint.input.histogram),d3.sum(dataPoint.output.histogram)];
+		//dataPoint.totalData = [avg(dataPoint.input.histogram)*sizeInterval,avg(dataPoint.output.histogram)*sizeInterval];
 	}
 
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
@@ -118,6 +119,7 @@ function LoadData(queryDate,queryText,avgOver){
 		var interval = { first: new Date(date[0]), second: new Date(date[1]) }
 		var sizeIntervalSeconds = (interval.second - interval.first)/1000
 		var avgOver = avgOver;
+		var nodes = [];
 		//Query to retrieve metadata values
 		var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where a_endpoint != null and z_endpoint != null'
 		d3.json(url)
@@ -158,7 +160,6 @@ function LoadData(queryDate,queryText,avgOver){
 					mapGraph(queryObjects[counter]);
 					//Create Table
 					histogramTableGraph(queryObjects[counter]);
-					counter=counter+1;
 				});
 			});
 			function drawQueryText(queryText){

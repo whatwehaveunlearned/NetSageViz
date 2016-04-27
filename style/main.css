@@ -88,20 +88,20 @@
 /*************************** END Histogram Style *****************************/
 
 /*************************** Map Style *****************************/
-#map{
+.map{
   border: 1px solid black;
   width:800px;
   height:500px;
   display: inline-block;
   background: #F8F8FF;
 }
-#map path {
+.map path {
   stroke: black;
   stroke-width: 0.30px;
   fill: rgba(225,239,224,1);
 }
 
-#map .links {
+.map .links {
 	fill:none;
 	stroke: blue;
 }
@@ -122,7 +122,7 @@
   font-weight: bold;
 }
 
-#map .nodes{
+.map .nodes{
   fill:white;
   stroke: black;
 }

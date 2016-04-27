@@ -1,11 +1,10 @@
 //Global Variables
 var windowWith = $(window).width();
 var windowHeight = $(window).height();
-var nodes = [];
 var links;
 var queryObjects = [];
 var initialQuery =  "What was the min, max, average bandwith used between the IRNC links ";
-var counter=0;
+var counter=-1;
 function main (){
 	queryForm(initialQuery);
 }
@@ -28,8 +27,6 @@ function Query(query,date){
 function queryForm(query){
 	var queryTypes = ["What was the min, max, average bandwith used between the IRNC links ","todo1 ", "todo2 "]
 	var timeFrames = ["This Year","This Month","Last 7 days","Today","Now","On a specific day","Between"]
-	//var date1 = "02/26/2016 00:00:00 UTC";
-	//var date2 = "02/26/2016 01:00:00 UTC";
 	var logoWidth = 100;
 	var logoHeight = 100;
 	var querySelector = d3.select("body").append("div")
@@ -71,17 +68,6 @@ function queryForm(query){
 		queryTimeFrame.append("option")
 			.html(timeFrames[i]);
 	}
-/*	queryForm.append("input")
-	.attr({
-		"type":"text",
-		"name": "query",
-		"id":"queryText",
-		"value":query
-	})
-	.style({
-		"width":windowWith-(10*logoWidth) + "px"
-	})
-*/
 	$("#query").selectmenu();
 	$("#timeFrame").selectmenu({
       change: function( event, data ) {
@@ -125,6 +111,8 @@ function queryForm(query){
 	}).html("Ask NetSage")
 	.on("click",handleOnClick);
 	function handleOnClick(){
+		//Increase counter
+		counter=counter+1;
 		//Read query
 		var queryType = $("#query")[0].value
 		//Read TimeFrame
@@ -165,15 +153,3 @@ function queryForm(query){
 		LoadData(queryObjects[counter].date,queryObjects[counter].queryText,avgOver);
 	}
 }
-/*
-<fieldset>
-    <label for="speed">Select a speed</label>
-    <select name="speed" id="speed">
-      <option>Slower</option>
-      <option>Slow</option>
-      <option selected="selected">Medium</option>
-      <option>Fast</option>
-      <option>Faster</option>
-    </select>
-
-    */
