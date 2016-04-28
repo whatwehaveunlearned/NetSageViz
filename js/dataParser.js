@@ -86,8 +86,16 @@ function LoadData(queryDate,queryText,avgOver){
 		var inputClean=[];
 		var outputClean=[];
 		for (each in dataPoint.input){
-			if(dataPoint.input[each][1]!=null) inputClean.push(dataPoint.input[each][1]/8/1024/1024); // bit/bytes(div by 8)/KBs/MBs/
-			if(dataPoint.output[each][1]!=null) outputClean.push(dataPoint.output[each][1]/8/1024/1024);
+			if(dataPoint.input[each][1]!=null){
+				inputClean.push(dataPoint.input[each][1]/8/1024/1024); // bit/bytes(div by 8)/KBs/MBs/
+			}else{
+				inputClean.push(0);
+			}
+			if(dataPoint.output[each][1]!=null){
+				outputClean.push(dataPoint.output[each][1]/8/1024/1024);
+			} else{
+				outputClean.push(0);
+			}
 		}
 		//Save the cleaned scaled values in the data
 		dataPoint.input.histogram = inputClean;
@@ -108,8 +116,10 @@ function LoadData(queryDate,queryText,avgOver){
 		dataPoint.output.percentile75 = percentile(dataPoint.output.histogram,75);
 		dataPoint.output.max = d3.max(dataPoint.output.histogram);
 		dataPoint.output.min = d3.min(dataPoint.output.histogram);
-		dataPoint.totalData = [d3.sum(dataPoint.input.histogram),d3.sum(dataPoint.output.histogram)];
-		//dataPoint.totalData = [avg(dataPoint.input.histogram)*sizeInterval,avg(dataPoint.output.histogram)*sizeInterval];
+		//dataPoint.totalData = [d3.sum(dataPoint.input.histogram),d3.sum(dataPoint.output.histogram)];
+		dataPoint.totalData = [avg(dataPoint.input.histogram)*sizeInterval,avg(dataPoint.output.histogram)*sizeInterval];
+		if(isNaN(dataPoint.totalData[0])) dataPoint.totalData[0]=0;
+		if(isNaN(dataPoint.totalData[1])) dataPoint.totalData[1]=0;
 	}
 
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
@@ -128,11 +138,6 @@ function LoadData(queryDate,queryText,avgOver){
 			{
 				links = data.results;
 				queryObjects[counter].links = links;
-				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				//links.splice(8,1);
-				//Remove the empty value THIS IS TEMPORAL HACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				data.results.splice(5,1);
-				//Query to retrieve links bandwith values
 				url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, aggregate(values.input,' + avgOver + ', average) as input, aggregate(values.output,' + avgOver + ', average) as output between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where ( '
 				for (var each in links){
 					if (each != links.length-1) url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") or ';
@@ -172,8 +177,7 @@ function LoadData(queryDate,queryText,avgOver){
 				.html("Query"+ (counter+1) + ":" + queryText);
 			}
 	}
-	//https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get aggregate(values.input, 60, average) as input, aggregate(values.output, 60, average) as output between("02/26/2016 00:00:00 UTC", "02/26/2016 01:00:00 UTC") by node, intf from interface where ( ( node = "mct01.miami.ampath.net" and intf = "ethernet2/5" ) or ( node = "mct02.miami.ampath.net" and intf = "ethernet2/5" ) )
 	//#################################### END AUX FUNCTIONS ############################
-	////First Query to retrive metadata information and create overview
+	////Loads the data for the query
 	OverviewTSDSQuery(avgOver);
 }

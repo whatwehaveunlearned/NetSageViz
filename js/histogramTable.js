@@ -3,15 +3,15 @@
 function histogramTableGraph(queryData){
 	//Hold the initial link color before selection
 	var linkColor;
-	var bins;
+	var numberBins;
 	var columns;
 	// Create margins
     var margin = {top: 2, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
     	width = 350 - margin.left - margin.right,
    		height = 100 - margin.top - margin.bottom;
 	//Order the data and launch tables
-	links = sortObjects(queryData.links);
-	nodes = sortObjects(queryData.nodes);
+	links = sortObjects(queryData.links).slice();
+	nodes = sortObjects(queryData.nodes).slice();
 	columns = ["Links","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
     startTable("links-"+counter,links);
     columns = ["Nodes","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
@@ -41,6 +41,12 @@ function histogramTableGraph(queryData){
 	}
 	//function to Create header of the Table, and row per data element. Creates the barebones of an html table that will fill up with the rest of the functions
 	function startTable(tableName,data){
+		//delete very small values
+		for(var i=data.length-1;i>0;i--){
+				if(data[i].data.totalData[0]+data[i].data.totalData[1]<10000){
+					data.splice(i,1);
+				}
+			}
 		function handleMouseOverRow(d,i){
 			if(this.classList[0].split("-")[0]=="links"){
 				linkColor = d3.select("#" + this.classList[0] + this.id)[0][0].style["stroke"]
@@ -64,7 +70,7 @@ function histogramTableGraph(queryData){
 			       .style("opacity", .9);
 			        //Get the text for the links
 				    for (var each in d.links){
-				      nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "- " + links[d.links[each]].intf + "</p>")
+				      nodeLinks = nodeLinks + ("<p>" + eval("queryObjects["+this.classList[0].split("-")[1]+"].links["+d.links[each]+"].node") + "- " + eval("queryObjects["+this.classList[0].split("-")[1]+"].links["+d.links[each]+"].intf") + "</p>")
 				    }
 				    div.selectAll("*").remove()
 				    div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
@@ -94,7 +100,7 @@ function histogramTableGraph(queryData){
 			}
 		}
     	//Create bining for histogram
-		bins = createBins(data,"fd");
+		numberBins = createBins(data,"fd");
 
 	    d3.select("#query"+counter).append("div")
 			.attr({
@@ -124,10 +130,10 @@ function histogramTableGraph(queryData){
 			    	"z-index":10
 			    })
 			    .style("opacity", 0);
-	    dataGroup(tableName,0,data,bins,header,rows);
+	    dataGroup(tableName,0,data,numberBins,header,rows);
 	}
 	//###############Function that adds columns headers and corresponding cells (columns per each row) ###############
-	function dataGroup(tableName,group,data,bins,header,rows){
+	function dataGroup(tableName,group,data,numberBins,header,rows){
 		var group = group;
 		header.selectAll(".head"+group)
 			.data(columns)
@@ -161,13 +167,13 @@ function histogramTableGraph(queryData){
 	    	.text(function(d,i){
 	    		return data[i].node});
 	    //FillTable
-	   	fillTable(tableName,group,data,bins,columns);
+	   	fillTable(tableName,group,data,numberBins,columns);
 	}
 	//############### Function to fill the formatted data for each column ###############
-	function fillTable(tableName,group,data,bins){
-		var bins = bins;
+	function fillTable(tableName,group,data,numberBins){
+		var numberBins = numberBins;
 		//Create Input and OutputHistogram
-	    createHistogram(tableName,group,data);
+	    createHistogram(tableName,group,data,numberBins);
 	    //TotalData
 	    createTotalData(tableName,group,data);
 	}
@@ -241,7 +247,7 @@ function histogramTableGraph(queryData){
 	    totalInput.append("rect")
 	    	.attr({
 	    		"class": tableName + " iData",
-	    		"id": function(d,i){ 
+	    		"id": function(d,i){
 	    			return this.classList[0] + "-totalIn-" + i;},
 				"transform": "translate(0," + position.position1 + ")",
 				"height": barwidth,
@@ -301,13 +307,13 @@ function histogramTableGraph(queryData){
 	     	.text(function(d,i) { return (totalDataOut/1024).toFixed(2) + " GB"; });
 	}
 	//############### Function to create the histogram ###############
-	function createHistogram(tableName,group,data){
+	function createHistogram(tableName,group,data,numberBins){
 		    //Number of bins
 		    var inputDataLayouts = [];
 		    var outputDataLayouts = [];
 		    for (j=0;j<data.length;j++){
-		      inputDataLayouts.push(d3.layout.histogram().bins(bins)(data[j].data.input.histogram));
-		      outputDataLayouts.push(d3.layout.histogram().bins(bins)(data[j].data.output.histogram));
+		      inputDataLayouts.push(d3.layout.histogram().bins(numberBins)(data[j].data.input.histogram));
+		      outputDataLayouts.push(d3.layout.histogram().bins(numberBins)(data[j].data.output.histogram));
 		    }
 		    //Calculate Max values for scales
 		    var maxX=[];
@@ -414,7 +420,10 @@ function histogramTableGraph(queryData){
 	        })
 	        .enter().append("g")
 	        .attr("class", "bar")
-	        .attr("transform", function(d) {
+	        .attr("transform", function(d,i) {
+	        	if(isNaN(d.x)){
+					console.log(i+ "NAN " + d )
+				}
 	        	return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
 	    bar.append("rect")
 	        .attr("x", 1)

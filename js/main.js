@@ -8,6 +8,7 @@ var counter=-1;
 function main (){
 	queryForm(initialQuery);
 }
+//Query Object Prototype
 function Query(query,date){
 	this.queryText = query;
 	this.date = date;
