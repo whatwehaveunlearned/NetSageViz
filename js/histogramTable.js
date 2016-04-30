@@ -12,6 +12,8 @@ function histogramTableGraph(queryData){
 	//Order the data and launch tables
 	links = sortObjects(queryData.links).slice();
 	nodes = sortObjects(queryData.nodes).slice();
+	queryData.graphs.table.links = links;
+	queryData.graphs.table.nodes = nodes;
 	columns = ["Links","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
     startTable("links-"+counter,links);
     columns = ["Nodes","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
@@ -41,9 +43,9 @@ function histogramTableGraph(queryData){
 	}
 	//function to Create header of the Table, and row per data element. Creates the barebones of an html table that will fill up with the rest of the functions
 	function startTable(tableName,data){
-		//delete very small values
+		//delete very small values and we dont draw a column for those elements
 		for(var i=data.length-1;i>0;i--){
-				if(data[i].data.totalData[0]+data[i].data.totalData[1]<10000){
+				if(data[i].data.totalData[0]+data[i].data.totalData[1]<5){
 					data.splice(i,1);
 				}
 			}
@@ -186,11 +188,11 @@ function histogramTableGraph(queryData){
    				.duration(200)
    				.style("opacity", .9);
    			if(this.classList[1]=="iData"){
-   				div.html("<p>"+ (eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
+   				div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }else{
-		   		div.html("<p>"+ (eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval(this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
+		   		div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }

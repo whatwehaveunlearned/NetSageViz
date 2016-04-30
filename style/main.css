@@ -13,6 +13,10 @@
   width:800px;
 }
 
+.querySelector #submit{
+  background-color:rgba(232, 157, 77, 0.9);
+}
+
 /*************************** END query Style *****************************/
 /*************************** Histogram Style *****************************/
 .multipleHistogram{
