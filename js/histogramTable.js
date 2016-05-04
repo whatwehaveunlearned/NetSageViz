@@ -44,11 +44,11 @@ function histogramTableGraph(queryData){
 	//function to Create header of the Table, and row per data element. Creates the barebones of an html table that will fill up with the rest of the functions
 	function startTable(tableName,data){
 		//delete very small values and we dont draw a column for those elements
-		for(var i=data.length-1;i>0;i--){
+		/*for(var i=data.length-1;i>0;i--){
 				if(data[i].data.totalData[0]+data[i].data.totalData[1]<5){
 					data.splice(i,1);
 				}
-			}
+			}*/
 		function handleMouseOverRow(d,i){
 			if(this.classList[0].split("-")[0]=="links"){
 				linkColor = d3.select("#" + this.classList[0] + this.id)[0][0].style["stroke"]
@@ -60,7 +60,6 @@ function histogramTableGraph(queryData){
 			    d3.select("#" + this.classList[0] + this.id)
 			      .transition()
 			      .duration(500)
-			      .style('stroke','rgba(232, 157, 77, 0.9)')
 			      .style('stroke-width','2')
 			      .attr('r',10)
 			    div = d3.select("#mapTooltip");
@@ -91,7 +90,6 @@ function histogramTableGraph(queryData){
 			    d3.select("#" + this.classList[0] + this.id)
 			      .transition()
 			      .duration(500)
-			      .style('stroke','black')
 			      .style('stroke-width','1')
 			      .attr('r',5)
 			    var nodeLinks="";
@@ -209,8 +207,9 @@ function histogramTableGraph(queryData){
     	//Calculate Max values for scales and Total data transmitted accross all elements
 	    var totalDataIn=0, totalDataOut=0;
 	    for (each in data){
-	    	totalDataIn += eval(tableName.split("-")[0] + "[each].data.totalData[0]");
-	    	totalDataOut += eval(tableName.split("-")[0] + "[each].data.totalData[1]");
+	    	console.log(each);
+	    	totalDataIn += eval("queryObjects[" + tableName.split("-")[1] + "].graphs.table." + tableName.split("-")[0] + "[each].data.totalData[0]");
+	    	totalDataOut += eval("queryObjects[" + tableName.split("-")[1] + "].graphs.table." + tableName.split("-")[0] + "[each].data.totalData[1]");
 	    }
 	   	var maxX = d3.max([totalDataIn,totalDataOut]);
 
@@ -360,7 +359,7 @@ function histogramTableGraph(queryData){
 			div.transition()
 					.duration(200)
 					.style("opacity", .9);
-		   	div.html("<p>"+ avg(dataInColumn).toFixed(2) +" MB/s</p> <p>"+ d.y + " elements" )
+		   	div.html("<p>"+ d3.mean(dataInColumn).toFixed(2) +" MB/s</p> <p>"+ d.y + " elements" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		}
@@ -385,25 +384,27 @@ function histogramTableGraph(queryData){
 	    			   		id: function(d,i){ return i;}
 	    				})
 	    				.text(function(d,i){
-	    						return "Max: " + eval(this.classList[0].split("-")[0] + "[i].data." + type + ".max.toFixed(2)") + " MB/s"
+	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.max.toFixed(2)") + " MB/s"
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attr({
 	    			   		class: tableName + " avg",
+	    			   		id: function(d,i){ return i;},
 	    			   		x:-15,
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Avg: " + eval(this.classList[0].split("-")[0] + "[i].data." + type + ".avg.toFixed(2)") + " MB/s"
+	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)") + " MB/s"
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attr({
 	    			   		class: tableName + " min",
+	    			   		id: function(d,i){ return i;},
 	    			   		x:-15,
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Min: " + eval(this.classList[0].split("-")[0] + "[i].data." + type + ".min.toFixed(2)")+ " MB/s"
+	    						return "Min: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.min.toFixed(2)")+ " MB/s"
 	    				});
 		}
 		var svg=d3.selectAll(colName).append("svg")
@@ -424,13 +425,17 @@ function histogramTableGraph(queryData){
 	        .attr("class", "bar")
 	        .attr("transform", function(d,i) {
 	        	if(isNaN(d.x)){
-					console.log(i+ "NAN " + d )
+					d.x=0;
+					d.dx=0;
 				}
 	        	return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
 	    bar.append("rect")
 	        .attr("x", 1)
 	        .attr("width", function(d,i){
-	          return x(d.dx) - 1})
+	        	if(x(d.dx) - 1 <0) {
+	        		return 1;
+	        	} else {return x(d.dx) - 1};
+	        })
 	        .attr("height", function(d) { return height - y(d.y); })
 	        .on("mouseover",handleMouseOver)
 		  	.on("mouseout",handleMouseOut)

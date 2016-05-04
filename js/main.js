@@ -7,6 +7,10 @@ var initialQuery =  "What was the min, max, average bandwith used between the IR
 var counter=-1;
 function main (){
 	queryForm(initialQuery);
+	d3.select("#timeFrame-button")
+	  .style({
+  			"width": "8.3em"
+	  });
 }
 //Query Object Prototype
 function Query(query,date){
@@ -15,11 +19,14 @@ function Query(query,date){
 	this.links = 0;
 	this.nodes = 0;
 	this.graphs = ({
-		"table" : ({
+		"table" : 	({
 						"links":null,
 						"nodes":null
 					}),
-		"map" : null
+		"map" 	: 	({
+						"links":null,
+						"nodes":null
+					}),
 	});
 	this.printQuery = function (){
 		return queryText;
@@ -56,11 +63,6 @@ function queryForm(query){
 							"id":"fieldset"
 						});
 
-	fieldset.append("label")
-			.attr({
-			 	"for":"query"
-			 })
-			.html("Select a query:");
 	var queryTypeSelect = fieldset.append("select")
 					.attr({
 						"name": "query",
@@ -89,7 +91,7 @@ function queryForm(query){
 		var today = new Date();
 		$( "#datePickerStart" ).remove();
 			$( "#datePickerEnd" ).remove();
-      	//If we select Between create 2 datePickers
+      	//If we select Between create 2 empty datePickers
         if(data.item.label===timeFrames[5]){
         	createDatePickers(true,true,"","",false);
 		//For the specified ranges we fill up the date pickers
@@ -118,6 +120,8 @@ function queryForm(query){
 	}).html("Ask NetSage")
 	.on("click",handleOnClick);
 	function handleOnClick(){
+		var dayFormat = d3.time.format("%m/%d/%Y");
+		var timeFormat = d3.time.format("%H:%M:%S");
 		//Increase counter
 		counter=counter+1;
 		//Read query
@@ -126,34 +130,34 @@ function queryForm(query){
 		var timeFrame = $("#timeFrame")[0].value
 		//Read Dates
 		var queryDate;
-		var dayFormat = d3.time.format("%m/%d/%Y");
-		var timeFormat = d3.time.format("%H:%M:%S");
-		var today = new Date();
 		var avgOver = 60;
-		var todayFormated = dayFormat(today);
-		var timeFormated = timeFormat(today);
+		//UTC date
+		var UTCDateStart;
+		var UTCDateStop;
+		UTCDateStart = new Date(d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value )
+		UTCDateStart = new Date(UTCDateStart.getUTCFullYear(), UTCDateStart.getUTCMonth(), UTCDateStart.getUTCDate(),  UTCDateStart.getUTCHours(), UTCDateStart.getUTCMinutes(), UTCDateStart.getUTCSeconds());
+		UTCDateStop = new Date(d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value )
+		UTCDateStop = new Date(UTCDateStop.getUTCFullYear(), UTCDateStop.getUTCMonth(), UTCDateStop.getUTCDate(),  UTCDateStop.getUTCHours(), UTCDateStop.getUTCMinutes(), UTCDateStop.getUTCSeconds());
 		if (timeFrame === "Time Frame") {
 			avgOver = 120;
-			queryDate = [d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value + " UTC" ,d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value + " UTC"];
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDate) + " UTC" ,dayFormat(UTCDateStart) + " " + timeFormat(UTCDate) + " UTC"];
 		} else if (timeFrame === "On a specific day") {
-			queryDate = [d3.select("#datePickerStart")[0][0].value + d3.select("#timeStart")[0][0].value + " UTC"];
+			queryDate = [dayFormat(UTCDateStart) + d3.select("#timeStart")[0][0].value + " UTC"];
 		} else if (timeFrame === "This Year"){
 			avgOver = 21600;
-			queryDate = [d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value + " UTC" ,d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value + " UTC"];
-			//queryDate = [ januaryFirst + " 00:00:00 UTC" ,todayFormated + " " + timeFormated + " UTC"];
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "This Month"){
 			avgOver = 720;
-			queryDate = [d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value + " UTC" ,d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value + " UTC"];
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "Last 7 days"){
 			avgOver = 120;
-			queryDate = [d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value + " UTC" ,d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value + " UTC"];
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
 		else if (timeFrame === "Today"){
-			queryDate = [d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value + " UTC" ,d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value + " UTC"];
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "Now"){
 			avgOver = 60;
-			var threeHoursBefore = new Date(today.getTime() - (3*60 * 60 * 1000));
-			queryDate = [d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value + " UTC" ,d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value + " UTC"];
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
 		queryObjects.push(new Query(queryType + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate))
 		LoadData(queryObjects[counter].date,queryObjects[counter].queryText,avgOver);
@@ -174,11 +178,13 @@ function queryForm(query){
 			fieldset.append("input")
 			.attr({
 				"type":"text",
-				"id": "datePickerStart"
+				"id": "datePickerStart",
+				"class": "datePicker"
 			});
 			var timeSelect = d3.select("#fieldset").append("select")
 								.attr({
-									"id":"timeStart"
+									"id":"timeStart",
+									"class":"timePicker"
 								});
 			for (var each in hoursSelectionStart){
 				timeSelect.append("option")
@@ -198,11 +204,13 @@ function queryForm(query){
 			fieldset.append("input")
 				.attr({
 					"type":"text",
-					"id": "datePickerEnd"
+					"id": "datePickerEnd",
+					"class": "datePicker"
 				});
 				var timeSelect = d3.select("#fieldset").append("select")
 								.attr({
-									"id":"timeStop"
+									"id":"timeStop",
+									"class":"timePicker"
 								});
 			for (var each in hoursSelectionStop){
 				timeSelect.append("option")

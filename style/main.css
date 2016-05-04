@@ -1,7 +1,21 @@
+body{
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
 /*************************** query Style *****************************/
 .querySelector{
-  font: 15px helvetica;
+  font: 15px;
 }
+
+select {
+  border-radius: 0px;
+}
+
+.querySelector #queryForm{
+    position: relative;
+    top: 0.7em;
+}
+
 .querySelector img{
   float:left;
 }
@@ -11,17 +25,64 @@
 
 .querySelector #query{
   width:800px;
+  margin: 5px;
+  margin-right: 5px;
 }
 
 .querySelector #submit{
-  background-color:rgba(232, 157, 77, 0.9);
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 1.4em;
+  background-color: rgba(232, 157, 77, 0.9);
+  position: relative;
+  left: 61em;
+  padding: 10px;
+  top: -2.7em;
+  border-style: solid;
+}
+
+.querySelector .ui-selectmenu-button{
+  margin-left: 5px;
+  border-radius: 0;
+}
+
+.querySelector .ui-selectmenu-text{
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+.querySelector .datePicker{
+  position: relative;
+  top: -1.2em;
+  height: 2.8em;
+  text-align: left;
+  padding: 0.2em 1.2em 0.2em 0.5em;
+  width: 70px;
+  background: #f6f6f6;
+  margin: 0px 0px 0px 15px;
+  border: 1px solid #c5c5c5;
+  border-radius: 0;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+}
+
+.querySelector .timePicker{
+  position: relative;
+  top: -1.2em;
+  height: 3.5em;
+  text-align: left;
+  padding: 0.2em 1.2em 0.2em 0.5em;
+  width: 75px;
+  background: #f6f6f6;s
+  border-radius: 0;
+  margin-left: 2px;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
 }
 
 /*************************** END query Style *****************************/
 /*************************** Histogram Style *****************************/
 .multipleHistogram{
     border: 1px solid black;
-	  font: 10px helvetica;
+	  font-size: 10px;
     position: relative;
     height: 503px;
     overflow-y: scroll;
@@ -30,13 +91,13 @@
     text-align: center;
 }
 .multipleHistogram .xAxis{
-	font: 8px helvetica;
+	font-size: 8px;
 }
 
 .multipleHistogram thead{
 	background-color:rgba(232, 157, 77, 0.9);
 	overflow:hidden;
-  font: 15px helvetica;
+  font-size: 15px;
 }
 
 .multipleHistogram .bar rect {
@@ -63,7 +124,7 @@
     text-align: center;
     padding-left: 10px;
     padding-right: 10px;
-    font: 10px helvetica;
+    font-size: 10px;
     background: rgba(232, 157, 77, 0.8);
     border: 0px;
     pointer-events: none;
@@ -72,7 +133,7 @@
 /*************************** LineChart Style *****************************/
 #lineChart {
   border: 1px solid black;
-  font: 10px helvetica;
+  font-size: 10px;
   display: inline-block;
 }
 
@@ -97,7 +158,7 @@
   width:800px;
   height:500px;
   display: inline-block;
-  background: #F8F8FF;
+  /*background: #F8F8FF;*/
 }
 .map path {
   stroke: black;
@@ -115,19 +176,18 @@
     text-align: center;
     padding-left: 10px;
     padding-right: 10px;
-    font: 10px helvetica;
+    font-size: 10px;
     background: rgba(232, 157, 77, 0.8);
     border: 0px;
     pointer-events: none;
 }
 
 #mapTooltipname{
-  font: 10px helvetica;
+  font-size: 10px;
   font-weight: bold;
 }
 
 .map .nodes{
-  fill:white;
   stroke: black;
 }
 

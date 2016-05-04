@@ -40,7 +40,7 @@ function median(arr){
 //Standart Deviation
 function stdDev(arr){
 	var sum =0;
-	var average = avg(arr);
+	var average = d3.mean(arr);
 	for (var each in arr){
 		sum+= Math.pow(arr[each]-average,2);
 	}

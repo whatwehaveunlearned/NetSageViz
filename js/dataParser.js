@@ -79,8 +79,9 @@ function LoadData(queryDate,queryText,avgOver){
 				}
 			})
 		}
-		return uniqNodes(nodes); //nodeData.concat(links[i].data.input.histogram)
+		return uniqNodes(nodes);
 	}
+
 	//Function to clean data
 	function scaleAndClean(dataPoint){
 		var inputClean=[];
@@ -106,20 +107,37 @@ function LoadData(queryDate,queryText,avgOver){
 		//Create other helper Statistical values
 		dataPoint.input.max = d3.max(dataPoint.input.histogram);
 		dataPoint.input.min = d3.min(dataPoint.input.histogram);
-		dataPoint.input.avg = avg(dataPoint.input.histogram);
+		dataPoint.input.avg = d3.mean(dataPoint.input.histogram);
 		dataPoint.input.median = median(dataPoint.input.histogram);
 		dataPoint.input.percentile25 = percentile(dataPoint.input.histogram,25);
 		dataPoint.input.percentile75 = percentile(dataPoint.input.histogram,75);
-		dataPoint.output.avg = avg(dataPoint.output.histogram);
+		dataPoint.output.avg = d3.mean(dataPoint.output.histogram);
 		dataPoint.output.median = median(dataPoint.output.histogram);
 		dataPoint.output.percentile25 = percentile(dataPoint.output.histogram,25);
 		dataPoint.output.percentile75 = percentile(dataPoint.output.histogram,75);
 		dataPoint.output.max = d3.max(dataPoint.output.histogram);
 		dataPoint.output.min = d3.min(dataPoint.output.histogram);
-		//dataPoint.totalData = [d3.sum(dataPoint.input.histogram),d3.sum(dataPoint.output.histogram)];
-		dataPoint.totalData = [avg(dataPoint.input.histogram)*sizeInterval,avg(dataPoint.output.histogram)*sizeInterval];
-		if(isNaN(dataPoint.totalData[0])) dataPoint.totalData[0]=0;
-		if(isNaN(dataPoint.totalData[1])) dataPoint.totalData[1]=0;
+
+		if(dataPoint.input.histogram.length == 0){
+			dataPoint.input.max = 0;
+			dataPoint.input.min = 0;
+			dataPoint.input.avg = 0;
+			dataPoint.input.median = 0;
+			dataPoint.input.percentile25 = 0;
+			dataPoint.input.percentile75 = 0;
+		}
+		if (dataPoint.output.histogram.length == 0){
+			dataPoint.output.max = 0;
+			dataPoint.output.min = 0;
+			dataPoint.output.avg = 0;
+			dataPoint.output.median = 0;
+			dataPoint.output.percentile25 = 0;
+			dataPoint.output.percentile75 = 0;
+		}
+
+			dataPoint.totalData = [d3.mean(dataPoint.input.histogram)*sizeInterval,d3.mean(dataPoint.output.histogram)*sizeInterval];
+			if(isNaN(dataPoint.totalData[0])) dataPoint.totalData[0]=0;
+			if(isNaN(dataPoint.totalData[1])) dataPoint.totalData[1]=0;
 	}
 
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
@@ -148,10 +166,10 @@ function LoadData(queryDate,queryText,avgOver){
 				.get(function(error,data)
 				{
 					for (var element in links){
-						scaleAndClean(data.results[element]);
 						//Add the data to the links object
-						links[element].data = data.results[element];
-						calculateStatistics(links[element].data,sizeIntervalSeconds);
+						queryObjects[counter].links[element].data = data.results[element];
+						scaleAndClean(queryObjects[counter].links[element].data);
+						calculateStatistics(queryObjects[counter].links[element].data,sizeIntervalSeconds);
 					}
 					//Create the nodes from the links
 					nodes = createNodes(nodes);
@@ -174,7 +192,7 @@ function LoadData(queryDate,queryText,avgOver){
 					"class": "applicationRegion"
 				})
 				.append("p")
-				.html("Query"+ (counter+1) + ":" + queryText);
+				.html("<b>Query"+ (counter+1) + ":</b>" + queryText);
 			}
 	}
 	//#################################### END AUX FUNCTIONS ############################

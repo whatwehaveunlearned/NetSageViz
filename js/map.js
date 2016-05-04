@@ -1,4 +1,8 @@
 function mapGraph(data){
+  queryObjects[counter].graphs.map.links = data.links;
+  queryObjects[counter].graphs.map.nodes = data.nodes;
+  var links = data.links;
+  var nodes = data.nodes;
   //#################################### AUX FUNCTIONS ############################
   function handleMouseOver(d,i){
     //Eliminate events on lines enhaces interaction with nodes
@@ -9,7 +13,6 @@ function mapGraph(data){
     d3.select(this)
       .transition()
       .duration(500)
-      .style('stroke','rgba(232, 157, 77, 0.9)')
       .style('stroke-width','2')
       .attr('r',10)
     div = d3.select("#mapTooltip");
@@ -18,7 +21,7 @@ function mapGraph(data){
        .style("opacity", .9);
     //Get the text for the links
     for (var each in d.links){
-      nodeLinks = nodeLinks + ("<p>" + links[d.links[each]].node + "- " + links[d.links[each]].intf + "</p>")
+      nodeLinks = nodeLinks + ("<p>" + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].node") + "- " + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].intf") + "</p>")
     }
     div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
        .style("left", (d3.event.pageX + 15) + "px")
@@ -81,11 +84,23 @@ function mapGraph(data){
     var customLine = d3.svg.line()
                        .interpolate("basis");
 
-     //create colors for the links
+    //create colors for the links
     //Calculate Max values for scales
-    var color = d3.scale.linear().domain([0,500])
+    var maxDataLinks=[];
+    var maxDataNodes=[];
+    for(var each in eval("queryObjects["+counter+"].links")){
+      maxDataLinks.push(eval("d3.max([queryObjects["+counter+"].links[each].data.input.avg,queryObjects["+counter+"].links[each].data.output.avg])"));
+      maxDataNodes.push(eval("d3.max([queryObjects["+counter+"].nodes[each].data.input.avg,queryObjects["+counter+"].nodes[each].data.output.avg])"));
+    }
+    maxDataLinks = d3.max(maxDataLinks);
+    maxDataNodes = d3.max(maxDataNodes);
+    var colorLinks = d3.scale.linear().domain([0,maxDataLinks])
     .interpolate(d3.interpolateHcl)
     .range([d3.rgb("#E1F5FE"), d3.rgb("#01579B")]);
+    var colorNodes = d3.scale.linear().domain([0,maxDataNodes])
+    .interpolate(d3.interpolateHcl)
+    .range([d3.rgb("#ffe0cc"), d3.rgb("#ff6600")]);
+    //var colorNodes = d3.scale.linear().domain([0,maxDataNodes]).range(["rgba(255,0,0,.1)", "rgba(0,255,0,1)"]);
 
     //Create Links
     map.selectAll(".links")
@@ -102,8 +117,10 @@ function mapGraph(data){
           return "links-"+ counter+ i ; }
       })
       .style({
-        "stroke-width": function(d,i){ return ((data.links[i].max_bandwidth/100000000000)+2)},
-        "stroke": function(d,i){ return color(avg([data.links[i].data.input.avg,data.links[i].data.output.avg]))} //We are coloring links based on avg use
+        "stroke-width": function(d,i){
+          return ((data.links[i].max_bandwidth/100000000000)+2)},
+        "stroke": function(d,i){
+        return colorLinks(d3.mean([data.links[i].data.input.avg,data.links[i].data.output.avg]))} //We are coloring links based on avg use
       })
 
     //Create ExchangePoints
@@ -116,7 +133,10 @@ function mapGraph(data){
           cy: function (d) { return projection([d.lon, d.lat])[1]; },
           r: 5,
           class: "nodes",
-          id: function (d,i) { return "nodes-"+counter + i; }
+          id: function (d,i) { return "nodes-"+ counter + i; }
+       })
+       .style({
+          fill: function(d,i) {return colorNodes(avg([data.links[i].data.input.avg,data.links[i].data.output.avg]))}
        })
        .on("mouseover",handleMouseOver)
        .on("mouseout",handleMouseOut)
