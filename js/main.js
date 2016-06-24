@@ -2,6 +2,7 @@
 var windowWith = $(window).width();
 var windowHeight = $(window).height();
 var links;
+var results;
 var queryObjects = [];
 var initialQuery =  "What was the min, max, average bandwith used between the IRNC links ";
 var counter=-1;
@@ -12,12 +13,29 @@ function main (){
   			"width": "8.3em"
 	  });
 }
+//Get Parameters from url
+function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+}
+
 //Query Object Prototype
-function Query(query,date){
+function Query(query,date,avgOver){
 	this.queryText = query;
 	this.date = date;
 	this.links = 0;
 	this.nodes = 0;
+	this.avgOver = avgOver;
 	this.graphs = ({
 		"table" : 	({
 						"links":null,
@@ -81,14 +99,20 @@ function queryForm(query){
 		queryTimeFrame.append("option")
 			.html(timeFrames[i]);
 	}
-	//We prefill with the pickers with the now data
-	var today = new Date();
-	var threeHoursBefore = new Date(today.getTime() - (3 * 60 * 60 * 1000));
-	createDatePickers(true,true,threeHoursBefore,today,true);
+	//If the URL has parameters load the search with those.
+	if(getUrlParameter("date")!=undefined){
+		var day = eval(getUrlParameter("date"));
+		createDatePickers(true,true,new Date(day[0]),new Date(day[1]),true);
+		//queryObjects.push(new Query(getUrlParameter("queryText"), getUrlParameter("date"),getUrlParameter("avgOver")))
+	}else{//If there are no parameters passed. We prefill with the pickers with the now data
+		var day = new Date();
+		var threeHoursBefore = new Date(day.getTime() - (3 * 60 * 60 * 1000));
+		createDatePickers(true,true,threeHoursBefore,day,true);
+	}
 	$("#query").selectmenu();
 	$("#timeFrame").selectmenu({
       change: function( event, data ) {
-		var today = new Date();
+		var day = new Date();
 		$( "#datePickerStart" ).remove();
 			$( "#datePickerEnd" ).remove();
       	//If we select Between create 2 empty datePickers
@@ -97,18 +121,18 @@ function queryForm(query){
 		//For the specified ranges we fill up the date pickers
         }else if(data.item.label===timeFrames[4]){
         	var januaryFirst = new Date(new Date().getFullYear(), 0, 1);
-        	createDatePickers(true,true,januaryFirst,today,false);
+        	createDatePickers(true,true,januaryFirst,day,false);
          }else if(data.item.label===timeFrames[3]){
-			var monthFirst = new Date(today.getFullYear(), today.getMonth(), 1);
-			createDatePickers(true,true,monthFirst,today,false);
+			var monthFirst = new Date(day.getFullYear(), day.getMonth(), 1);
+			createDatePickers(true,true,monthFirst,day,false);
 		 }else if(data.item.label===timeFrames[2]){
-        	var sevenDaysBefore = new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000));
-			createDatePickers(true,true,sevenDaysBefore,today,false);
+        	var sevenDaysBefore = new Date(day.getTime() - (7 * 24 * 60 * 60 * 1000));
+			createDatePickers(true,true,sevenDaysBefore,day,false);
 		}else if(data.item.label===timeFrames[1]){
-			createDatePickers(true,true,today,today,false);
+			createDatePickers(true,true,day,day,false);
 		}else if(data.item.label===timeFrames[0]){
-			var threeHoursBefore = new Date(today.getTime() - (3 * 60 * 60 * 1000));
-			createDatePickers(true,true,threeHoursBefore,today,true);
+			var threeHoursBefore = new Date(day.getTime() - (3 * 60 * 60 * 1000));
+			createDatePickers(true,true,threeHoursBefore,day,true);
     	}
       }
      });
@@ -130,7 +154,8 @@ function queryForm(query){
 		var timeFrame = $("#timeFrame")[0].value
 		//Read Dates
 		var queryDate;
-		var avgOver = 60;
+		if(getUrlParameter("date")!=undefined) var avgOver = parseInt(getUrlParameter("avgOver"));
+		else var avgOver = 60;
 		//UTC date
 		var UTCDateStart;
 		var UTCDateStop;
@@ -159,8 +184,8 @@ function queryForm(query){
 			avgOver = 60;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
-		queryObjects.push(new Query(queryType + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate))
-		LoadData(queryObjects[counter].date,queryObjects[counter].queryText,avgOver);
+		queryObjects.push(new Query(queryType + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate,avgOver))
+		LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver);
 	}
 	//Function to fill up and create the necesarry datePickers depending on the selected TimeFrame
 	function createDatePickers(start,stop,startDate,stopDate,isNow){

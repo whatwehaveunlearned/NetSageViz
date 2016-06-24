@@ -6,22 +6,43 @@ function histogramTableGraph(queryData){
 	var numberBins;
 	var columns;
 	// Create margins
-    var margin = {top: 2, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
+    var margin = {top: 2, right: 15, bottom: 16, left: 30, nameLeft:30, histogramLeft: 0},
     	width = 350 - margin.left - margin.right,
-   		height = 100 - margin.top - margin.bottom;
+   		height = 80 - margin.top - margin.bottom;
 	//Order the data and launch tables
-	links = sortObjects(queryData.links).slice();
-	nodes = sortObjects(queryData.nodes).slice();
-	queryData.graphs.table.links = links;
-	queryData.graphs.table.nodes = nodes;
+	sortObjects(queryData.links,".data.input.avg");
+	sortObjects(queryData.nodes,".data.input.avg");
+	queryData.graphs.table.links = queryData.links;
+	queryData.graphs.table.nodes = queryData.nodes;
 	columns = ["Links","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
-    startTable("links-"+counter,links);
+    startTable("links-"+counter,queryData.graphs.table.links);
     columns = ["Nodes","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
-    startTable("nodes-"+counter,nodes);
+    startTable("nodes-"+counter,queryData.graphs.table.nodes);
 	//Converto to dragtable
 	$('table').dragtable();
+	//Create static header
+	staticHeader("#multipleHistogram-links-"+counter);
+	staticHeader("#multipleHistogram-nodes-"+counter);
 
 	//#################################### AUX FUNCTIONS ###########################
+	//Create a static header for a table
+	function staticHeader(tableName){
+		table = $(tableName);
+		table.after("<table id='header-fixed'></table>")
+		var tableOffset = table.offset().top;
+		var $header = $("#table-1 > thead").clone();
+		var $fixedHeader = $("#header-fixed").append($header);
+
+		$(window).bind("scroll", function() {
+		    var offset = $(this).scrollTop();
+		    if (offset >= tableOffset && $fixedHeader.is(":hidden")) {
+		        $fixedHeader.show();
+		    }
+		    else if (offset < tableOffset) {
+		        $fixedHeader.hide();
+		    }
+		});
+	}
 	//############### Function to create custom binnings for the data ###############
 	function createBins(data,type){
 		var bins;
@@ -186,11 +207,11 @@ function histogramTableGraph(queryData){
    				.duration(200)
    				.style("opacity", .9);
    			if(this.classList[1]=="iData"){
-   				div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
+   				div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/1024/8).toFixed(0) +" GB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }else{
-		   		div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/1024).toFixed(2) +" GB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
+		   		div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/1024/8).toFixed(0) +" GB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }
@@ -207,7 +228,6 @@ function histogramTableGraph(queryData){
     	//Calculate Max values for scales and Total data transmitted accross all elements
 	    var totalDataIn=0, totalDataOut=0;
 	    for (each in data){
-	    	console.log(each);
 	    	totalDataIn += eval("queryObjects[" + tableName.split("-")[1] + "].graphs.table." + tableName.split("-")[0] + "[each].data.totalData[0]");
 	    	totalDataOut += eval("queryObjects[" + tableName.split("-")[1] + "].graphs.table." + tableName.split("-")[0] + "[each].data.totalData[1]");
 	    }
@@ -225,13 +245,13 @@ function histogramTableGraph(queryData){
 
 	    var svg=d3.selectAll("." + tableName + "-" + group + "-col" + "3").append("svg")
 	   		.attr({
-	      		"width": width + margin.left * 3 + margin.right,
+	      		"width": width + margin.left * 1.5 + margin.right,
 	      		"height": height + margin.top + margin.bottom,
 	    	})
 	    var graph = svg.append("g")
 	        .attr({
 	        	"class": "graph",
-	        	"transform": "translate(" + margin.left * 3 + "," + margin.top + ")"
+	        	"transform": "translate(" + margin.left * 1.5 + "," + margin.top + ")"
 	        });
 	    //totalInput
 	    var totalInput = graph.append("g")
@@ -252,24 +272,24 @@ function histogramTableGraph(queryData){
 	    			return this.classList[0] + "-totalIn-" + i;},
 				"transform": "translate(0," + position.position1 + ")",
 				"height": barwidth,
-				"width": function(d,i){ return x(eval(this.classList[0].split("-")[0]+"[i].data.totalData[0]")); }
+				"width": function(d,i){ return x(eval("queryObjects[" + this.classList[0].split("-")[1] + "]." + this.classList[0].split("-")[0]+"[i].data.totalData[0]")); }
 			  })
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
 		totalInput.append("text")
 	      	.attr({
-	      		"x": -40,
+	      		"x": -42,
 	      		"y": position.position1,
 	      		"dy": barwidth/2
 	      	})
-	      	.text(function(d) { return "Input"; });
+	      	.text(function(d) { return "Incoming"; });
 	    totalInput.append("text")
 	      	.attr({
-	      		"x": x(totalDataIn) - 3 * margin.left,
+	      		"x": x(totalDataIn) - margin.right,
 	      		"y": position.position1 - barwidth,
 	      		"dy": barwidth/2
 	      	})
-	      	.text(function(d,i) { return (totalDataIn/1024).toFixed(2) + " GB"; } );
+	      	.text(function(d,i) { return (totalDataIn/1024/8).toFixed(0) + " GB"; } );
 		//totalOutput
 		var totalOutput = graph.append("g")
 	        .attr("class", "totalOuput")
@@ -288,28 +308,28 @@ function histogramTableGraph(queryData){
 	    	  	"id": function(d,i){ return this.classList[0] + "-totalOut-" + i;},
 			  	"transform": "translate(0," + position.position2 + ")",
 			  	"height": barwidth,
-			  	"width": function(d,i){ return x(eval(this.classList[0].split("-")[0]+"[i].data.totalData[1]")); }
+			  	"width": function(d,i){ return x(eval("queryObjects[" + this.classList[0].split("-")[1] + "]." + this.classList[0].split("-")[0]+"[i].data.totalData[1]")); }
 			})
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
 		totalOutput.append("text")
 	      	.attr({
-	      		"x": -40,
+	      		"x": -42,
 	      		"y": position.position2,
 	      		"dy": barwidth/1.5
 	      	})
-	      .text(function(d) { return "Output"; });
+	      .text(function(d) { return "Outgoing"; });
 	    totalOutput.append("text")
 	    	.attr({
-	      		"x": x(totalDataOut) - 3 * margin.left,
+	      		"x": x(totalDataOut) - 2.5 * margin.right,
 	      		"y": position.position2 - barwidth,
 	      		"dy": barwidth/2
 	     	})
-	     	.text(function(d,i) { return (totalDataOut/1024).toFixed(2) + " GB"; });
+	     	.text(function(d,i) { return (totalDataOut/1024/8).toFixed(0) + " GB"; });
 	}
 	//############### Function to create the histogram ###############
 	function createHistogram(tableName,group,data,numberBins){
-		    //Number of bins
+		    ///Histogram distributions
 		    var inputDataLayouts = [];
 		    var outputDataLayouts = [];
 		    for (j=0;j<data.length;j++){
@@ -359,7 +379,7 @@ function histogramTableGraph(queryData){
 			div.transition()
 					.duration(200)
 					.style("opacity", .9);
-		   	div.html("<p>"+ d3.mean(dataInColumn).toFixed(2) +" MB/s</p> <p>"+ d.y + " elements" )
+		   	div.html("<p>"+ d3.mean(dataInColumn).toFixed(2) +" Mb/s</p> <p>"+ d.y + " elements" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		}
@@ -370,7 +390,7 @@ function histogramTableGraph(queryData){
 	       .style("opacity", 0);
 		}
 		function createLegend(tableName,type,data){
-			var histogramLegend = {width:width-50,height:16}
+			var histogramLegend = {width:width - 65,height:16}
 	    	var histoLegend = graph.append("g")
 						    	.attr({
 						    		class: "histoLegend",
@@ -384,7 +404,7 @@ function histogramTableGraph(queryData){
 	    			   		id: function(d,i){ return i;}
 	    				})
 	    				.text(function(d,i){
-	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.max.toFixed(2)") + " MB/s"
+	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.max.toFixed(2)") + " Mb/s"
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attr({
@@ -394,7 +414,7 @@ function histogramTableGraph(queryData){
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)") + " MB/s"
+	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)") + " Mb/s"
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attr({
@@ -404,7 +424,7 @@ function histogramTableGraph(queryData){
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Min: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.min.toFixed(2)")+ " MB/s"
+	    						return "Min: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.min.toFixed(2)")+ " Mb/s"
 	    				});
 		}
 		var svg=d3.selectAll(colName).append("svg")

@@ -6,42 +6,129 @@ function mapGraph(data){
   //#################################### AUX FUNCTIONS ############################
   function handleMouseOver(d,i){
     //Eliminate events on lines enhaces interaction with nodes
-    d3.selectAll(".links")
-      .attr("pointer-events","none")
-    var nodeLinks="";
-    //Change size of node
-    d3.select(this)
-      .transition()
-      .duration(500)
-      .style('stroke-width','2')
-      .attr('r',10)
+    //d3.selectAll(".links")
+    //  .attr("pointer-events","none")
     div = d3.select("#mapTooltip");
     div.transition()
        .duration(500)
        .style("opacity", .9);
-    //Get the text for the links
-    for (var each in d.links){
-      nodeLinks = nodeLinks + ("<p>" + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].node") + "- " + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].intf") + "</p>")
+    var nodeLinks="";
+    //If mouseoverNode
+    if(this.classList[0]==="nodes"){
+      //Change size of node
+      d3.select(this)
+        .transition()
+        .duration(500)
+        .style('stroke-width','2')
+        .attr('r',10)
+      //Get the text for the links
+      for (var each in d.links){
+        nodeLinks = nodeLinks + ("<p>" + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].node") + "- " + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].intf") + "</p>")
+      }
+      div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
+         .style("left", (d3.event.pageX + 15) + "px")
+         .style("top", (d3.event.pageY ) + "px");
+    }else{
+      //If MouseoverLink
+      div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Tb" )
+         .style("left", (d3.event.pageX + 15) + "px")
+         .style("top", (d3.event.pageY ) + "px");
     }
-    div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
-       .style("left", (d3.event.pageX + 15) + "px")
-       .style("top", (d3.event.pageY ) + "px");
   }
   function handleMouseOut(d,i){
     //return events on lines
-    d3.selectAll(".links")
-      .attr("pointer-events","auto")
-    d3.select(this)
-      .transition()
-      .duration(500)
-      .style('stroke','black')
-      .style('stroke-width','1')
-      .attr('r',5)
-    var nodeLinks="";
+    //d3.selectAll(".links")
+    //  .attr("pointer-events","auto")
+    if(this.classList[0]==="nodes"){
+      d3.select(this)
+        .transition()
+        .duration(500)
+        .style('stroke','black')
+        .style('stroke-width','1')
+        .attr('r',5)
+      var nodeLinks="";
+    }
     div = d3.select("#mapTooltip");
     div.transition()
        .duration(500)
        .style("opacity", 0);
+  }
+
+  function createLegend(svgGroup, colorNodes, colorLinks,maxDataLinks,maxDataNodes){
+    //Create gradients the id assigned has to be the same that appears in the fill parameter of the rectangle
+    createGradient("linkGradient",svgGroup,colorLinks(0),colorLinks(maxDataLinks));
+    createGradient("nodesGradient",svgGroup,colorNodes(0),colorNodes(maxDataNodes));
+    var legend = svgGroup.append('g')
+                         .attr({
+                            "class":"mapLegend",
+                            "transform": "translate(" + (width - 130) + "," + (height - 110) + ")",
+                         })
+    legend.append("rect")
+            .attr({
+              "id": "linksLegend",
+              "height": 100,
+              "width": 20,
+              "fill": "url(#linkGradient)",
+              "stroke":"rgb(0,0,0)",
+              "stroke-width":0.5
+            });
+    //Add max and minimum value to link Legend
+    legend.append("text")
+            .attr({
+              "transform": "translate(" + (-60) + "," + 10 + ")"
+            })
+            .text(Math.ceil(maxDataLinks) + " Mb/s")
+    legend.append("text")
+            .attr({
+              "transform": "translate(" + (-40) + "," + 98 + ")"
+            })
+            .text("0 Mb/s")
+    //Add max and minimum value to link Legend
+    legend.append("text")
+            .attr({
+              "transform": "translate(" + 65 + "," + 10 + ")"
+            })
+            .text(Math.ceil(maxDataNodes) + " Mb/s")
+    legend.append("text")
+            .attr({
+              "transform": "translate(" + 65 + "," + 98 + ")"
+            })
+            .text("0 Mb/s")
+    legend.append("rect")
+            .attr({
+              "class": "mapLegend2",
+              "id": "nodesLegend",
+              "transform": "translate(" + (40) + "," + 0 + ")",
+              "height": 100,
+              "width": 20,
+              "fill": "url(#nodesGradient)",
+              "stroke":"rgb(0,0,0)",
+              "stroke-width":0.5
+            })
+  }
+  //Aux function to create an svg vertical Gradient for Legends
+  function createGradient(id,svgGroup,startColor,endColor){
+    //Append a defs (for definition) element to your SVG
+    var defs = svgGroup.append("defs");
+
+    //Append a linearGradient element to the defs and give it a unique id
+    var linearGradient = defs.append("linearGradient")
+        .attr("id", id);
+    //Vertical gradient
+    linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", "100%");
+    //Set the color for the start (0%)
+    linearGradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", endColor); //Color bottom
+    //Set the color for the end (100%)
+    linearGradient.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", startColor); //Color top
+    return linearGradient;
   }
   //#################################### END AUX FUNCTIONS ########################
   // Define the div for the tooltip
@@ -100,7 +187,6 @@ function mapGraph(data){
     var colorNodes = d3.scale.linear().domain([0,maxDataNodes])
     .interpolate(d3.interpolateHcl)
     .range([d3.rgb("#ffe0cc"), d3.rgb("#ff6600")]);
-    //var colorNodes = d3.scale.linear().domain([0,maxDataNodes]).range(["rgba(255,0,0,.1)", "rgba(0,255,0,1)"]);
 
     //Create Links
     map.selectAll(".links")
@@ -118,10 +204,12 @@ function mapGraph(data){
       })
       .style({
         "stroke-width": function(d,i){
-          return ((data.links[i].max_bandwidth/100000000000)+2)},
+          return ((data.links[i].max_bandwidth/10000000000) + 2 )}, //Transform to Terabyte and adjust size
         "stroke": function(d,i){
         return colorLinks(d3.mean([data.links[i].data.input.avg,data.links[i].data.output.avg]))} //We are coloring links based on avg use
       })
+      .on("mouseover", handleMouseOver)
+      .on("mouseout",handleMouseOut);
 
     //Create ExchangePoints
     map.selectAll(".nodes")
@@ -129,7 +217,8 @@ function mapGraph(data){
        .enter()
        .append("circle")
        .attr({
-          cx: function (d) { return projection([d.lon, d.lat])[0]; },
+          cx: function (d) {
+            return projection([d.lon, d.lat])[0]; },
           cy: function (d) { return projection([d.lon, d.lat])[1]; },
           r: 5,
           class: "nodes",
@@ -139,6 +228,8 @@ function mapGraph(data){
           fill: function(d,i) {return colorNodes(avg([data.links[i].data.input.avg,data.links[i].data.output.avg]))}
        })
        .on("mouseover",handleMouseOver)
-       .on("mouseout",handleMouseOut)
+       .on("mouseout",handleMouseOut);
+    //Create Legend
+    createLegend(map, colorNodes, colorLinks,maxDataLinks,maxDataNodes);
   });
 }

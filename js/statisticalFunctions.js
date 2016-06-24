@@ -1,15 +1,15 @@
-function sortObjects (arr,type){
+function sortObjects (arr,property,type){
 	var sort;
 	switch(type){
 		case "dec":
-			sort = arr.sort(function(a, b) {return b.data.input.avg - a.data.input.avg});
+			sort = arr.sort(function(a, b) {return eval("b" + property /*.data.input.avg*/) - eval("a"+ property)});
 			break;
 		case "inc":
-			sort = arr.sort(function(a, b) {return a.data.input.avg - b.data.input.avg});
+			sort = arr.sort(function(a, b) {return eval("a"+ property) - eval("b" + property)});
 			break;
 		//increasing order as default
 		default:
-			sort = arr.sort(function(a, b) {return b.data.input.avg - a.data.input.avg});
+			sort = arr.sort(function(a, b) {return eval("b"+ property) - eval("a"+ property)});
 			break;
 	}
 	return sort;

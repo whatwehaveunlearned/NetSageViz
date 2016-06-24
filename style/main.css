@@ -78,6 +78,14 @@ select {
 
 }
 
+.saveButton{
+  position: relative;
+  top: -47.9em;
+  left: 91em;
+  padding: 0.8em;
+  background-color: rgba(232, 157, 77, 0.9);
+}
+
 /*************************** END query Style *****************************/
 /*************************** Histogram Style *****************************/
 .multipleHistogram{
@@ -96,8 +104,14 @@ select {
 
 .multipleHistogram thead{
 	background-color:rgba(232, 157, 77, 0.9);
-	overflow:hidden;
+	overflow:visible;
   font-size: 15px;
+}
+
+#header-fixed {
+    position: fixed;
+    top: 0px; display:none;
+    background-color:white;
 }
 
 .multipleHistogram .bar rect {
@@ -189,6 +203,10 @@ select {
 
 .map .nodes{
   stroke: black;
+}
+
+.map .mapLegend{
+  font-size: 12px;
 }
 
 /*************************** END Histogram Style *****************************/

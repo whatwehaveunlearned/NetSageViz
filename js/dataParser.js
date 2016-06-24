@@ -88,12 +88,12 @@ function LoadData(queryDate,queryText,avgOver){
 		var outputClean=[];
 		for (each in dataPoint.input){
 			if(dataPoint.input[each][1]!=null){
-				inputClean.push(dataPoint.input[each][1]/8/1024/1024); // bit/bytes(div by 8)/KBs/MBs/
+				inputClean.push(dataPoint.input[each][1]/1024/1024); // bit/Kbs/Mbs/
 			}else{
 				inputClean.push(0);
 			}
 			if(dataPoint.output[each][1]!=null){
-				outputClean.push(dataPoint.output[each][1]/8/1024/1024);
+				outputClean.push(dataPoint.output[each][1]/1024/1024);
 			} else{
 				outputClean.push(0);
 			}
@@ -166,8 +166,12 @@ function LoadData(queryDate,queryText,avgOver){
 				.get(function(error,data)
 				{
 					for (var element in links){
+						//Select appropiate data from array and attach it to the proper link
+						var elementResult = data.results.filter(function( obj ) {
+  							return obj.node == queryObjects[counter].links[element].node;
+						});
 						//Add the data to the links object
-						queryObjects[counter].links[element].data = data.results[element];
+						queryObjects[counter].links[element].data = elementResult[0];
 						scaleAndClean(queryObjects[counter].links[element].data);
 						calculateStatistics(queryObjects[counter].links[element].data,sizeIntervalSeconds);
 					}
@@ -179,6 +183,7 @@ function LoadData(queryDate,queryText,avgOver){
 					}
 					//Create query text
 					drawQueryText(queryText);
+					drawSaveButton();
 					//Create Map
 					mapGraph(queryObjects[counter]);
 					//Create Table
@@ -192,7 +197,28 @@ function LoadData(queryDate,queryText,avgOver){
 					"class": "applicationRegion"
 				})
 				.append("p")
-				.html("<b>Query"+ (counter+1) + ":</b>" + queryText);
+				.html("<b>Query "+ (counter+1) + ": </b>" + queryText);
+			}
+			function drawSaveButton(){
+				d3.select("#query"+counter).append("button")
+				.attr({
+					"id": "save-"+counter,
+					"class":"saveButton"
+				})
+				.html("save query")
+				.on("click", saveQuery)
+			}
+			function saveQuery(){
+				var urlParam = [];
+				var date = JSON.stringify(queryObjects[this.id.split("-")[1]].date);
+				var queryText = queryObjects[this.id.split("-")[1]].queryText;
+				var avgOver = JSON.stringify(queryObjects[this.id.split("-")[1]].avgOver);
+				urlParam.push(encodeURI("date") + "=" + encodeURI(date));
+				urlParam.push(encodeURI("queryText") + "=" + encodeURI([queryText]));
+				urlParam.push(encodeURI("avgOver") + "=" + encodeURI(avgOver));
+				d3.select("#query"+counter).append("p")
+				  .html("http://netsagetest.s3-website-us-east-1.amazonaws.com/main.html?" + urlParam.join("&"))
+				console.log("http://localhost:8888/main.html?" + urlParam.join("&"))
 			}
 	}
 	//#################################### END AUX FUNCTIONS ############################
