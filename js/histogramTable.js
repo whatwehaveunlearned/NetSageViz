@@ -121,8 +121,8 @@ function histogramTableGraph(queryData){
 			}
 		}
     	//Create bining for histogram
-		numberBins = createBins(data,"fd");
-
+		numberBins = createBins(data,"rice");
+		//numberBins = 5;
 	    d3.select("#query"+counter).append("div")
 			.attr({
 				"id":"multipleHistogram-" + tableName,

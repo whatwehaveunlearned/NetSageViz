@@ -225,7 +225,9 @@ function mapGraph(data){
           id: function (d,i) { return "nodes-"+ counter + i; }
        })
        .style({
-          fill: function(d,i) {return colorNodes(avg([data.links[i].data.input.avg,data.links[i].data.output.avg]))}
+          fill: function(d,i) {
+            return colorNodes(avg([data.nodes[i].data.input.avg,data.nodes[i].data.output.avg]));
+          }
        })
        .on("mouseover",handleMouseOver)
        .on("mouseout",handleMouseOut);

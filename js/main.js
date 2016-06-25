@@ -58,8 +58,9 @@ function Query(query,date,avgOver){
 	return this;
 }
 function queryForm(query){
-	var queryTypes = ["What was the min, max, average bandwith used between the IRNC links ","todo1 ", "todo2 "]
-	var timeFrames = ["Now","Today","Last 7 days","This Month","This Year","Time Frame"]
+	var queryTypes = ["What was the min, max, average bandwith used between the IRNC links ","todo1 ", "todo2 "];
+	if(getUrlParameter("date")!=undefined) var timeFrames = ["Time Frame","Now","Today","Last 7 days","This Month","This Year"];
+	else var timeFrames = ["Now","Today","Last 7 days","This Month","This Year","Time Frame"];
 	var logoWidth = 100;
 	var logoHeight = 100;
 	var querySelector = d3.select("body").append("div")
@@ -99,11 +100,12 @@ function queryForm(query){
 		queryTimeFrame.append("option")
 			.html(timeFrames[i]);
 	}
-	//If the URL has parameters load the search with those.
+	//If the URL has parameters load the search with those and execute the search
 	if(getUrlParameter("date")!=undefined){
 		var day = eval(getUrlParameter("date"));
 		createDatePickers(true,true,new Date(day[0]),new Date(day[1]),true);
-		//queryObjects.push(new Query(getUrlParameter("queryText"), getUrlParameter("date"),getUrlParameter("avgOver")))
+		handleOnClick(day);
+
 	}else{//If there are no parameters passed. We prefill with the pickers with the now data
 		var day = new Date();
 		var threeHoursBefore = new Date(day.getTime() - (3 * 60 * 60 * 1000));
@@ -116,21 +118,21 @@ function queryForm(query){
 		$( "#datePickerStart" ).remove();
 			$( "#datePickerEnd" ).remove();
       	//If we select Between create 2 empty datePickers
-        if(data.item.label===timeFrames[5]){
+        if(data.item.label==="Time Frame"){
         	createDatePickers(true,true,"","",false);
 		//For the specified ranges we fill up the date pickers
-        }else if(data.item.label===timeFrames[4]){
+        }else if(data.item.label==="This Year"){
         	var januaryFirst = new Date(new Date().getFullYear(), 0, 1);
         	createDatePickers(true,true,januaryFirst,day,false);
-         }else if(data.item.label===timeFrames[3]){
+         }else if(data.item.label==="This Month"){
 			var monthFirst = new Date(day.getFullYear(), day.getMonth(), 1);
 			createDatePickers(true,true,monthFirst,day,false);
-		 }else if(data.item.label===timeFrames[2]){
+		 }else if(data.item.label==="Last 7 days"){
         	var sevenDaysBefore = new Date(day.getTime() - (7 * 24 * 60 * 60 * 1000));
 			createDatePickers(true,true,sevenDaysBefore,day,false);
-		}else if(data.item.label===timeFrames[1]){
+		}else if(data.item.label==="Today"){
 			createDatePickers(true,true,day,day,false);
-		}else if(data.item.label===timeFrames[0]){
+		}else if(data.item.label==="Now"){
 			var threeHoursBefore = new Date(day.getTime() - (3 * 60 * 60 * 1000));
 			createDatePickers(true,true,threeHoursBefore,day,true);
     	}
@@ -143,7 +145,7 @@ function queryForm(query){
 		"id":"submit"
 	}).html("Ask NetSage")
 	.on("click",handleOnClick);
-	function handleOnClick(){
+	function handleOnClick(urlDate){
 		var dayFormat = d3.time.format("%m/%d/%Y");
 		var timeFormat = d3.time.format("%H:%M:%S");
 		//Increase counter
@@ -154,7 +156,7 @@ function queryForm(query){
 		var timeFrame = $("#timeFrame")[0].value
 		//Read Dates
 		var queryDate;
-		if(getUrlParameter("date")!=undefined) var avgOver = parseInt(getUrlParameter("avgOver"));
+		if(getUrlParameter("avgOver")!=undefined) var avgOver = parseInt(getUrlParameter("avgOver"));
 		else var avgOver = 60;
 		//UTC date
 		var UTCDateStart;
@@ -164,11 +166,9 @@ function queryForm(query){
 		UTCDateStop = new Date(d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value )
 		UTCDateStop = new Date(UTCDateStop.getUTCFullYear(), UTCDateStop.getUTCMonth(), UTCDateStop.getUTCDate(),  UTCDateStop.getUTCHours(), UTCDateStop.getUTCMinutes(), UTCDateStop.getUTCSeconds());
 		if (timeFrame === "Time Frame") {
-			avgOver = 120;
-			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDate) + " UTC" ,dayFormat(UTCDateStart) + " " + timeFormat(UTCDate) + " UTC"];
-		} else if (timeFrame === "On a specific day") {
-			queryDate = [dayFormat(UTCDateStart) + d3.select("#timeStart")[0][0].value + " UTC"];
-		} else if (timeFrame === "This Year"){
+			avgOver = 60;
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
+		}else if (timeFrame === "This Year"){
 			avgOver = 21600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "This Month"){
@@ -185,7 +185,13 @@ function queryForm(query){
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
 		queryObjects.push(new Query(queryType + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate,avgOver))
-		LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver);
+		if($("#query0")[0]!==undefined){
+			url = getQuery(avgOver);
+			myWindow = window.open(url,'_blank');
+			myWindow.focus();
+		}else{
+			LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver);
+		}
 	}
 	//Function to fill up and create the necesarry datePickers depending on the selected TimeFrame
 	function createDatePickers(start,stop,startDate,stopDate,isNow){
@@ -252,5 +258,12 @@ function queryForm(query){
 		//Set the days of the datePickers for timeFrames
 		$( "#datePickerStart" ).datepicker("setDate",StartDateFormated);
 		$( "#datePickerEnd" ).datepicker("setDate",StopDateFormated);
+	}
+	function getQuery(avgOver){
+		var urlParam = [];
+		var date = JSON.stringify(queryObjects[0].date);
+		urlParam.push(encodeURI("date") + "=" + encodeURI(date));
+		urlParam.push(encodeURI("avgOver") + "=" + encodeURI(avgOver));
+		return "main.html?" + urlParam.join("&");
 	}
 }
