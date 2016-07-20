@@ -15,7 +15,7 @@
 
 thead{
 	background-color:rgba(232, 157, 77, 0.9);
-	overflow:hidden; 
+	overflow:hidden;
 }
 
 .bar rect {
@@ -189,7 +189,7 @@ thead{
 	        .enter()
 	        .append("td")
 	        .attr("class", function(d,i){return "col" + i})
-	        .attr("id",function(d,i){ 
+	        .attr("id",function(d,i){
 	        	return this.parentElement.id + "-" +i;})
 	    var selector = d3.selectAll(".col0")
 	    	.append("input")

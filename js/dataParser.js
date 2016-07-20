@@ -86,15 +86,20 @@ function LoadData(queryDate,queryText,avgOver){
 	function scaleAndClean(dataPoint){
 		var inputClean=[];
 		var outputClean=[];
+		//change this to the d3 assignment forEach
 		for (each in dataPoint.input){
 			if(dataPoint.input[each][1]!=null){
-				inputClean.push(dataPoint.input[each][1]/1024/1024); // bit/Kbs/Mbs/
+				dataPoint.input[each][1] = dataPoint.input[each][1]/1024/1024 // bit/Kbs/Mbs/
+				inputClean.push(dataPoint.input[each][1]);
 			}else{
+				dataPoint.input[each][1] = 0;
 				inputClean.push(0);
 			}
 			if(dataPoint.output[each][1]!=null){
-				outputClean.push(dataPoint.output[each][1]/1024/1024);
+				dataPoint.output[each][1] = dataPoint.output[each][1]/1024/1024;
+				outputClean.push(dataPoint.output[each][1]);
 			} else{
+				dataPoint.output[each][1] = 0;
 				outputClean.push(0);
 			}
 		}
@@ -181,6 +186,14 @@ function LoadData(queryDate,queryText,avgOver){
 					for (var element in nodes){
 						calculateStatistics(nodes[element].data,sizeIntervalSeconds);
 					}
+					//####### Print the query to console used to do tests.
+					var text = "["
+					for(var i=0;i<queryObjects[counter].links[0].data.input.length;i++){
+						text = text + "[" +queryObjects[counter].links[0].data.input[i][0] + "," + queryObjects[counter].links[0].data.input[i][1] + "],"
+					}
+					text = text + "]"
+					console.log(text);
+					//####### END Print the query to console used to do tests.
 					//Create query text
 					drawQueryText(queryText);
 					drawSaveButton();
@@ -218,7 +231,23 @@ function LoadData(queryDate,queryText,avgOver){
 				urlParam.push(encodeURI("avgOver") + "=" + encodeURI(avgOver));
 				d3.select("#query"+counter).append("p")
 				  .html("http://netsagetest.s3-website-us-east-1.amazonaws.com/main.html?" + urlParam.join("&"))
-				console.log("http://localhost:8888/main.html?" + urlParam.join("&"))
+				var completeURL = "http://netsagetest.s3-website-us-east-1.amazonaws.com/main.html?" + urlParam.join("&");
+				copyToClipboard(completeURL);
+				function copyToClipboard(text) {
+				  // Create a "hidden" input
+				  var aux = document.createElement("input");
+				  // Assign it the value of the specified element
+				  aux.setAttribute("value", text);
+				  // Append it to the body
+				  document.body.appendChild(aux);
+				  // Highlight its content
+				  aux.select();
+				  // Copy the highlighted text
+				  document.execCommand("copy");
+				  // Remove it from the body
+				  document.body.removeChild(aux);
+
+				}
 			}
 	}
 	//#################################### END AUX FUNCTIONS ############################

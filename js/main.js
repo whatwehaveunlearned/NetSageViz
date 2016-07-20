@@ -165,14 +165,19 @@ function queryForm(query){
 		UTCDateStart = new Date(UTCDateStart.getUTCFullYear(), UTCDateStart.getUTCMonth(), UTCDateStart.getUTCDate(),  UTCDateStart.getUTCHours(), UTCDateStart.getUTCMinutes(), UTCDateStart.getUTCSeconds());
 		UTCDateStop = new Date(d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value )
 		UTCDateStop = new Date(UTCDateStop.getUTCFullYear(), UTCDateStop.getUTCMonth(), UTCDateStop.getUTCDate(),  UTCDateStop.getUTCHours(), UTCDateStop.getUTCMinutes(), UTCDateStop.getUTCSeconds());
+		console.log(UTCDateStart);
+		console.log(UTCDateStop);
 		if (timeFrame === "Time Frame") {
-			avgOver = 60;
+			//avgOver = 60;
+			avgOver = 3600;//sample each day to get avg each day. This is the avgOver value I need for the pattern recognition.
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}else if (timeFrame === "This Year"){
-			avgOver = 21600;
+			//avgOver = 21600;
+			avgOver = 3600;//sample each day to get avg each day. This is the avgOver value I need for the pattern recognition.
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "This Month"){
-			avgOver = 720;
+			//avgOver = 720;
+			avgOver = 3600;//sample each day to get avg each day. This is the avgOver value I need for the pattern recognition.
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "Last 7 days"){
 			avgOver = 120;
