@@ -59,7 +59,7 @@ function LoadData(queryDate,queryText,avgOver){
 		for (var i in links){
 			var linkArray =[];
 			nodes.push ( {
-				node: links[i]["description"].split("<->")[0],
+				node: links[i]["a_endpoint.name"],
 				lat: links[i]["a_endpoint.latitude"],
 				lon: links[i]["a_endpoint.longitude"],
 				links: [i],
@@ -69,7 +69,7 @@ function LoadData(queryDate,queryText,avgOver){
 				}
 			})
 			nodes.push ( {
-				node: links[i]["description"].split("<->")[1],
+				node: links[i]["z_endpoint.name"],
 				lat: links[i]["z_endpoint.latitude"],
 				lon: links[i]["z_endpoint.longitude"],
 				links: [i],
@@ -154,7 +154,7 @@ function LoadData(queryDate,queryText,avgOver){
 		var avgOver = avgOver;
 		var nodes = [];
 		//Query to retrieve metadata values
-		var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where a_endpoint != null and z_endpoint != null'
+		var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.name, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.name, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where a_endpoint != null and z_endpoint != null'
 		d3.json(url)
 			.on("beforesend", function (request) {request.withCredentials = true;})
 			.get(function(error,data)
