@@ -82,7 +82,7 @@ function histogramTableGraph(queryData){
 			      .transition()
 			      .duration(500)
 			      .style('stroke-width','2')
-			      .attr('r',10)
+			      .attrs('r',10)
 			    div = d3.select("#mapTooltip");
 			    div.transition()
 			       .duration(500)
@@ -96,8 +96,8 @@ function histogramTableGraph(queryData){
 				    }
 				    div.selectAll("*").remove()
 				    div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
-				       .style("left", (parseInt(d3.select("#" + this.classList[0] + this.id).attr("cx"))) + "px")
-				       .style("top", (parseInt(d3.select("#" + this.classList[0] + this.id).attr("cy")) + d3.select("#" + this.classList[0] + this.id)[0][0].parentElement.parentElement.getBoundingClientRect().top) + "px");
+				       .style("left", (parseInt(d3.select("#" + this.classList[0] + this.id).attrs("cx"))) + "px")
+				       .style("top", (parseInt(d3.select("#" + this.classList[0] + this.id).attrs("cy")) + d3.select("#" + this.classList[0] + this.id)[0][0].parentElement.parentElement.getBoundingClientRect().top) + "px");
   			}
     	}
     	function handleMouseOutRow(d,i){
@@ -107,12 +107,12 @@ function histogramTableGraph(queryData){
     		}else{
     			//return events on lines
 			    d3.selectAll(".links")
-			      .attr("pointer-events","auto")
+			      .attrs("pointer-events","auto")
 			    d3.select("#" + this.classList[0] + this.id)
 			      .transition()
 			      .duration(500)
 			      .style('stroke-width','1')
-			      .attr('r',5)
+			      .attrs('r',5)
 			    var nodeLinks="";
 			    div = d3.select("#mapTooltip");
 			    div.transition()
@@ -124,7 +124,7 @@ function histogramTableGraph(queryData){
 		numberBins = createBins(data,"rice");
 		//numberBins = 5;
 	    d3.select("#query"+counter).append("div")
-			.attr({
+			.attrs({
 				"id":"multipleHistogram-" + tableName,
 				"class":"multipleHistogram"
 			});
@@ -136,7 +136,7 @@ function histogramTableGraph(queryData){
 	        .data(data)
 	        .enter()
 	        .append("tr")
-	        .attr({
+	        .attrs({
 	        	"id": function(d,i){
 	        		return i },
 	       		"class": tableName + " row"
@@ -145,7 +145,7 @@ function histogramTableGraph(queryData){
 	       	.on("mouseover",handleMouseOverRow)
 	       	.on("mouseout",handleMouseOutRow);
 			var div = d3.select("body").append("div")
-			    .attr({
+			    .attrs({
 			    	"id": tableName+"-tableTooltip",
 			    	"class": "tableTooltip",
 			    	"z-index":10
@@ -160,7 +160,7 @@ function histogramTableGraph(queryData){
 			.data(columns)
 			.enter()
 			.append("th")
-			.attr({
+			.attrs({
 				"class": function(d,i){
 					return "head" + group;},
 			})
@@ -171,13 +171,13 @@ function histogramTableGraph(queryData){
 	        .data(columns)
 	        .enter()
 	        .append("td")
-	        .attr({
+	        .attrs({
 	        	"class": function(d,i){return tableName + "-" + group + "-col" + i;}, //class: tableName-group-column
 	        	"id": function(d,i){ return tableName + "-" + group + this.parentElement.id + "-" + i;} //id: tableName-group-column-cell
 	        })
 		var selector = d3.selectAll(".col" + group + "-" + 0)
 		    .append("input")
-		    .attr({
+		    .attrs({
 	    		"type":"checkbox",
 	    		"name": function(d,i) { return (i)},
 	    		"value": function(d,i) { return (i)},
@@ -244,21 +244,21 @@ function histogramTableGraph(queryData){
 	        .orient("bottom");
 
 	    var svg=d3.selectAll("." + tableName + "-" + group + "-col" + "3").append("svg")
-	   		.attr({
+	   		.attrs({
 	      		"width": width + margin.left * 1.5 + margin.right,
 	      		"height": height + margin.top + margin.bottom,
 	    	})
 	    var graph = svg.append("g")
-	        .attr({
+	        .attrs({
 	        	"class": "graph",
 	        	"transform": "translate(" + margin.left * 1.5 + "," + margin.top + ")"
 	        });
 	    //totalInput
 	    var totalInput = graph.append("g")
-	        .attr("class", tableName + " totalInput");
+	        .attrs("class", tableName + " totalInput");
 	    //Creates totalData input Bar
 	    totalInput.append("rect")
-	    	.attr({
+	    	.attrs({
 	    		"transform": "translate(0," + position.position1 + ")",
 			  	"height": barwidth,
 			  	"class":"totalDataBar",
@@ -266,7 +266,7 @@ function histogramTableGraph(queryData){
 			})
 		//Fills up the totalDatabar input for each individual element
 	    totalInput.append("rect")
-	    	.attr({
+	    	.attrs({
 	    		"class": tableName + " iData",
 	    		"id": function(d,i){
 	    			return this.classList[0] + "-totalIn-" + i;},
@@ -277,14 +277,14 @@ function histogramTableGraph(queryData){
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
 		totalInput.append("text")
-	      	.attr({
+	      	.attrs({
 	      		"x": -42,
 	      		"y": position.position1,
 	      		"dy": barwidth/2
 	      	})
 	      	.text(function(d) { return "Incoming"; });
 	    totalInput.append("text")
-	      	.attr({
+	      	.attrs({
 	      		"x": x(totalDataIn) - margin.right,
 	      		"y": position.position1 - barwidth,
 	      		"dy": barwidth/2
@@ -292,10 +292,10 @@ function histogramTableGraph(queryData){
 	      	.text(function(d,i) { return (totalDataIn/1024/8).toFixed(0) + " GB"; } );
 		//totalOutput
 		var totalOutput = graph.append("g")
-	        .attr("class", "totalOuput")
+	        .attrs("class", "totalOuput")
 	    //Creates totalData input Bar
 	    totalOutput.append("rect")
-	    	.attr({
+	    	.attrs({
 	    		"transform": "translate(0," + position.position2+ ")",
 				"height": barwidth,
 				"class": "totalDataBar",
@@ -303,7 +303,7 @@ function histogramTableGraph(queryData){
 			})
 		//Fills up the totalDatabar input for each individual element
 	    totalOutput.append("rect")
-	    	.attr({
+	    	.attrs({
 	    	  	"class": tableName + " oData ",
 	    	  	"id": function(d,i){ return this.classList[0] + "-totalOut-" + i;},
 			  	"transform": "translate(0," + position.position2 + ")",
@@ -313,14 +313,14 @@ function histogramTableGraph(queryData){
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
 		totalOutput.append("text")
-	      	.attr({
+	      	.attrs({
 	      		"x": -42,
 	      		"y": position.position2,
 	      		"dy": barwidth/1.5
 	      	})
 	      .text(function(d) { return "Outgoing"; });
 	    totalOutput.append("text")
-	    	.attr({
+	    	.attrs({
 	      		"x": x(totalDataOut) - 2.5 * margin.right,
 	      		"y": position.position2 - barwidth,
 	      		"dy": barwidth/2
@@ -333,8 +333,8 @@ function histogramTableGraph(queryData){
 		    var inputDataLayouts = [];
 		    var outputDataLayouts = [];
 		    for (j=0;j<data.length;j++){
-		      inputDataLayouts.push(d3.layout.histogram().bins(numberBins)(data[j].data.input.histogram));
-		      outputDataLayouts.push(d3.layout.histogram().bins(numberBins)(data[j].data.output.histogram));
+		      inputDataLayouts.push(d3.histogram().bins(numberBins)(data[j].data.input.histogram));
+		      outputDataLayouts.push(d3.histogram().bins(numberBins)(data[j].data.output.histogram));
 		    }
 		    //Calculate Max values for scales
 		    var maxX=[];
@@ -392,13 +392,13 @@ function histogramTableGraph(queryData){
 		function createLegend(tableName,type,data){
 			var histogramLegend = {width:width - 65,height:16}
 	    	var histoLegend = graph.append("g")
-						    	.attr({
+						    	.attrs({
 						    		class: "histoLegend",
 						    		transform:  "translate(" + histogramLegend.width + "," + histogramLegend.height + ")"
 						    	})
 						    	.append("text");
 	    	histoLegend.append("tspan")
-	    			   .attr({
+	    			   .attrs({
 	    			   		x:-15,
 	    			   		class: tableName + " max",
 	    			   		id: function(d,i){ return i;}
@@ -407,7 +407,7 @@ function histogramTableGraph(queryData){
 	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.max.toFixed(2)") + " Mb/s"
 	    				});
 	    	histoLegend.append("tspan")
-	    			   .attr({
+	    			   .attrs({
 	    			   		class: tableName + " avg",
 	    			   		id: function(d,i){ return i;},
 	    			   		x:-15,
@@ -417,7 +417,7 @@ function histogramTableGraph(queryData){
 	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)") + " Mb/s"
 	    				});
 	    	histoLegend.append("tspan")
-	    			   .attr({
+	    			   .attrs({
 	    			   		class: tableName + " min",
 	    			   		id: function(d,i){ return i;},
 	    			   		x:-15,
@@ -428,41 +428,41 @@ function histogramTableGraph(queryData){
 	    				});
 		}
 		var svg=d3.selectAll(colName).append("svg")
-	   		.attr({
+	   		.attrs({
 	      		"width": width + margin.left + margin.right,
 	      		"height": height + margin.top + margin.bottom,
 	    	})
 	    var graph = svg.append("g")
-	        .attr("class", "graph")
-	        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	        .attrs("class", "graph")
+	        .attrs("transform", "translate(" + margin.left + "," + margin.top + ")");
 	    var bar = graph.append("g")
-	        .attr("class", "histogram")
+	        .attrs("class", "histogram")
 	        .selectAll(".bar")
 	        .data(function(d,i){
 	        	return eval((colData) + "[" + i + "]");
 	        })
 	        .enter().append("g")
-	        .attr("class", "bar")
-	        .attr("transform", function(d,i) {
+	        .attrs("class", "bar")
+	        .attrs("transform", function(d,i) {
 	        	if(isNaN(d.x)){
 					d.x=0;
 					d.dx=0;
 				}
 	        	return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
 	    bar.append("rect")
-	        .attr("x", 1)
-	        .attr("width", function(d,i){
+	        .attrs("x", 1)
+	        .attrs("width", function(d,i){
 	        	if(x(d.dx) - 1 <0) {
 	        		return 1;
 	        	} else {return x(d.dx) - 1};
 	        })
-	        .attr("height", function(d) { return height - y(d.y); })
+	        .attrs("height", function(d) { return height - y(d.y); })
 	        .on("mouseover",handleMouseOver)
 		  	.on("mouseout",handleMouseOut)
 
 	    graph.append("g")
-	      .attr("class", "xAxis")
-	      .attr("transform", "translate(0," + height + ")")
+	      .attrs("class", "xAxis")
+	      .attrs("transform", "translate(0," + height + ")")
 	      .call(xAxis);
 
 	    createLegend(tableName,legend,data);

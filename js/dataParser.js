@@ -205,7 +205,7 @@ function LoadData(queryDate,queryText,avgOver){
 			});
 			function drawQueryText(queryText){
 				d3.select("body").append("div")
-				.attr({
+				.attrs({
 					"id": "query"+counter,
 					"class": "applicationRegion"
 				})
@@ -214,7 +214,7 @@ function LoadData(queryDate,queryText,avgOver){
 			}
 			function drawSaveButton(){
 				d3.select("#query"+counter).append("button")
-				.attr({
+				.attrs({
 					"id": "save-"+counter,
 					"class":"saveButton"
 				})
@@ -237,7 +237,7 @@ function LoadData(queryDate,queryText,avgOver){
 				  // Create a "hidden" input
 				  var aux = document.createElement("input");
 				  // Assign it the value of the specified element
-				  aux.setAttribute("value", text);
+				  aux.setattrsibute("value", text);
 				  // Append it to the body
 				  document.body.appendChild(aux);
 				  // Highlight its content

@@ -64,26 +64,26 @@ function queryForm(query){
 	var logoWidth = 100;
 	var logoHeight = 100;
 	var querySelector = d3.select("body").append("div")
-		.attr({
+		.attrs({
 			class:"querySelector"
 		});
 	querySelector.append("img")
-		.attr({
+		.attrs({
 			"src":"logo.png",
 			"width":logoWidth,
 			"height":logoHeight
 		});
 	queryForm=querySelector.append("form")
-		.attr({
+		.attrs({
 			"id":"queryForm"
 		});
 	fieldset = queryForm.append("fieldset")
-						.attr({
+						.attrs({
 							"id":"fieldset"
 						});
 
 	var queryTypeSelect = fieldset.append("select")
-					.attr({
+					.attrs({
 						"name": "query",
 						"id":"query"
 					});
@@ -92,7 +92,7 @@ function queryForm(query){
 			.html(queryTypes[i]);
 	}
 	var queryTimeFrame = fieldset.append("select")
-					.attr({
+					.attrs({
 						"name": "timeFrame",
 						"id":"timeFrame"
 					});
@@ -140,14 +140,14 @@ function queryForm(query){
      });
 
 	querySelector.append("button")
-	.attr({
+	.attrs({
 		"type":"submit",
 		"id":"submit"
 	}).html("Ask NetSage")
 	.on("click",handleOnClick);
 	function handleOnClick(urlDate){
-		var dayFormat = d3.time.format("%m/%d/%Y");
-		var timeFormat = d3.time.format("%H:%M:%S");
+		var dayFormat = d3.timeFormat("%m/%d/%Y");
+		var timeFormat = d3.timeFormat("%H:%M:%S");
 		//Increase counter
 		counter=counter+1;
 		//Read query
@@ -161,9 +161,9 @@ function queryForm(query){
 		//UTC date
 		var UTCDateStart;
 		var UTCDateStop;
-		UTCDateStart = new Date(d3.select("#datePickerStart")[0][0].value + " " + d3.select("#timeStart")[0][0].value )
+		UTCDateStart = new Date(d3.select("#datePickerStart")._groups[0][0].value + " " + d3.select("#timeStart")._groups[0][0].value )
 		UTCDateStart = new Date(UTCDateStart.getUTCFullYear(), UTCDateStart.getUTCMonth(), UTCDateStart.getUTCDate(),  UTCDateStart.getUTCHours(), UTCDateStart.getUTCMinutes(), UTCDateStart.getUTCSeconds());
-		UTCDateStop = new Date(d3.select("#datePickerEnd")[0][0].value + " " + d3.select("#timeStop")[0][0].value )
+		UTCDateStop = new Date(d3.select("#datePickerEnd")._groups[0][0].value + " " + d3.select("#timeStop")._groups[0][0].value )
 		UTCDateStop = new Date(UTCDateStop.getUTCFullYear(), UTCDateStop.getUTCMonth(), UTCDateStop.getUTCDate(),  UTCDateStop.getUTCHours(), UTCDateStop.getUTCMinutes(), UTCDateStop.getUTCSeconds());
 		console.log(UTCDateStart);
 		console.log(UTCDateStop);
@@ -200,8 +200,8 @@ function queryForm(query){
 	}
 	//Function to fill up and create the necesarry datePickers depending on the selected TimeFrame
 	function createDatePickers(start,stop,startDate,stopDate,isNow){
-		var dayFormat = d3.time.format("%m/%d/%Y");
-		var timeFormat = d3.time.format("%H:%M:%S");
+		var dayFormat = d3.timeFormat("%m/%d/%Y");
+		var timeFormat = d3.timeFormat("%H:%M:%S");
 		$( "#datePickerStart" ).remove();
 		$( "#datePickerEnd" ).remove();
 		$( "#timeStart" ).remove();
@@ -212,13 +212,13 @@ function queryForm(query){
 			if (startDate != "") var StartDateFormated = dayFormat(startDate);
 			else var StartDateFormated = "";
 			fieldset.append("input")
-			.attr({
+			.attrs({
 				"type":"text",
 				"id": "datePickerStart",
 				"class": "datePicker"
 			});
 			var timeSelect = d3.select("#fieldset").append("select")
-								.attr({
+								.attrs({
 									"id":"timeStart",
 									"class":"timePicker"
 								});
@@ -238,13 +238,13 @@ function queryForm(query){
 				var hoursSelectionStop = ["00:00:00","01:00:00","02:00:00","03:00:00","04:00:00","05:00:00","06:00:00","07:00:00","08:00:00","09:00:00","10:00:00","11:00:00","12:00:00","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00","18:00:00","19:00:00","20:00:00","21:00:00","22:00:00","23:00:00"];
 			}
 			fieldset.append("input")
-				.attr({
+				.attrs({
 					"type":"text",
 					"id": "datePickerEnd",
 					"class": "datePicker"
 				});
 				var timeSelect = d3.select("#fieldset").append("select")
-								.attr({
+								.attrs({
 									"id":"timeStop",
 									"class":"timePicker"
 								});

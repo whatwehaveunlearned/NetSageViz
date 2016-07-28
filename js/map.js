@@ -7,7 +7,7 @@ function mapGraph(data){
   function handleMouseOver(d,i){
     //Eliminate events on lines enhaces interaction with nodes
     //d3.selectAll(".links")
-    //  .attr("pointer-events","none")
+    //  .attrs("pointer-events","none")
     div = d3.select("#mapTooltip");
     div.transition()
        .duration(500)
@@ -38,7 +38,7 @@ function mapGraph(data){
   function handleMouseOut(d,i){
     //return events on lines
     //d3.selectAll(".links")
-    //  .attr("pointer-events","auto")
+    //  .attrs("pointer-events","auto")
     if(this.classList[0]==="nodes"){
       d3.select(this)
         .transition()
@@ -59,12 +59,12 @@ function mapGraph(data){
     createGradient("linkGradient",svgGroup,colorLinks(0),colorLinks(maxDataLinks));
     createGradient("nodesGradient",svgGroup,colorNodes(0),colorNodes(maxDataNodes));
     var legend = svgGroup.append('g')
-                         .attr({
+                         .attrs({
                             "class":"mapLegend",
                             "transform": "translate(" + (width - 130) + "," + (height - 110) + ")",
                          })
     legend.append("rect")
-            .attr({
+            .attrs({
               "id": "linksLegend",
               "height": 100,
               "width": 20,
@@ -74,28 +74,28 @@ function mapGraph(data){
             });
     //Add max and minimum value to link Legend
     legend.append("text")
-            .attr({
+            .attrs({
               "transform": "translate(" + (-60) + "," + 10 + ")"
             })
             .text(Math.ceil(maxDataLinks) + " Mb/s")
     legend.append("text")
-            .attr({
+            .attrs({
               "transform": "translate(" + (-40) + "," + 98 + ")"
             })
             .text("0 Mb/s")
     //Add max and minimum value to link Legend
     legend.append("text")
-            .attr({
+            .attrs({
               "transform": "translate(" + 65 + "," + 10 + ")"
             })
             .text(Math.ceil(maxDataNodes) + " Mb/s")
     legend.append("text")
-            .attr({
+            .attrs({
               "transform": "translate(" + 65 + "," + 98 + ")"
             })
             .text("0 Mb/s")
     legend.append("rect")
-            .attr({
+            .attrs({
               "class": "mapLegend2",
               "id": "nodesLegend",
               "transform": "translate(" + (40) + "," + 0 + ")",
@@ -116,24 +116,30 @@ function mapGraph(data){
         .attr("id", id);
     //Vertical gradient
     linearGradient
-        .attr("x1", "0%")
-        .attr("y1", "0%")
-        .attr("x2", "0%")
-        .attr("y2", "100%");
+        .attrs({
+          "x1": "0%",
+          "y1": "0%",
+          "x2": "0%",
+          "y2": "100%"
+        });
     //Set the color for the start (0%)
     linearGradient.append("stop")
-        .attr("offset", "0%")
-        .attr("stop-color", endColor); //Color bottom
+        .attrs({
+          "offset": "0%",
+          "stop-color": endColor //Color bottom
+        })
     //Set the color for the end (100%)
     linearGradient.append("stop")
-        .attr("offset", "100%")
-        .attr("stop-color", startColor); //Color top
+        .attrs({
+          "offset": "100%",
+          "stop-color": startColor //Color top
+        })
     return linearGradient;
   }
   //#################################### END AUX FUNCTIONS ########################
   // Define the div for the tooltip
   var div = d3.select("#query"+counter).append("div")
-    .attr({
+    .attrs({
       "id": "mapTooltip"
     })
     .style("opacity", 0);
@@ -142,12 +148,12 @@ function mapGraph(data){
         height = 500 - margin.top - margin.bottom;
   var svgMap = d3.select("#query"+counter)
       .append("div")
-      .attr({
+      .attrs({
         "id":"map"+counter,
         "class":"map"
       })
       .append("svg")
-      .attr({
+      .attrs({
         width:width + margin.left + margin.right,
         height:height + margin.top + margin.bottom
       })
@@ -159,17 +165,19 @@ function mapGraph(data){
   d3.json("world.json", function(error, world) {
     if (error) return console.error(error);
     var subunits = topojson.feature(world, world.objects.subunits);
-    var projection = d3.geo.mercator()
+    var projection = d3.geoMercator()
     	  .scale(150)
     	  .rotate([-270,0]);
-    var path = d3.geo.path()
+    var path = d3.geoPath()
     	  .projection(projection);
     map.append("path")
         .datum(subunits)
-        .attr("d", path)
-        .attr("id","worlldMap"+counter);
-    var customLine = d3.svg.line()
-                       .interpolate("basis");
+        .attrs({
+          "d": path,
+          "id":"worlldMap"+counter
+        })
+   // var customLine = d3.line()
+     //                  .interpolate("basis");
 
     //create colors for the links
     //Calculate Max values for scales
@@ -181,10 +189,10 @@ function mapGraph(data){
     }
     maxDataLinks = d3.max(maxDataLinks);
     maxDataNodes = d3.max(maxDataNodes);
-    var colorLinks = d3.scale.linear().domain([0,maxDataLinks])
+    var colorLinks = d3.scaleLinear().domain([0,maxDataLinks])
     .interpolate(d3.interpolateHcl)
     .range([d3.rgb("#E1F5FE"), d3.rgb("#01579B")]);
-    var colorNodes = d3.scale.linear().domain([0,maxDataNodes])
+    var colorNodes = d3.scaleLinear().domain([0,maxDataNodes])
     .interpolate(d3.interpolateHcl)
     .range([d3.rgb("#ffe0cc"), d3.rgb("#ff6600")]);
 
@@ -196,13 +204,13 @@ function mapGraph(data){
       .datum( function(d){
           return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]]};
       })
-      .attr({
+      .attrs({
         class:"links",
         d:path,
         id: function (d,i) {
           return "links-"+ counter+ i ; }
       })
-      .style({
+      .styles({
         "stroke-width": function(d,i){
           return ((data.links[i].max_bandwidth/10000000000) + 2 )}, //Transform to Terabyte and adjust size
         "stroke": function(d,i){
@@ -216,7 +224,7 @@ function mapGraph(data){
        .data(data.nodes)
        .enter()
        .append("circle")
-       .attr({
+       .attrs({
           cx: function (d) {
             return projection([d.lon, d.lat])[0]; },
           cy: function (d) { return projection([d.lon, d.lat])[1]; },
@@ -224,7 +232,7 @@ function mapGraph(data){
           class: "nodes",
           id: function (d,i) { return "nodes-"+ counter + i; }
        })
-       .style({
+       .styles({
           fill: function(d,i) {
             return colorNodes(avg([data.nodes[i].data.input.avg,data.nodes[i].data.output.avg]));
           }
