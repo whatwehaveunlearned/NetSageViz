@@ -72,7 +72,7 @@ function histogramTableGraph(queryData){
 			}*/
 		function handleMouseOverRow(d,i){
 			if(this.classList[0].split("-")[0]=="links"){
-				linkColor = d3.select("#" + this.classList[0] + this.id)[0][0].style["stroke"]
+				linkColor = d3.select("#" + this.classList[0] + this.id)._groups[0][0].style["stroke"]
     			d3.select("#" + this.classList[0] + this.id)
     		 		.style("stroke", "red");
     		}else{
@@ -82,7 +82,7 @@ function histogramTableGraph(queryData){
 			      .transition()
 			      .duration(500)
 			      .style('stroke-width','2')
-			      .attrs('r',10)
+			      .attr('r',10)
 			    div = d3.select("#mapTooltip");
 			    div.transition()
 			       .duration(500)
@@ -96,8 +96,8 @@ function histogramTableGraph(queryData){
 				    }
 				    div.selectAll("*").remove()
 				    div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
-				       .style("left", (parseInt(d3.select("#" + this.classList[0] + this.id).attrs("cx"))) + "px")
-				       .style("top", (parseInt(d3.select("#" + this.classList[0] + this.id).attrs("cy")) + d3.select("#" + this.classList[0] + this.id)[0][0].parentElement.parentElement.getBoundingClientRect().top) + "px");
+				       .style("left", (parseInt(d3.select("#" + this.classList[0] + this.id).attr("cx"))) + "px")
+				       .style("top", (parseInt(d3.select("#" + this.classList[0] + this.id).attr("cy")) + d3.select("#" + this.classList[0] + this.id)._groups[0][0].parentElement.parentElement.getBoundingClientRect().top) + "px");
   			}
     	}
     	function handleMouseOutRow(d,i){
@@ -107,12 +107,12 @@ function histogramTableGraph(queryData){
     		}else{
     			//return events on lines
 			    d3.selectAll(".links")
-			      .attrs("pointer-events","auto")
+			      .attr("pointer-events","auto")
 			    d3.select("#" + this.classList[0] + this.id)
 			      .transition()
 			      .duration(500)
 			      .style('stroke-width','1')
-			      .attrs('r',5)
+			      .attr('r',5)
 			    var nodeLinks="";
 			    div = d3.select("#mapTooltip");
 			    div.transition()
@@ -234,14 +234,13 @@ function histogramTableGraph(queryData){
 	   	var maxX = d3.max([totalDataIn,totalDataOut]);
 
 	    //Set up scales
-	    var x = d3.scale.linear()
+	    var x = d3.scaleLinear()
 	        .domain([0, maxX])
 	        .range([0, width])
 	        .nice();
 
-	    var xAxis = d3.svg.axis()
-	        .scale(x)
-	        .orient("bottom");
+	    var xAxis = d3.axisBottom()
+	        .scale(x);
 
 	    var svg=d3.selectAll("." + tableName + "-" + group + "-col" + "3").append("svg")
 	   		.attrs({
@@ -255,7 +254,7 @@ function histogramTableGraph(queryData){
 	        });
 	    //totalInput
 	    var totalInput = graph.append("g")
-	        .attrs("class", tableName + " totalInput");
+	        .attr("class", tableName + " totalInput");
 	    //Creates totalData input Bar
 	    totalInput.append("rect")
 	    	.attrs({
@@ -292,7 +291,7 @@ function histogramTableGraph(queryData){
 	      	.text(function(d,i) { return (totalDataIn/1024/8).toFixed(0) + " GB"; } );
 		//totalOutput
 		var totalOutput = graph.append("g")
-	        .attrs("class", "totalOuput")
+	        .attr("class", "totalOuput")
 	    //Creates totalData input Bar
 	    totalOutput.append("rect")
 	    	.attrs({
@@ -330,39 +329,38 @@ function histogramTableGraph(queryData){
 	//############### Function to create the histogram ###############
 	function createHistogram(tableName,group,data,numberBins){
 		    ///Histogram distributions
+		    var histogramSetUp = d3.histogram().thresholds(numberBins)
 		    var inputDataLayouts = [];
 		    var outputDataLayouts = [];
 		    for (j=0;j<data.length;j++){
-		      inputDataLayouts.push(d3.histogram().bins(numberBins)(data[j].data.input.histogram));
-		      outputDataLayouts.push(d3.histogram().bins(numberBins)(data[j].data.output.histogram));
+		      inputDataLayouts.push(histogramSetUp(data[j].data.input.histogram));
+		      outputDataLayouts.push(histogramSetUp(data[j].data.output.histogram));
 		    }
 		    //Calculate Max values for scales
 		    var maxX=[];
 		    var maxY=[];
 		    for (each in data){
 		    	maxX.push(d3.max([d3.max(data[each].data.input.histogram),d3.max(data[each].data.output.histogram)]));
-				maxY.push(d3.max([d3.max(inputDataLayouts[each], function(d) { return d.y; }),d3.max(outputDataLayouts[each], function(d) { return d.y; })]));
+				maxY.push(d3.max([d3.max(inputDataLayouts[each], function(d) { return d.length; }),d3.max(outputDataLayouts[each], function(d) { return d.length; })]));
 		    }
 		   	var maxX=d3.max(maxX);
 		   	var maxY=d3.max(maxY);
 
 		    //Set up scales
-		    var x = d3.scale.linear()
+		    var x = d3.scaleLinear()
 		        .domain([0, maxX])
 		        .range([0, width])
 		        .nice();
 
-		    var y = d3.scale.linear()
+		    var y = d3.scaleLinear()
 		        .domain([0, maxY])
 		        .range([height, 0]);
 
-		    var xAxis = d3.svg.axis()
-		        .scale(x)
-		        .orient("bottom");
+		    var xAxis = d3.axisBottom()
+		        .scale(x);
 
-		    var yAxis = d3.svg.axis()
-		      	.scale(y)
-		      	.orient("left");
+		    var yAxis = d3.axisLeft()
+		      	.scale(y);
 		    //Input
 		    fillHistogramColumn(tableName,"." + tableName + "-" + group + "-col1","inputDataLayouts","input",inputDataLayouts,outputDataLayouts,x,y,xAxis,yAxis,data);
 		    //Output
@@ -372,14 +370,11 @@ function histogramTableGraph(queryData){
     function fillHistogramColumn(tableName,colName,colData,legend,inputDataLayouts,outputDataLayouts,x,y,xAxis,yAxis,data){
 		function handleMouseOver(d,i){
 			var dataInColumn=[];
-			for (var i=0;i<d.y;i++){
-				dataInColumn.push(d[i]);
-			}
 			div = d3.select("#" + tableName + "-tableTooltip");
 			div.transition()
 					.duration(200)
 					.style("opacity", .9);
-		   	div.html("<p>"+ d3.mean(dataInColumn).toFixed(2) +" Mb/s</p> <p>"+ d.y + " elements" )
+		   	div.html("<p>"+ d3.mean(d).toFixed(2) +" Mb/s</p> <p>"+ d.length + " elements" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		}
@@ -433,36 +428,40 @@ function histogramTableGraph(queryData){
 	      		"height": height + margin.top + margin.bottom,
 	    	})
 	    var graph = svg.append("g")
-	        .attrs("class", "graph")
-	        .attrs("transform", "translate(" + margin.left + "," + margin.top + ")");
+	        .attrs({
+	        	"class": "graph",
+	        	"transform": "translate(" + margin.left + "," + margin.top + ")"
+	        })
 	    var bar = graph.append("g")
-	        .attrs("class", "histogram")
+	        .attr("class", "histogram")
 	        .selectAll(".bar")
 	        .data(function(d,i){
 	        	return eval((colData) + "[" + i + "]");
 	        })
 	        .enter().append("g")
-	        .attrs("class", "bar")
-	        .attrs("transform", function(d,i) {
-	        	if(isNaN(d.x)){
-					d.x=0;
-					d.dx=0;
-				}
-	        	return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-	    bar.append("rect")
-	        .attrs("x", 1)
-	        .attrs("width", function(d,i){
-	        	if(x(d.dx) - 1 <0) {
-	        		return 1;
-	        	} else {return x(d.dx) - 1};
+	        .attrs({
+	        	"class": "bar",
+	        	"transform": function(d,i) {
+	        		if(isNaN(d.x0)){
+						d.x0=0;
+						d.x1=0;
+					}
+					return "translate(" + x(d.x0) + "," + y(d.length) + ")"; }
 	        })
-	        .attrs("height", function(d) { return height - y(d.y); })
+	    bar.append("rect")
+	        .attrs({
+	        	"x": 1,
+	        	"width": function(d,i){ return Math.abs((x(d.x1) - x(d.x0))-1)},
+		        "height": function(d) { return height - y(d.length); }
+	        })
 	        .on("mouseover",handleMouseOver)
 		  	.on("mouseout",handleMouseOut)
 
 	    graph.append("g")
-	      .attrs("class", "xAxis")
-	      .attrs("transform", "translate(0," + height + ")")
+	      .attrs({
+	      	"class": "xAxis",
+	      	"transform": "translate(0," + height + ")"
+	      })
 	      .call(xAxis);
 
 	    createLegend(tableName,legend,data);
