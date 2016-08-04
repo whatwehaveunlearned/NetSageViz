@@ -1,4 +1,4 @@
-function LoadData(queryDate,queryText,avgOver){
+function LoadData(queryDate,queryText,avgOver,queryType){
 	//#################################### AUX FUNCTIONS ############################
 	//Function return unique nodes from links
 	function uniqNodes(a) {
@@ -22,21 +22,44 @@ function LoadData(queryDate,queryText,avgOver){
 	         }
 	    }
 	    for (var element in out){
-	    	var linkData =[];
+	    	var linkData = [];
 	    	//We cleaned the data of the links so we only need to calculate the aggregate data for nodes getting it from their links.
-	    	var inputNodeData = [];
-	    	var outputNodeData = [];
+	    	var inputNodeData = {};
+	    	var outputNodeData = {};
+	    	var inputNodeDataHistogram = [];
+	    	var outputNodeDataHistogram = [];
 	    	for (var each in out[element].links){
 	    		linkData.push(links[parseInt(out[element].links[each])].data);
-	    		inputNodeData = inputNodeData.concat(links[parseInt(out[element].links[each])].data.input.histogram);
-	    		outputNodeData = outputNodeData.concat(links[parseInt(out[element].links[each])].data.output.histogram);
+	    		inputNodeDataHistogram = inputNodeDataHistogram.concat(links[parseInt(out[element].links[each])].data.input.histogram);
+	    		outputNodeDataHistogram = outputNodeDataHistogram.concat(links[parseInt(out[element].links[each])].data.output.histogram);
 	    	}
 	    	out[element].data.linkData = linkData;
-	    	out[element].data.input.histogram = inputNodeData;
-	    	out[element].data.output.histogram = outputNodeData;
+	    	out[element].data.input.histogram = inputNodeDataHistogram;
+	    	out[element].data.output.histogram = outputNodeDataHistogram;
+	    	//To get the data of the nodes I create an object where the index is the time and the value is the data, if the index exists add the data if it doesnt create it and add the data of the link
+	    	//I need to do this because the links have different amount of times because not all of them started getting data at the same time.
+	    	for(var i in out[element].links){
+	    		for(var each in out[element].data.linkData[i].input.values){
+	    			if (inputNodeData[out[element].data.linkData[i].input.values[each][0]] === undefined) inputNodeData[out[element].data.linkData[i].input.values[each][0]] = out[element].data.linkData[i].input[each][1];
+	    			else inputNodeData[out[element].data.linkData[i].input.values[each][0]] += out[element].data.linkData[i].input.values[each][1];
+	    			if (outputNodeData[out[element].data.linkData[i].output.values[each][0]] === undefined) outputNodeData[out[element].data.linkData[i].output.values[each][0]] = out[element].data.linkData[i].output[each][1];
+	    			else outputNodeData[out[element].data.linkData[i].output.values[each][0]] += out[element].data.linkData[i].output.values[each][1];
+	    		}
+	    	}
+	    	out[element].data.input.values = objToArray(inputNodeData);
+	    	out[element].data.output.values = objToArray(outputNodeData);
 	    }
 	    return out;
 	}
+	//Function to transform object to array
+	function objToArray(obj){
+		var dataArray = new Array;
+		for(var i in obj) {
+		    dataArray.push([parseInt(i),obj[i]]);
+		}
+		return dataArray;
+	}
+
 	//Return unique links values for links[i].links array. (Removes repeated values.)
 	function uniqFast(a) {
 	    var seen = {};
@@ -86,6 +109,8 @@ function LoadData(queryDate,queryText,avgOver){
 	function scaleAndClean(dataPoint){
 		var inputClean=[];
 		var outputClean=[];
+		var inputValues = [];
+		var outputValues = [];
 		//change this to the d3 assignment forEach
 		for (each in dataPoint.input){
 			if(dataPoint.input[each][1]!=null){
@@ -102,10 +127,14 @@ function LoadData(queryDate,queryText,avgOver){
 				dataPoint.output[each][1] = 0;
 				outputClean.push(0);
 			}
+			inputValues.push([dataPoint.input[each][0],dataPoint.input[each][1]]);
+			outputValues.push([dataPoint.output[each][0],dataPoint.output[each][1]]);
 		}
 		//Save the cleaned scaled values in the data
 		dataPoint.input.histogram = inputClean;
 		dataPoint.output.histogram = outputClean;
+		dataPoint.input.values = inputValues;
+		dataPoint.output.values = outputValues;
 	}
 	//Function to calculate Important Statistical values
 	function calculateStatistics (dataPoint,sizeInterval){
@@ -146,7 +175,7 @@ function LoadData(queryDate,queryText,avgOver){
 	}
 
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
-	function OverviewTSDSQuery(avgOver){
+	function snmpTSDSQuery(avgOver){
 		//Set up the date
 		var date = queryDate;
 		var interval = { first: new Date(date[0]), second: new Date(date[1]) }
@@ -187,20 +216,24 @@ function LoadData(queryDate,queryText,avgOver){
 						calculateStatistics(nodes[element].data,sizeIntervalSeconds);
 					}
 					//####### Print the query to console used to do tests.
-					var text = "["
+					/*var text = "["
 					for(var i=0;i<queryObjects[counter].links[0].data.input.length;i++){
 						text = text + "[" +queryObjects[counter].links[0].data.input[i][0] + "," + queryObjects[counter].links[0].data.input[i][1] + "],"
 					}
 					text = text + "]"
-					console.log(text);
+					console.log(text);*/
 					//####### END Print the query to console used to do tests.
 					//Create query text
 					drawQueryText(queryText);
 					drawSaveButton();
-					//Create Map
-					mapGraph(queryObjects[counter]);
-					//Create Table
-					histogramTableGraph(queryObjects[counter]);
+					if(queryObjects[counter].queryType==="0"){//Bandwith accross links
+						//Create Map
+						mapGraph(queryObjects[counter]);
+						//Create Table
+						histogramTableGraph(queryObjects[counter]);
+					}else if(queryObjects[counter].queryType==="1"){//Periodic Patterns
+						periodicPattern(queryObjects[counter]);
+					}
 				});
 			});
 			function drawQueryText(queryText){
@@ -219,7 +252,7 @@ function LoadData(queryDate,queryText,avgOver){
 					"class":"saveButton"
 				})
 				.html("save query")
-				.on("click", saveQuery)
+				.on("click", saveQuery);
 			}
 			function saveQuery(){
 				var urlParam = [];
@@ -252,5 +285,5 @@ function LoadData(queryDate,queryText,avgOver){
 	}
 	//#################################### END AUX FUNCTIONS ############################
 	////Loads the data for the query
-	OverviewTSDSQuery(avgOver);
+	snmpTSDSQuery(avgOver);
 }

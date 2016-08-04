@@ -4,10 +4,9 @@ var windowHeight = $(window).height();
 var links;
 var results;
 var queryObjects = [];
-var initialQuery =  "What was the min, max, average bandwith used between the IRNC links ";
 var counter=-1;
 function main (){
-	queryForm(initialQuery);
+	queryForm();
 	d3.select("#timeFrame-button")
 	  .style({
   			"width": "8.3em"
@@ -30,12 +29,13 @@ function getUrlParameter(sParam) {
 }
 
 //Query Object Prototype
-function Query(query,date,avgOver){
+function Query(query,date,avgOver,queryType){
 	this.queryText = query;
 	this.date = date;
 	this.links = 0;
 	this.nodes = 0;
 	this.avgOver = avgOver;
+	this.queryType = queryType;
 	this.graphs = ({
 		"table" : 	({
 						"links":null,
@@ -57,8 +57,8 @@ function Query(query,date,avgOver){
 	}
 	return this;
 }
-function queryForm(query){
-	var queryTypes = ["What was the min, max, average bandwith used between the IRNC links ","todo1 ", "todo2 "];
+function queryForm(){
+	var queryTypes = ["What was the min, max, average bandwith used between the IRNC links ?","What is the duration and are there any periodic patterns or peak periods in bandwith use accross the IRNC links?", "todo2 "];
 	if(getUrlParameter("date")!=undefined) var timeFrames = ["Time Frame","Now","Today","Last 7 days","This Month","This Year"];
 	else var timeFrames = ["Now","Today","Last 7 days","This Month","This Year","Time Frame"];
 	var logoWidth = 100;
@@ -89,6 +89,7 @@ function queryForm(query){
 					});
 	for (var i in queryTypes){
 		queryTypeSelect.append("option")
+			.attrs({"value":i})
 			.html(queryTypes[i]);
 	}
 	var queryTimeFrame = fieldset.append("select")
@@ -102,9 +103,9 @@ function queryForm(query){
 	}
 	//If the URL has parameters load the search with those and execute the search
 	if(getUrlParameter("date")!=undefined){
-		var day = eval(getUrlParameter("date"));
+		var day = getUrlParameter("date").split(",");
 		createDatePickers(true,true,new Date(day[0]),new Date(day[1]),true);
-		handleOnClick(day);
+		handleOnClick(day,true);
 
 	}else{//If there are no parameters passed. We prefill with the pickers with the now data
 		var day = new Date();
@@ -145,19 +146,23 @@ function queryForm(query){
 		"id":"submit"
 	}).html("Ask NetSage")
 	.on("click",handleOnClick);
-	function handleOnClick(urlDate){
+	function handleOnClick(urlDate,fromURL){
 		var dayFormat = d3.timeFormat("%m/%d/%Y");
 		var timeFormat = d3.timeFormat("%H:%M:%S");
 		//Increase counter
 		counter=counter+1;
-		//Read query
-		var queryType = $("#query")[0].value
+		//Read query type
+		if(getUrlParameter("queryType")!=undefined && fromURL===true) var queryType = getUrlParameter("queryType");
+		else var queryType = $("#query")[0].value;
+		//Read query Name
+		if(getUrlParameter("queryName")!=undefined && fromURL===true) var queryName = getUrlParameter("queryName");
+		else var queryName = $("#query option:selected").html();
 		//Read TimeFrame
 		var timeFrame = $("#timeFrame")[0].value
 		//Read Dates
 		var queryDate;
-		if(getUrlParameter("avgOver")!=undefined) var avgOver = parseInt(getUrlParameter("avgOver"));
-		else var avgOver = 60;
+		if(getUrlParameter("avgOver")!=undefined && fromURL===true) var avgOver = parseInt(getUrlParameter("avgOver"));
+		else var avgOver = 120;
 		//UTC date
 		var UTCDateStart;
 		var UTCDateStop;
@@ -168,34 +173,36 @@ function queryForm(query){
 		console.log(UTCDateStart);
 		console.log(UTCDateStop);
 		if (timeFrame === "Time Frame") {
-			//avgOver = 60;
-			avgOver = 3600;//sample each day to get avg each day. This is the avgOver value I need for the pattern recognition.
+			if(queryType==="1") avgOver = 3600; //sample each day to get avg per each hour. This is the data format the heatmaps are expecting.
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}else if (timeFrame === "This Year"){
-			//avgOver = 21600;
-			avgOver = 3600;//sample each day to get avg each day. This is the avgOver value I need for the pattern recognition.
+			avgOver = 21600;
+			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "This Month"){
-			//avgOver = 720;
-			avgOver = 3600;//sample each day to get avg each day. This is the avgOver value I need for the pattern recognition.
+			avgOver = 720;
+			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "Last 7 days"){
 			avgOver = 120;
+			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
 		else if (timeFrame === "Today"){
+			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "Now"){
-			avgOver = 60;
+			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
-		queryObjects.push(new Query(queryType + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate,avgOver))
+		queryObjects.push(new Query(queryName + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate,avgOver,queryType))
+		//when we make a second query in the same page we open a new tab.
 		if($("#query0")[0]!==undefined){
-			url = getQuery(avgOver);
+			url = getQuery(queryDate,avgOver,queryType,queryName);
 			myWindow = window.open(url,'_blank');
 			myWindow.focus();
 		}else{
-			LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver);
+			LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver,queryObjects[counter].queryType);
 		}
 	}
 	//Function to fill up and create the necesarry datePickers depending on the selected TimeFrame
@@ -264,11 +271,12 @@ function queryForm(query){
 		$( "#datePickerStart" ).datepicker("setDate",StartDateFormated);
 		$( "#datePickerEnd" ).datepicker("setDate",StopDateFormated);
 	}
-	function getQuery(avgOver){
+	function getQuery(queryDate,avgOver,queryType,queryName){
 		var urlParam = [];
-		var date = JSON.stringify(queryObjects[0].date);
-		urlParam.push(encodeURI("date") + "=" + encodeURI(date));
+		urlParam.push(encodeURI("date") + "=" + encodeURI(queryDate));
 		urlParam.push(encodeURI("avgOver") + "=" + encodeURI(avgOver));
+		urlParam.push(encodeURI("queryType") + "=" + encodeURI(queryType));
+		urlParam.push(encodeURI("queryName") + "=" + encodeURI(queryName));
 		return "main.html?" + urlParam.join("&");
 	}
 }
