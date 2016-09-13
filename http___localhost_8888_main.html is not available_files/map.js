@@ -30,7 +30,7 @@ function mapGraph(data){
          .style("top", (d3.event.pageY ) + "px");
     }else{
       //If MouseoverLink
-      div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Gb" )
+      div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Tb" )
          .style("left", (d3.event.pageX + 15) + "px")
          .style("top", (d3.event.pageY ) + "px");
     }

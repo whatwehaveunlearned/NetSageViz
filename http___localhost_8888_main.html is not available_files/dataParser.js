@@ -225,8 +225,6 @@ function LoadData(queryDate,queryText,avgOver,queryType){
 					}else if(queryObjects[counter].queryType==="1"){//Periodic Patterns
 						periodicPattern(queryObjects[counter]);
 					}
-					$("#whiteButtonImg").remove();
-					$("#queryButtonImg").remove();
 				});
 			});
 			function drawQueryText(queryText){
@@ -242,7 +240,7 @@ function LoadData(queryDate,queryText,avgOver,queryType){
 					"class": "queryTextAppRegion"
 				})
 				.append("p")
-				.html(queryText);
+				.html("<b>Query "+ (counter+1) + ": </b>" + queryText);
 			}
 	}
 	//#################################### END AUX FUNCTIONS ############################

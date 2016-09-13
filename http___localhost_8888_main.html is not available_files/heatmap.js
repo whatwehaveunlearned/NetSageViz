@@ -49,44 +49,26 @@ function periodicPattern(data){
 	maxDate = d3.max(maxDate);
 
 	//we draw a heatmap per input and output for each of the links and then each of the nodes.
-	var arrayIndexLinks = 0;
-	var arrayIndexNodes = 0;
 	for(var element in data.links){
-		setTimeout(function(){
-			var start = new Date().getTime();
-			drawElementText("Input: " + data.links[arrayIndexLinks].node);
-			heatmapData = data.links[arrayIndexLinks].data.input.values;
-			heatmap(heatmapData,maxValueLinks,maxDate);
-			weekHeatmap(data.links[arrayIndexLinks].data.input.weekData,maxWeekDataLinks);
-			drawElementText("Output: " + data.links[arrayIndexLinks].node);
-			heatmapData = data.links[arrayIndexLinks].data.output.values;
-			heatmap(heatmapData,maxValueLinks,maxDate);
-			weekHeatmap(data.links[arrayIndexLinks].data.output.weekData,maxWeekDataLinks);
-			arrayIndexLinks++;
-			var end = new Date().getTime();
-			var time = end - start;
-			console.log('Element: ' + arrayIndexLinks+ ' Execution time: ' + time);
-		},element*4000)
+		drawElementText("Input: " + data.links[element].node);
+		heatmapData = data.links[element].data.input.values;
+		heatmap(heatmapData,maxValueLinks,maxDate);
+		weekHeatmap(data.links[element].data.input.weekData,maxWeekDataLinks);
+		drawElementText("Output: " + data.links[element].node);
+		heatmapData = data.links[element].data.output.values;
+		heatmap(heatmapData,maxValueLinks,maxDate);
+		weekHeatmap(data.links[element].data.output.weekData,maxWeekDataLinks);
 	}
-	setTimeout(function(){
-		for(var element in data.nodes){
-			setTimeout(function(){
-				var start = new Date().getTime();
-				drawElementText("Input: " + data.nodes[arrayIndexNodes].node);
-				heatmapData = data.nodes[arrayIndexNodes].data.input.values;
-				heatmap(heatmapData,maxValueNodes,maxDate);
-				weekHeatmap(data.nodes[arrayIndexNodes].data.input.weekData,maxWeekDataNodes);
-				drawElementText("Output: " + data.nodes[arrayIndexNodes].node);
-				heatmapData = data.nodes[arrayIndexNodes].data.output.values;
-				heatmap(heatmapData,maxValueNodes,maxDate);
-				weekHeatmap(data.nodes[arrayIndexNodes].data.output.weekData,maxWeekDataNodes);
-				arrayIndexNodes++;
-				var end = new Date().getTime();
-				var time = end - start;
-				console.log('Element: ' + arrayIndexNodes+ ' Execution time: ' + time);
-			},element*4000)
-		}
-	},(data.links.length*4000)+1000)
+	for(var element in data.nodes){
+		drawElementText("Input: " + data.nodes[element].node);
+		heatmapData = data.nodes[element].data.input.values;
+		heatmap(heatmapData,maxValueNodes,maxDate);
+		weekHeatmap(data.nodes[element].data.input.weekData,maxWeekDataNodes);
+		drawElementText("Output: " + data.nodes[element].node);
+		heatmapData = data.nodes[element].data.output.values;
+		heatmap(heatmapData,maxValueNodes,maxDate);
+		weekHeatmap(data.nodes[element].data.output.weekData,maxWeekDataNodes);
+	}
 	d3.select('body')
 	  .append('div')
 	  .attrs({
@@ -144,7 +126,7 @@ function periodicPattern(data){
 	    var legend = svgGroup.append('g')
 	                         .attrs({
 	                            "class":"heatMapLegend",
-	                            "transform": "translate(" + (width+15) + "," + 20 + ")",
+	                            "transform": "translate(" + (width) + "," + 15 + ")",
 	                         })
 	    legend.append("rect")
 	            .attrs({
@@ -158,28 +140,20 @@ function periodicPattern(data){
 	    //Add max and minimum value to Legend
 	    legend.append("text")
 	            .attrs({
-	              "transform": "translate(" + (-7) + "," + (-5) + ")"
+	              "transform": "translate(" + (-15) + "," + (-5) + ")"
 	            })
 	            .styles({
 	            	'font-size':"0.75em"
 	            })
-	            .text(Math.ceil(maxData))
+	            .text(Math.ceil(maxData) + " Mb/s")
 	    legend.append("text")
 	            .attrs({
-	              "transform": "translate(" + (15) + "," + (45) + ")"
+	              "transform": "translate(" + (-10) + "," + 90 + ")"
 	            })
 	            .styles({
 	            	'font-size':"0.75em"
 	            })
-	            .text("Mb/s")
-	    legend.append("text")
-	            .attrs({
-	              "transform": "translate(" + (2) + "," + 90 + ")"
-	            })
-	            .styles({
-	            	'font-size':"0.75em"
-	            })
-	            .text("0")
+	            .text("0 Mb/s")
 	    //Aux function to create an svg vertical Gradient for Legends
 		function createGradient(id,svgGroup,startColor,endColor){
 		    //Append a defs (for definition) element to your SVG
@@ -214,7 +188,7 @@ function periodicPattern(data){
 
 	function heatmap(data,maxValue,maxDate){
 		//Margins and size
-		var m = [20, 40, 40, 80];
+		var m = [80, 80, 80, 80];
 		var w = 1000 - m[1] - m[3];
 		var h = 405 - m[0] - m[2];
 		var type;
@@ -248,7 +222,14 @@ function periodicPattern(data){
 		var ticks;
 		var ticksFormat;
 		//Check range to make a weekly or monthly or yearly viz depending on the range. We create 3 type of heatmaps weekly, monthly, yearly
-		if(d3.timeMonth.count(dateRange[0], dateRange[1]) === 0){//less than a month
+		if(d3.timeDay.count(dateRange[0], dateRange[1]) <= 7 ){ //less than a week
+			//create small heatmap
+			type='week';
+			heatmapDates.push(dateRange[0]);
+			heatmapDates.push(dateRange[1]);
+			ticks = d3.timeDay;
+			ticksFormat = monthDayFormat;
+		}else if(d3.timeMonth.count(dateRange[0], dateRange[1]) === 0){//less than a month
 			//create month heatmap
 			type='month';
 			var numbOfDays= new Date(getYear(dateRange[0]), getMonthInNumber(dateRange[0]), 0).getDate();
@@ -319,7 +300,7 @@ function periodicPattern(data){
 			      .call(xAxis)
 			      .selectAll("text")
 			      .attrs({
-			      	'dx': -26,
+			      	'dx': -25,
 			      	'dy':15,
 			      	'transform': function(d) { return 'rotate(-65)';},
 			      	fill: function(d,i){ //I need to add the first day of the next month so that the last column is not in the air. Here I make that text white so you dont see it.
@@ -353,22 +334,11 @@ function periodicPattern(data){
 		      		if(i<8 || i>20) return 'rgb(169, 178, 189)';
 		      		else return 'black';
 		      	}
-		      })
-		graph.append("g")
-			 .attrs({
-			 		"class": "yAxisLabel",
-			 		"transform": "translate(" + 12 + "," + 150 + ")",
-			 	})
-			 .append("text")
-		     .attrs({
-		     	"text-anchor": "middle",
-		     	"transform": function(d) { return 'rotate(-90)';},
-		 	 })
-		     .text("Time of day")
+		      });
 		//Append Squares
 		graph.append('g')
 			.attrs({
-				'transform': "translate(" + (m[1]+1) + ",0)"
+				'transform': "translate(" + m[1] + ",0)"
 			})
 			.selectAll("rect")
 			.data(data)
@@ -388,7 +358,7 @@ function periodicPattern(data){
 			})
 			.on("mouseover", handleMouseOver)
       		.on("mouseout",handleMouseOut);
-      		createLegend(graph, colorScale,maxValue,w+m[3]/2);
+      		createLegend(graph, colorScale,maxValue,w+m[0]+20);
 		function addDays(date, days) {
 	    	var result = new Date(date);
 	    	result.setDate(result.getDate() + days);
@@ -397,7 +367,7 @@ function periodicPattern(data){
 	}
 	function weekHeatmap(data,maxValue){
 		//Margins and size
-		var m = [20, 40, 20, 80];
+		var m = [80, 80, 80, 80];
 		var w = 600 - m[1] - m[3];
 		var h = 405 - m[0] - m[2];
 		var hoursInDay = ["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"];
@@ -425,11 +395,6 @@ function periodicPattern(data){
 				'width': w + m[1] + m[3],
 				'height':h + m[0] + m[2]
 		});
-		graph.append("text")
-			 .attrs({
-			 	'transform': "translate(" + (m[1]+1) + ",0)"
-			 })
-			 .text("Weekday Heatmap")
 		//Render Axis
 		var xAxis = d3.axisBottom()
 				      .scale(x);
@@ -459,21 +424,10 @@ function periodicPattern(data){
 		      		else return 'black';
 		      	}
 		      });
-		graph.append("g")
-			 .attrs({
-			 		"class": "yAxisLabel",
-			 		"transform": "translate(" + 12 + "," + 150 + ")",
-			 	})
-			 .append("text")
-		     .attrs({
-		     	"text-anchor": "middle",
-		     	"transform": function(d) { return 'rotate(-90)';},
-		 	 })
-		     .text("Time of day")
 		//Append Squares
 		graph.append('g')
 			.attrs({
-				'transform': "translate(" + (m[1]+1) + ",0)"
+				'transform': "translate(" + m[1] + ",0)"
 			})
 			.selectAll("rect")
 			.data(data.values)
@@ -495,6 +449,6 @@ function periodicPattern(data){
 			})
 			.on("mouseover", handleMouseOver)
       		.on("mouseout",handleMouseOut);
-      	createLegend(graph, colorScale,maxValue,w + m[3]/2);
+      	createLegend(graph, colorScale,maxValue,w+m[0]+30);
 	}
 }
