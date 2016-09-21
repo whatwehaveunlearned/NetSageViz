@@ -12,7 +12,7 @@ function queryForm(){
 	var queryFromTab;
 	if(hasParameters===false){
 		queryTypes = ["What was the min, max, average ","What is the duration and are there any periodic patterns or peak periods ", "More to come... "];
-		queryMeasures = ["in Bandwith use"," in Losses"];
+		queryMeasures = ["in Bandwidth use"," in Losses"];
 		queryValues = ["across the IRNC Network","across the IRNC Links","across the IRNC Nodes"];
 		timeFrames = ["now","today","last 7 days","this month","this year","time frame"];
 		drawQueryForm();
@@ -21,6 +21,23 @@ function queryForm(){
 		var threeHoursBefore = new Date(day.getTime() - (3 * 60 * 60 * 1000));
 		createDatePickers(threeHoursBefore,day,true);
 	}else{
+		//Add Giff image while loading it replaces the text in the button. The giff is replaced back to the text at the end of the query. I do that in the main function (TOP)
+		d3.select("#submit").append("span")
+			.append("img")
+			.attrs({
+				"id":"whiteButtonImg",
+				"src":"whiteSquareButton.jpeg",
+				"width":"25em",
+				"height":"25em"
+			})
+		d3.select("#submit").append("span")
+			.append("img")
+			.attrs({
+				"id":"queryButtonImg",
+				"src":"opc-ajax-loader.gif",
+				"width":"35em",
+				"height":"35em"
+			})
 		queryFromTab = {
 			"queryType":getUrlParameter("queryType"),
 			"queryName":getUrlParameter("queryName"),
@@ -28,7 +45,7 @@ function queryForm(){
 			"queryValue":getUrlParameter("queryValue")
 		}
 		queryTypes = ["What was the min, max, average ","What is the duration and are there any periodic patterns or peak periods ", "More to come... "];
-		queryMeasures = ["in Bandwith use"," in Losses"];
+		queryMeasures = ["in Bandwidth use"," in Losses"];
 		queryValues = ["across the IRNC Network","across the IRNC Links","across the IRNC Nodes"];
 		timeFrames = ["time frame","now","today","last 7 days","this month","this year"];
 		drawQueryForm();
@@ -345,6 +362,8 @@ function queryForm(){
 		queryObjects.push(new Query(queryName + " " + queryMeasure + " " + queryValue + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate,avgOver,queryType))
 		//when we make a second query in the same page we open a new tab.
 		if($("#query0")[0]!==undefined){
+			$("#whiteButtonImg").remove();
+			$("#queryButtonImg").remove();
 			url = getQuery(queryDate,avgOver,queryType,queryName,queryMeasure,queryValue);
 			myWindow = window.open(url,'_blank');
 			myWindow.focus();
@@ -454,7 +473,7 @@ function queryForm(){
 	function populateFormValues(){
 		//Populate queryForm Values
 		var queryTypes = ["What was the min, max, average ","What is the duration and are there any periodic patterns or peak periods ", "More to come... "];
-		var queryMeasures = ["in Bandwith use"," in Losses"];
+		var queryMeasures = ["in Bandwidth use"," in Losses"];
 		var queryValues = ["across the IRNC Network","across the IRNC Links","across the IRNC Nodes"];
 		if(getUrlParameter("date")!=undefined) var timeFrames = ["time frame","now","today","last 7 days","this month","this year"];
 		else var timeFrames = ["now","today","last 7 days","this month","this year","time frame"];
