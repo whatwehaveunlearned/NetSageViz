@@ -143,8 +143,8 @@ function mapGraph(data){
       "id": "mapTooltip"
     })
     .style("opacity", 0);
-  var margin = {top: 0, right: 0, bottom: 0, left: -25},
-        width = 800 - margin.left - margin.right,
+  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+        width = 1210 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
   var svgMap = d3.select("#AppRegion"+counter)
       .append("div")
@@ -166,8 +166,8 @@ function mapGraph(data){
     if (error) return console.error(error);
     var subunits = topojson.feature(world, world.objects.subunits);
     var projection = d3.geoMercator()
-    	  .scale(150)
-    	  .rotate([-270,0]);
+    	  .scale(240)
+    	  .rotate([-220,-5]);
     var path = d3.geoPath()
     	  .projection(projection);
     map.append("path")
@@ -193,50 +193,93 @@ function mapGraph(data){
     .interpolate(d3.interpolateHcl)
     .range([d3.rgb("#ffe0cc"), d3.rgb("#ff6600")]);
 
-    //Create Links
-    map.selectAll(".links")
-      .data(data.links)
-      .enter()
-      .append("path")
-      .datum( function(d){
-          return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]]};
-      })
-      .attrs({
-        class:"links",
-        d:path,
-        id: function (d,i) {
-          return "links-"+ counter+ i ; }
-      })
-      .styles({
-        "stroke-width": function(d,i){
-          return ((data.links[i].max_bandwidth/10000000000) + 2 )}, //Transform to Terabyte and adjust size
-        "stroke": function(d,i){
-        return colorLinks(d3.mean([data.links[i].data.input.avg,data.links[i].data.output.avg]))} //We are coloring links based on avg use
-      })
-      .on("mouseover", handleMouseOver)
-      .on("mouseout",handleMouseOut);
+    //Create Links PlaceHolders
+    d3.json("linksMetadata.json",function(error, linkValues){
+      map.selectAll(".linksPlaceholder")
+         .data(linkValues)
+         .enter()
+         .append("path")
+         .datum( function(d){
+            return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]]};
+         })
+         .attrs({
+            class:"linksPlaceholder",
+            d:path,
+            id: function (d,i) {
+              return "linksPlaceholder-"+ counter+ i ; }
+            })
+         .styles({
+            "stroke-width": function(d,i){
+              return ((linkValues[i].max_bandwidth/10000000000) + 2 )}, //Transform to Terabyte and adjust size
+         })
 
-    //Create ExchangePoints
-    map.selectAll(".nodes")
-       .data(data.nodes)
-       .enter()
-       .append("circle")
-       .attrs({
-          cx: function (d) {
-            return projection([d.lon, d.lat])[0]; },
-          cy: function (d) { return projection([d.lon, d.lat])[1]; },
-          r: 5,
-          class: "nodes",
-          id: function (d,i) { return "nodes-"+ counter + i; }
-       })
-       .styles({
-          fill: function(d,i) {
-            return colorNodes(avg([data.nodes[i].data.input.avg,data.nodes[i].data.output.avg]));
-          }
-       })
-       .on("mouseover",handleMouseOver)
-       .on("mouseout",handleMouseOut);
-    //Create Legend
-    createLegend(map, colorNodes, colorLinks,maxDataLinks,maxDataNodes);
+      //After we create the Real Links so they render on top
+      map.selectAll(".links")
+        .data(data.links)
+        .enter()
+        .append("path")
+        .datum( function(d){
+            return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]]};
+        })
+        .attrs({
+          class:"links",
+          d:path,
+          id: function (d,i) {
+            return "links-"+ counter+ i ; }
+        })
+        .styles({
+          "stroke-width": function(d,i){
+            return ((data.links[i].max_bandwidth/10000000000) + 2 )}, //Transform to Terabyte and adjust size
+          "stroke": function(d,i){
+            return colorLinks(d3.mean([data.links[i].data.input.avg,data.links[i].data.output.avg]))} //We are coloring links based on avg use
+        })
+        .on("mouseover", handleMouseOver)
+        .on("mouseout",handleMouseOut);
+
+        //Create Nodes PlaceHolders
+        d3.json("nodesMetadata.json",function(error, nodeValues){
+          map.selectAll(".nodesPlaceholder")
+             .data(nodeValues)
+             .enter()
+             .append("circle")
+             .attrs({
+                cx: function (d) {
+                  return projection([d.longitude, d.latitude])[0]; },
+                cy: function (d) { return projection([d.longitude, d.latitude])[1]; },
+                r: 5,
+                class: "nodesPlaceholder",
+                id: function (d,i) { return "nodes-"+ counter + i; }
+             })
+             .styles({
+                fill: function(d,i) {
+                  return "white";
+                }
+             })
+             .on("mouseover",handleMouseOver)
+             .on("mouseout",handleMouseOut);
+          //Create Real ExchangePoints
+          map.selectAll(".nodes")
+             .data(data.nodes)
+             .enter()
+             .append("circle")
+             .attrs({
+                cx: function (d) {
+                  return projection([d.lon, d.lat])[0]; },
+                cy: function (d) { return projection([d.lon, d.lat])[1]; },
+                r: 5,
+                class: "nodes",
+                id: function (d,i) { return "nodes-"+ counter + i; }
+             })
+             .styles({
+                fill: function(d,i) {
+                  return colorNodes(avg([data.nodes[i].data.input.avg,data.nodes[i].data.output.avg]));
+                }
+             })
+             .on("mouseover",handleMouseOver)
+             .on("mouseout",handleMouseOut);
+          //Create Legend
+          createLegend(map, colorNodes, colorLinks,maxDataLinks,maxDataNodes);
+        });
+    });
   });
 }

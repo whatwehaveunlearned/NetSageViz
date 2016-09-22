@@ -145,12 +145,20 @@ body{
 }
 
 /*************************** END query Style *****************************/
+
+/***************************Application Region Style **********************************/
+.applicationRegion{
+  position: relative;
+  left:20em;
+}
+
+/*************************** END Application Region Style *****************************/
 /*************************** Histogram Style *****************************/
 .multipleHistogram{
     border: 1px solid black;
 	  font-size: 10px;
     position: relative;
-    height: 503px;
+    min-height: 20em;
     overflow-y: scroll;
     display: inline-block;
     padding-left: 1px;
@@ -228,10 +236,9 @@ body{
 /*************************** Map Style *****************************/
 .map{
   border: 1px solid black;
-  width:800px;
+  width:1212px;
   height:500px;
   display: inline-block;
-  /*background: #F8F8FF;*/
 }
 .map path {
   stroke: black;
@@ -242,6 +249,11 @@ body{
 .map .links {
 	fill:none;
 	stroke: blue;
+}
+
+.map .linksPlaceholder{
+  fill:none;
+  stroke:lightgrey;
 }
 
 #mapTooltip {
@@ -261,6 +273,10 @@ body{
 }
 
 .map .nodes{
+  stroke: black;
+}
+
+.map .nodesPlaceholder{
   stroke: black;
 }
 
