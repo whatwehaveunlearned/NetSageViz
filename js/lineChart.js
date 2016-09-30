@@ -1,107 +1,51 @@
-function lineGraph(){
-	function parseQuery(){
-		function parseHistogram (tsdsObject){
-			var inputClean=[];
-			var outputClean=[];
-			for (each in tsdsObject.results.input){
-				if(tsdsObject.results.input[each][1]!=null) inputClean.push(tsdsObject.results.input[each][1]/1000000000);
-				if(tsdsObject.results.output[each][1]!=null) outputClean.push(tsdsObject.results.output[each][1]/1000000000);
-			}
-			return [inputClean,outputClean];
-		}
-
-		function parseTimeLine(tsdsObject){
-			var inputClean=[];
-			var outputClean=[];
-			for (each in tsdsObject.results.input){
-				if(tsdsObject.results.input[each][1]!=null) inputClean.push([ new Date(tsdsObject.results.input[each][0] * 1000), tsdsObject.results.input[each][1]/1000000000 ]);
-				if(tsdsObject.results.output[each][1]!=null) outputClean.push( [new Date(tsdsObject.results.input[each][0] * 1000),tsdsObject.results.output[each][1]/1000000000 ]);
-			}
-			return [inputClean,outputClean];
-		}
-
-		d3.json("tsdTest.json",function(error,data){
-			//Array to hold data from each node
-			var tsdsObjects = [];
-			for (each in data){
-				//The input and output key is based on the query LOOK FOR THE DIFFERENT QUERIES!
-				var input = data[each].query.split(', ')[2] + "," + data[each].query.split(',')[3] + "," + data[each].query.split(',')[4];
-				var output = input.split("input")[0] + "output" + input.split("input")[1];
-				var tsds = {
-					total_raw: data[each].total_raw,
-					query: data[each].query,
-					total:data[each].total,
-					results: {
-						input: data[each].results[0][input],
-						output: data[each].results[0][output]
-					}
-				};
-				tsdsObjects.push(tsds);
-			}
-			//Prepare data for histograms
-			var histogramData = [];
-			var timeLineData = [];
-			for (object in tsdsObjects){
-				histogramData.push(parseHistogram(tsdsObjects[object]));
-				timeLineData.push(parseTimeLine(tsdsObjects[object]));
-			}
-			lineChart(timeLineData,["US LHCNet","ASGCNet","CSTNet","TransPAC3","AARNet"]);
-		});
-	}
-	//Variable to hold the data from query to TSDS and that will be passed to the different graph functions
-	parseQuery();
-
-	function lineChart(data,elements){
-		var margin = {top: 10, right: 10, bottom: 30, left: 40},
-	    	width = 810 - margin.left - margin.right,
+function lineChart(data){
+	var links = data.links;
+	var nodes = data.nodes;
+	createLineCharts(links);
+	//I need to create one of this for all linecharts.
+		d3.select("#lineChart")
+		  .append('div')
+		  .attrs({
+		  	id:'tooltip'
+		  })
+		  .style("opacity", 0);
+	createLineCharts(nodes);
+	function createLineCharts(data){
+		var margin = {top: 40, right: 10, bottom: 30, left: 40},
+	    	width = 1200 - margin.left - margin.right,
 	    	height = 500 - margin.top - margin.bottom;
-	    var parseDate = d3.time.format("%Y%m%d").parse;
-	    var x = d3.time.scale()
-	    .range([0, width])
-	    .nice();
 
-		var y = d3.scale.linear()
-		    .range([height, 0]);
-
-		var color = d3.scale.category10();
+		//Scales and Colors
+		////Calculate Max values for scales
+	    var maxX=[];
+	    for (element in data){
+	    		maxX.push(data[element].data.input.max);
+	    		maxX.push(data[element].data.output.max);
+	    }
+	    maxX = d3.max(maxX)+1000;
+	    var x = d3.scaleTime().domain([data[0].data.minDate,data[0].data.maxDate]).range([0, width]);
+		var y = d3.scaleLinear().domain([0,maxX]).range([height, 0]);
+		var color = d3.scaleOrdinal(d3.schemeCategory10);
 		color.domain(data);
-		/*var color = d3.scale.ordinal()
-							.domain(data)
-							.range([{color: "red", opacity: .1}, {color: "green", opacity: 1}]);*/
 
-		var xAxis = d3.svg.axis()
-		    .scale(x)
-		    .orient("bottom");
+		var xAxis = d3.axisBottom()
+		    .scale(x);
 		    //.ticks(20);
 
-		var yAxis = d3.svg.axis()
-		    .scale(y)
-		    .orient("left");
+		var yAxis = d3.axisLeft()
+		    .scale(y);
 
-		var line = d3.svg.line()
-		    .interpolate("basis")
-		    .x(function(d) { 
+		var line = d3.line()
+		    .curve(d3.curveLinear)
+		    .x(function(d) {
 		    	return x(d[0]); })
-		    .y(function(d) { 
+		    .y(function(d) {
 		    	return y(d[1]); });
 
-		//Calculate Max values for scales
-	    var maxX=[];
-	    for (node in data){
-	    	for (type in data[node]){
-	    		maxX.push(d3.max(data[node][type], function(d) {
-		  			return d[1]; }))
-	    	}
-	    }
 
-		x.domain(d3.extent(data[0][0], function(d) {
-		  	return d[0]; }));
-    	y.domain([0,d3.max(maxX)])
-    	  	.nice();
+		var lineChart = d3.select(".applicationRegion").append("div")
+		  .attr("id","lineChart")
 
-
-    	var lineChart = d3.select("body").append("div")
-    	  .attr("id","lineChart")
 		//INPUT
 		var svgInput = lineChart.append("svg")
 			.attr("id","input")
@@ -125,42 +69,38 @@ function lineGraph(){
 		      .style("text-anchor", "end")
 		      .text("Gb/s");
 
-		  var inputNode = svgInput.selectAll(".node")
+		  var inputNode = svgInput.selectAll(".inputLine")
 		      .data(data)
 		    .enter().append("g")
-		      .attr("class",function(d,i){ return "node" + i + " node";})
+		      .attr("class",function(d,i){ return "inputLine" + i + " node";})
 		      .attr("id", function(d,i){ return "input"+i });
 
 		  inputNode.append("path")
 		      .attr("class", function(d,i){ return "line " + "line" + i})
-		      .attr("d", function(d) { 
-		      	return line(d[0]); })
-		      .style("stroke", function(d,i) { 
-		      	return color(data[i]); 
-		      })
-		      .on('mouseover', function(d){
-		      	//Difuse other lines fading away with a transition
-		      	d3.selectAll(".node")
-		      	  .transition()
-                  .duration(1000)
-                  .style("opacity", 0.2)
-		      	//Length of path for the animation http://bl.ocks.org/duopixel/4063326
-		      	var totalLength = this.getTotalLength();
-    			//We animate the selected path
-    			d3.selectAll("."+this.classList[1])
-    				.attr("stroke-dasharray", totalLength + " " + totalLength)
-      				.attr("stroke-dashoffset", totalLength)
-      				.transition()
-        			.duration(4000)
-       				.ease("linear")
-        			.attr("stroke-dashoffset", 0)
-        		//We set the opacity of the animated path to one again so that it pops out.
-        		d3.selectAll(".node"+this.classList[1].split('line')[1])
-        		  .transition()
-                  .duration(1000).style("opacity", 1)
-			  })
+		      .attr("d", function(d) { return line(d.data.input.values); })
+		      .style("stroke", function(d,i) { return color(i);})
+		      .on("mouseover", handleMouseOver)
+	      	  //.on("mouseout",handleMouseOut);
+			  createLegend(svgInput, color,data,width-margin.left);
+		  // svgInput.selectAll(".inputLine")
+		  //     .data(data)
+		  //   .enter().append("g")
+			 //  		.attrs({
+			 //  			"class": "dataCircles"
+			 //  		})
+			 //  		.data(data)
+				// 	.append("circle")
+			 //      	.attrs({
+			 //      		"class":"inputDataPoints",
+			 //      		"id": function(d,i){ return "inputDataPoints"+i },
+			 //      		cx: function (d,i) {
+	   //                		return x(d.data.input.values[i][0]); },
+	   //              	cy: function (d,i) { return y(d.data.input.values[i][1]); },
+	   //              	r: 5
+			 //      	})
 
-		//INPUT
+
+		//OUTPUT
 		var svgOutput = lineChart.append("svg")
 			.attr("id","output")
 		    .attr("width", width + margin.left + margin.right)
@@ -183,37 +123,75 @@ function lineGraph(){
 		      .style("text-anchor", "end")
 		      .text("Gb/s");
 
-		  var outputNode = svgOutput.selectAll(".node")
-		      .data(data)
+		  var outputNode = svgOutput.selectAll(".outputLine")
+	      .data(data)
 		    .enter().append("g")
-		      .attr("class",function(d,i){ return "node" + i + " node";})
+		      .attr("class",function(d,i){ return "outputLine" + i + " node";})
 		      .attr("id", function(d,i){ return "output"+i });
 
 		  outputNode.append("path")
 		      .attr("class", function(d,i){ return "line " + "line" + i})
-		      .attr("d", function(d) { 
-		      	return line(d[1]); })
-		      .style("stroke", function(d,i) { return color(data[i]); })
-		       .on('mouseover', function(d){
-		      	//Difuse other lines fading away with a transition
-		      	d3.selectAll(".node")
-		      	  .transition()
-                  .duration(1000)
-                  .style("opacity", 0.2)
-		      	//Length of path for the animation http://bl.ocks.org/duopixel/4063326
-		      	var totalLength = this.getTotalLength();
-    			//We animate the selected path
-    			d3.selectAll("."+this.classList[1])
-    				.attr("stroke-dasharray", totalLength + " " + totalLength)
-      				.attr("stroke-dashoffset", totalLength)
-      				.transition()
-        			.duration(4000)
-       				.ease("linear")
-        			.attr("stroke-dashoffset", 0)
-        		//We set the opacity of the animated path to one again so that it pops out.
-        		d3.selectAll(".node"+this.classList[1].split('line')[1])
-        		  .transition()
-                  .duration(1000).style("opacity", 1)
-			  })
+		      .attr("d", function(d,i) { return line(d.data.output.values); })
+		      .style("stroke", function(d,i) { return color(i); })
+		      .on("mouseover", handleMouseOver)
+	      	  //.on("mouseout",handleMouseOut);
+			  createLegend(svgOutput, color,data,width-margin.left);
+		function createLegend(svgGroup,colorScale,data,width){
+		    //Create gradients the id assigned has to be the same that appears in the fill parameter of the rectangle
+		    var legend = svgGroup.append('g')
+		                         .attrs({
+		                            "class":"lineChartLegend",
+		                            "transform": "translate(" + (width) + "," + 20 + ")",
+		                         })
+		    //Add max and minimum value to Legend
+		    legend.selectAll(".lineChartLegendNames")
+		      .data(data)
+		      .enter().append("text")
+		            .attrs({
+		              "transform": function(d,i){ return "translate(" + (-100)  + "," + (i*15) + ")"},
+		              "class": "lineChartLegendNames"
+		            })
+		            .styles({
+		            	'font-size':"0.75em",
+		            	'stroke': function(d,i){ return colorScale(i);}
+		            })
+		            .text(function(d){return d.node;});
+		}
+		function handleMouseOver(d,i){
+			div = d3.select('#tooltip')
+			div.transition()
+	       	   .duration(500)
+	           .style("opacity", .9);
+	        div.html("<p id ='mapTooltipname'> name: " + d.node + "</p>");
+	        div.style("position","absolute")
+	           .style("left", (d3.event.pageX - 250) + "px")
+	           .style("top", (d3.event.pageY -1500) + "px");
+		}
+		function handleMouseOut(d,i){
+			div = d3.select('#tooltip')
+			div.transition()
+	       	   .duration(500)
+	           .style("opacity", 0);
+		}
+		function redrawPath(){
+			//Difuse other lines fading away with a transition
+	      	d3.selectAll(".node")
+	      	  .transition()
+	          .duration(1000)
+	          .style("opacity", 0.2)
+	      	//Length of path for the animation http://bl.ocks.org/duopixel/4063326
+	      	var totalLength = this.getTotalLength();
+			//We animate the selected path
+			d3.selectAll(this)
+				.attr("stroke-dasharray", totalLength + " " + totalLength)
+					.attr("stroke-dashoffset", totalLength)
+					.transition()
+				.duration(4000)
+				.attr("stroke-dashoffset", 0)
+			//We set the opacity of the animated path to one again so that it pops out.
+			d3.selectAll(this)
+			  .transition()
+	          .duration(1000).style("opacity", 1)
+		}
 	}
 }

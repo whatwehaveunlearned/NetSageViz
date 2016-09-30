@@ -97,7 +97,7 @@ function queryForm(){
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":6
 				})
 		var queryTypeSelect = fieldset.append("div")
 									  .attrs({
@@ -128,7 +128,7 @@ function queryForm(){
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":6
 				})
 		//Create Query Measure Select
 		var queryMeasureSelect = fieldset.append("div")
@@ -160,7 +160,7 @@ function queryForm(){
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":6
 				})
 		//Create Query Values Select
 		var queryValueSelect = fieldset.append("div")
@@ -192,7 +192,7 @@ function queryForm(){
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":6
 				})
 		//Create queryTimeFrames Select
 		var queryTimeFrame = fieldset.append("div")
@@ -288,6 +288,8 @@ function queryForm(){
 		var queryMeasure;
 		var queryValue;
 		var timeFrame;
+		var queryDate;
+		var queryDateLocalTime;
 		//Add Giff image while loading it replaces the text in the button. The giff is replaced back to the text at the end of the query. I do that in the main function (TOP)
 		d3.select("#submit").append("span")
 			.append("img")
@@ -322,12 +324,12 @@ function queryForm(){
 		//Read TimeFrame
 		timeFrame = $("#queryTimeFrame")[0].value
 		//Read Dates
-		var queryDate;
 		if(getUrlParameter("avgOver")!=undefined && fromURL===true) var avgOver = parseInt(getUrlParameter("avgOver"),10);
 		else var avgOver = 60;
 		//UTC date
 		var UTCDateStart;
 		var UTCDateStop;
+		queryDateLocalTime = [d3.select("#datePickerStart")._groups[0][0].value + " at " + d3.select("#timeStart")._groups[0][0].value , d3.select("#datePickerEnd")._groups[0][0].value + " at " + d3.select("#timeStop")._groups[0][0].value]
 		UTCDateStart = new Date(d3.select("#datePickerStart")._groups[0][0].value + " " + d3.select("#timeStart")._groups[0][0].value )
 		UTCDateStart = new Date(UTCDateStart.getUTCFullYear(), UTCDateStart.getUTCMonth(), UTCDateStart.getUTCDate(),  UTCDateStart.getUTCHours(), UTCDateStart.getUTCMinutes(), UTCDateStart.getUTCSeconds());
 		UTCDateStop = new Date(d3.select("#datePickerEnd")._groups[0][0].value + " " + d3.select("#timeStop")._groups[0][0].value )
@@ -359,7 +361,7 @@ function queryForm(){
 			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
-		queryObjects.push(new Query(queryName + " " + queryMeasure + " " + queryValue + " " + timeFrame + ": " + queryDate[0] + " , " + queryDate[1],queryDate,avgOver,queryType))
+		queryObjects.push(new Query(queryName + " " + queryMeasure + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1], queryDate, avgOver, queryType))
 		//when we make a second query in the same page we open a new tab.
 		if($("#query0")[0]!==undefined){
 			$("#whiteButtonImg").remove();

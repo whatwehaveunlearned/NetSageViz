@@ -151,6 +151,9 @@ function LoadData(queryDate,queryText,avgOver,queryType){
 		dataPoint.output.percentile75 = percentile(dataPoint.output.histogram,75);
 		dataPoint.output.max = d3.max(dataPoint.output.histogram);
 		dataPoint.output.min = d3.min(dataPoint.output.histogram);
+		//min and max dates (dates are the same for all and are the same for input and output)
+		dataPoint.minDate = dataPoint.input.values[0][0];
+		dataPoint.maxDate = dataPoint.input.values[dataPoint.input.values.length-1][0];
 
 		if(dataPoint.input.histogram.length == 0){
 			dataPoint.input.max = 0;
@@ -222,6 +225,7 @@ function LoadData(queryDate,queryText,avgOver,queryType){
 						mapGraph(queryObjects[counter]);
 						//Create Table
 						histogramTableGraph(queryObjects[counter]);
+						lineChart(queryObjects[counter]);
 					}else if(queryObjects[counter].queryType==="1"){//Periodic Patterns
 						periodicPattern(queryObjects[counter]);
 					}

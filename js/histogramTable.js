@@ -14,11 +14,11 @@ function histogramTableGraph(queryData){
 	sortObjects(queryData.nodes,".data.input.avg");
 	queryData.graphs.table.links = queryData.links;
 	queryData.graphs.table.nodes = queryData.nodes;
-	columns = ["Links","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
+	columns = ["Links","Incoming Bandwidth (Mb/s)", "Outgoing Bandwidth (Mb/s)","Total Data (GB)"];
     startTable("links-"+counter,queryData.graphs.table.links);
-    columns = ["Nodes","Incoming Bandwidth", "Outgoing Bandwidth","Total Data"];
+    columns = ["Nodes","Incoming Bandwidth (Mb/s)", "Outgoing Bandwidth (Mb/s)","Total Data (GB)"];
     startTable("nodes-"+counter,queryData.graphs.table.nodes);
-	//Converto to dragtable
+	//Convert to dragtable
 	$('table').dragtable();
 	//Create static header
 	staticHeader("#multipleHistogram-links-"+counter);
@@ -389,33 +389,34 @@ function histogramTableGraph(queryData){
 						    	.append("text");
 	    	histoLegend.append("tspan")
 	    			   .attrs({
-	    			   		x:-15,
+	    			   		x:10,
 	    			   		class: tableName + " max",
 	    			   		id: function(d,i){ return i;}
 	    				})
 	    				.text(function(d,i){
-	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.max.toFixed(2)") + " Mb/s"
+	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.max.toFixed(2)");
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attrs({
 	    			   		class: tableName + " avg",
 	    			   		id: function(d,i){ return i;},
-	    			   		x:-15,
+	    			   		x:10,
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)") + " Mb/s"
+	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)");
 	    				});
-	    	histoLegend.append("tspan")
+	    	/*histoLegend.append("tspan")
 	    			   .attrs({
 	    			   		class: tableName + " min",
 	    			   		id: function(d,i){ return i;},
-	    			   		x:-15,
+	    			   		x:10,
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Min: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.min.toFixed(2)")+ " Mb/s"
+	    						return "Min: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.min.toFixed(2)");
 	    				});
+	    				*/
 		}
 		var svg=d3.selectAll(colName).append("svg")
 	   		.attrs({

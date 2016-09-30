@@ -6,7 +6,8 @@ body{
 .bullets{
   position:relative;
   /*Top and left specified inline because each has a specific position (main.js)*/
-  fill:rgba(232, 157, 77, 0.9);
+  fill:rgba(255, 153, 0, 1.0);
+  /*rgba(230, 108, 0, 1.0) same color as logo bu button is different*/
 }
 
 .querySelector img{
@@ -44,25 +45,26 @@ body{
 
 #queryTypeDiv{
   left:0em;
+  top:-2px;
 }
 
 #queryMeasureDiv{
   left:0em;
-  top:-2.5em;
+  top:-2.7em;
 }
 
 #queryValueDiv{
   left:0em;
-  top:-5em;
+  top:-5.2em;
 }
 
 #queryTimeFrameDiv{
   left:0em;
-  top:-7.3em;
+  top:-7.5em;
 }
 
 #dateHourDiv{
-  top:-7em;
+  top:-7.2em;
   left:0em;
   width:40em;
   padding: 0em;
@@ -149,7 +151,7 @@ body{
 /***************************Application Region Style **********************************/
 .applicationRegion{
   position: relative;
-  left:20em;
+  left:15em;
 }
 
 /*************************** END Application Region Style *****************************/
@@ -213,9 +215,8 @@ body{
 /*************************** END Histogram Style *****************************/
 /*************************** LineChart Style *****************************/
 #lineChart {
-  border: 1px solid black;
-  font-size: 10px;
-  display: inline-block;
+  position:relative;
+  float:left;
 }
 
 #lineChart .axis path,
@@ -227,8 +228,11 @@ body{
 
 #lineChart .line {
   fill: none;
-  stroke: steelblue;
   stroke-width: 1.5px;
+  stroke-opacity:0.4;
+}
+
+.lineChartLegendNames{
   stroke-opacity:0.4;
 }
 /*************************** END Histogram Style *****************************/
@@ -236,7 +240,7 @@ body{
 /*************************** Map Style *****************************/
 .map{
   border: 1px solid black;
-  width:1212px;
+  width:1197px;
   height:500px;
   display: inline-block;
 }

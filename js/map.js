@@ -26,13 +26,13 @@ function mapGraph(data){
         nodeLinks = nodeLinks + ("<p>" + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].node") + "- " + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].intf") + "</p>")
       }
       div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
-         .style("left", (d3.event.pageX + 15) + "px")
-         .style("top", (d3.event.pageY ) + "px");
+         .style("left", (d3.event.pageX - 230) + "px")
+         .style("top", (d3.event.pageY - 340) + "px");
     }else{
       //If MouseoverLink
       div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Gb" )
-         .style("left", (d3.event.pageX + 15) + "px")
-         .style("top", (d3.event.pageY ) + "px");
+         .style("left", (d3.event.pageX - 230) + "px")
+         .style("top", (d3.event.pageY - 340) + "px");
     }
   }
   function handleMouseOut(d,i){
@@ -144,7 +144,7 @@ function mapGraph(data){
     })
     .style("opacity", 0);
   var margin = {top: 0, right: 0, bottom: 0, left: 0},
-        width = 1210 - margin.left - margin.right,
+        width = 1197 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
   var svgMap = d3.select("#AppRegion"+counter)
       .append("div")
@@ -247,8 +247,7 @@ function mapGraph(data){
                   return projection([d.longitude, d.latitude])[0]; },
                 cy: function (d) { return projection([d.longitude, d.latitude])[1]; },
                 r: 5,
-                class: "nodesPlaceholder",
-                id: function (d,i) { return "nodes-"+ counter + i; }
+                class: "nodesPlaceholder"
              })
              .styles({
                 fill: function(d,i) {

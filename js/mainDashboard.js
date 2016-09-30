@@ -25,7 +25,7 @@ setInterval(main, 60000);
 function main (){
 	$(".applicationRegion").remove()
 	queryFormFunction();
-	$("#queryForm").remove()
+	$("#queryForm").remove();
 }
 
 //Query Object Prototype
