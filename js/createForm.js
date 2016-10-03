@@ -66,8 +66,13 @@ function queryForm(){
 				"src":"logoNoShadow.png",
 				"width":logoWidth,
 				"height":logoHeight
+			});
+		querySelector.append("span")
+			.attrs({
+				"class":"goBack"
 			})
-			.on("click",function(){ window.location.href="http://www.netsage.global/"});
+			.html("NetSage Dashboard")
+			.on("click",function(){ window.location.href="dashboard.html"});
 		queryForm=querySelector.append("form")
 			.attrs({
 				"id":"queryForm"
@@ -78,9 +83,33 @@ function queryForm(){
 							});
 		fieldset.append("span")
 				.attrs({
-					id:"fieldsetTitle"
+					class:"fieldsetTitle"
 				})
 				.html("Ask NetSage...");
+		fieldset.append("span")
+					.attrs({
+						class:"ui-icon ui-icon-info mainInfo noShowInfo"
+					})
+					.on("click",function(){
+						if(this.classList[3]==="showInfo"){
+							d3.select(this)
+						  	  .attr("class","ui-icon ui-icon-info mainInfo noShowInfo")
+						}else{
+							d3.select(this)
+						  	  .attr("class","ui-icon ui-icon-info mainInfo showInfo")
+						}
+						if(this.classList[3]==="showInfo")
+						{
+							d3.select("#fieldset").append("span")
+							.attrs({
+								"class": "mainInFoText",
+								"id":"mainInFoText"
+							})
+							.html("This is the main Page for the NetSage Project. <p>From here you can customize your query by simply clicking on the different dropdown menus.</p><p> Firstly select the question you want to get an answer to, secondly select the type of measurement you want to get, thirdly select the elements you want the measurements from and lastly select from the fast time range selector or your own customized range.</p><p>After you create your first query the following queries open in a new browser tab, this way we allow users to make different queries and visualize them side by side by undocking the tabs and arranging them in the screen</p><p>click the info button to hide this text and press it again to make it appear</p>")
+						}else{
+							$("#mainInFoText").remove();
+						}
+					});
 		//Create Query Type Select
 		//Insert svg Circle as bullet for list
 		fieldset.append("svg")

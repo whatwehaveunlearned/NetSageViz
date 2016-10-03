@@ -116,6 +116,10 @@ function periodicPattern(data){
 		return {"values":values,"arrayOfValues":arrayOfValues};
 	}
 	function handleMouseOver(d,i){
+		d3.select(this)
+		.styles({
+			"stroke-width":1
+		})
 		div = d3.select('.tooltip')
 		div.transition()
        	   .duration(500)
@@ -127,6 +131,10 @@ function periodicPattern(data){
            .style("top", (d3.event.pageY ) + "px");
 	}
 	function handleMouseOut(d,i){
+		d3.select(this)
+		.styles({
+			"stroke-width":0
+		})
 		div = d3.select('.tooltip')
 		div.transition()
        	   .duration(500)
@@ -487,8 +495,8 @@ function periodicPattern(data){
 					return y(d.hour)},
 				'height': function(d){return cellHeight},
 				'width': function(d){return cellWidth},
-				'stroke': function(){ return ""},
-				'stroke-width': function(){return 0.1},
+				'stroke': function(){ return "black"},
+				'stroke-width': function(){return 0},
 				'fill': function(d,i){
 					return colorScale(d.val)}
 

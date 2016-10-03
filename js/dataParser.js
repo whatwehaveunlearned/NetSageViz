@@ -225,7 +225,7 @@ function LoadData(queryDate,queryText,avgOver,queryType){
 						mapGraph(queryObjects[counter]);
 						//Create Table
 						histogramTableGraph(queryObjects[counter]);
-						lineChart(queryObjects[counter]);
+						if(window.location.pathname==="/dashboard.html") lineChart(queryObjects[counter]);
 					}else if(queryObjects[counter].queryType==="1"){//Periodic Patterns
 						periodicPattern(queryObjects[counter]);
 					}
@@ -234,19 +234,69 @@ function LoadData(queryDate,queryText,avgOver,queryType){
 				});
 			});
 			function drawQueryText(queryText){
-				d3.select("body").append("div")
+				var count =0;
+				var appRegion = d3.select("body").append("div")
 				.attrs({
 					"id": "AppRegion"+counter,
 					"class": "applicationRegion"
 				})
 				.style("float","left")
-				.append("div")
+				var queryTextDiv = appRegion.append("div")
 				.attrs({
 					"id": "query"+counter,
 					"class": "queryTextAppRegion"
 				})
-				.append("p")
+				queryTextDiv.append("span")
+					.attrs({
+						class:"ui-icon ui-icon-info noShowInfo"
+					})
+				.style("float","left")
+				.on("click",handleClick)
+				queryTextDiv.append("p")
 				.html(queryText);
+
+				function handleClick(){
+					var text;
+					if(this.classList[2]==="showInfo"){
+						d3.select(this)
+					  	  .attr("class","ui-icon ui-icon-info noShowInfo")
+					}else{
+						d3.select(this)
+					  	  .attr("class","ui-icon ui-icon-info showInfo")
+					}
+					if(this.classList[2]==="showInfo")
+					{
+						if(window.location.pathname==="/dashboard.html"){
+							text = createInfoText(0);
+							d3.select("body").append("div")
+						  		.attrs({
+						  			"id": "infoDashboardDiv"
+						  		})
+								.html(text)
+						}else{
+							text = createInfoText(1);
+							d3.select("body").append("div")
+						  		.attrs({
+						  			"id": "infoDiv"
+						  		})
+								.html(text)
+						}
+					}else{
+						$("#infoDashboardDiv").remove();
+						$("#infoDiv").remove();
+					}
+
+					function createInfoText(location){
+						if(queryObjects[0].queryType==="1"){
+							var text1= "<p>This query tries to visualize if any pattern exists for the selected measurement in the selected time period.</p><p>The visualization in the left shows heatmaps for the incoming and outcoming selected measurement values first for the IRNC links and then the IRNC nodes. On the y Axis time is represented as 1 hour steps showing the 24 hour period, the x Axis is represented as 1 day steps. Each square is colored using a blue scale based on the average measurement value for an hour H at a day D.</p><p> The visualizations in the right also show heatmaps of the selected measurement, but this time clustered by day of the week, the y Axis again represents the 24 hours in 1 hour steps, but in this visualization the x Axis represents each day of the week. Each square is colored using a blue scale based on the average measurement value for an hour H at an specific weekday W</p><p>Visualizations will appear incrementally <b>it is possible that it takes a bit of time to get all the visualizations</b> specially for long periods of time (longer than a few months) </p>"
+						}else{
+							var text1= "<p>On the top the map visualization shows the states of the links and nodes, where the size of the links represent the relative size of the connection. Links are colored in a blue scale while nodes are colored using an orange scale, gray links and white nodes have no data for the selected time frame.</p> <p> The table below depicts in its first two columns, the histograms of the links and the nodes for the incoming and outgoing bandwidth, as well as the maximum and average value for each link and node. The last column of the table visualizes the total incoming and outgoing bandwidth per each link, (part of the bar that is filled) relative to the values of the incoming and outgoing data transmitted by all the links or nodes (part of the bar that is empty) </p>";
+						}
+						var text0= "<p>This is the NetSage dashboard, the dashboard updates every 30 seconds with the last 3 hours information about the links and the nodes in the IRNC Network</p> <p>On the top the map visualization shows the states of the links and nodes, where the size of the links represent the relative size of the connection. Links are colored in a blue scale while nodes are colored using an orange scale, gray links and white nodes have no data for the last 3 hours.</p> <p> The table below depicts in its first two columns, the histograms of the links and the nodes for the incoming and outgoing bandwidth, as well as the maximum and average value for each link and node. The last column of the table visualizes the total incoming and outgoing bandwidth per each link, (part of the bar that is filled) relative to the values of the incoming and outgoing data transmitted by all the links or nodes (part of the bar that is empty) </p> <p> At last we provide visualizations showing the evolution for the past 3 hours of the incoming and outgoing bandwidth for the links and the nodes.</p><p>Click the info button to hide this text and click it again to make it appear</p>";
+						if(location===0) return text0;
+						else return text1;
+					}
+				}
 			}
 	}
 	//#################################### END AUX FUNCTIONS ############################

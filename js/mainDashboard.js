@@ -8,20 +8,10 @@ var counter=-1;
 
 //We put the logo
 var logoWidth = 90;
-		var logoHeight = 90;
-		var querySelector = d3.select("body").append("div")
-			.attrs({
-				class:"querySelector"
-			});
-		querySelector.append("img")
-			.attrs({
-				"src":"logoNoShadow.png",
-				"width":logoWidth,
-				"height":logoHeight
-			})
-			.on("click",function(){ window.location.href="http://www.netsage.global/"});
+var logoHeight = 90;
+
 //Every 30 seconds we execute the query again
-setInterval(main, 60000);
+//setInterval(main, 60000);
 function main (){
 	$(".applicationRegion").remove()
 	queryFormFunction();
@@ -83,6 +73,27 @@ function queryFormFunction(){
 		handleOnClick(day,false,queryFromTab);
 	}
 	function drawQueryForm(){
+		var querySelector = d3.select("body").append("div")
+			.attrs({
+				class:"querySelector"
+			});
+		querySelector.append("img")
+			.attrs({
+				"src":"logoNoShadow.png",
+				"width":logoWidth,
+				"height":logoHeight
+			});
+		querySelector.append("span")
+		.attrs({
+			"class":"dashboardTitle"
+		})
+		.html("NetSage Dashboard");
+		querySelector.append("span")
+			.attrs({
+				"class":"goBack"
+			})
+			.html("Ask NetSage")
+			.on("click",function(){ window.location.href="main.html"});
 		queryForm=querySelector.append("form")
 			.attrs({
 				"id":"queryForm"

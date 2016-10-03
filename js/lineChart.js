@@ -54,6 +54,12 @@ function lineChart(data){
 		  .append("g")
 		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+		   	svgInput.append("g")
+		   			.attr("class","lineChartTitle")
+		   			.attr("transform","translate("+ 10 +", " + 10 + ")")
+		   			.append("text")
+		   			.text("Input for the last 3 hours (Mb/s)")
+
 		  svgInput.append("g")
 		      .attr("class", "x axis")
 		      .attr("transform", "translate(0," + height + ")")
@@ -107,6 +113,12 @@ function lineChart(data){
 		    .attr("height", height + margin.top + margin.bottom)
 		  .append("g")
 		    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+		    svgOutput.append("g")
+		   			.attr("class","lineChartTitle")
+		   			.attr("transform","translate("+ 10 +", " + 10 + ")")
+		   			.append("text")
+		   			.text("Output for the last 3 hours (Mb/s)")
 
 		  svgOutput.append("g")
 		      .attr("class", "x axis")

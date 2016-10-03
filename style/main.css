@@ -28,7 +28,7 @@ body{
   border: 0;
 }
 
-#fieldsetTitle{
+.fieldsetTitle{
   position: absolute;
   top: -1.5em;
   left: 1.5em;
@@ -146,12 +146,42 @@ body{
   background-color: rgba(232, 157, 77, 0.9);
 }
 
+.goBack{
+  position: relative;
+  float:right;
+  border:;
+}
+.mainInfo{
+  position: absolute;
+  top: -3em;
+  left: 14em;
+}
+
+.mainInFoText{
+  position:absolute;
+  top: -4em;
+  left: 17em;
+  width:60em;
+}
+
 /*************************** END query Style *****************************/
 
 /***************************Application Region Style **********************************/
 .applicationRegion{
   position: relative;
   left:15em;
+}
+
+#infoDiv{
+  position: absolute;
+  top: 22.3em;
+  width: 15em;
+}
+
+#infoDashboardDiv{
+  position: absolute;
+  top: 7em;
+  width: 15em;
 }
 
 /*************************** END Application Region Style *****************************/
@@ -296,3 +326,13 @@ body{
 }
 
 /*************************** END Heatmap Style *****************************/
+
+/*************************** Dashboard Style *****************************/
+.dashboardTitle{
+  position: absolute;
+  top: 1em;
+  left: 3.7em;
+  font-size: 1.8em;
+}
+
+/*************************** END Dashboard Style *****************************/
