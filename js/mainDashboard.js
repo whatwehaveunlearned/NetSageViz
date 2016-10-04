@@ -9,13 +9,40 @@ var counter=-1;
 //We put the logo
 var logoWidth = 90;
 var logoHeight = 90;
+var querySelector = d3.select("body").append("div")
+			.attrs({
+				class:"querySelector"
+			});
+		querySelector.append("img")
+			.attrs({
+				"src":"logoNoShadow.png",
+				"width":logoWidth,
+				"height":logoHeight
+			});
+		querySelector.append("span")
+		.attrs({
+			"class":"dashboardTitle"
+		})
+		.html("NetSage Dashboard");
+		var goBack = querySelector.append("span")
+			.attrs({
+				"class":"goBack"
+			})
+			.html("Ask NetSage...")
+			.on("click",function(){ window.location.href="main.html"});
+		goBack.append("span")
+			.attrs({
+			  "class":"ui-icon ui-icon-arrowthick-1-e arrowGoBack"
+			 })
+			.on("click",function(){ window.location.href="main.html"});
 
 //Every 30 seconds we execute the query again
-//setInterval(main, 60000);
+setInterval(main, 60000);
 function main (){
+	$("#querySelector").remove();
 	$(".applicationRegion").remove()
 	queryFormFunction();
-	$("#queryForm").hide();
+	$("#queryForm").remove();
 }
 
 //Query Object Prototype
@@ -77,33 +104,11 @@ function queryFormFunction(){
 			.attrs({
 				class:"querySelector"
 			});
-		querySelector.append("img")
-			.attrs({
-				"src":"logoNoShadow.png",
-				"width":logoWidth,
-				"height":logoHeight
-			});
-		querySelector.append("span")
-		.attrs({
-			"class":"dashboardTitle"
-		})
-		.html("NetSage Dashboard");
-		var goBack = querySelector.append("span")
-			.attrs({
-				"class":"goBack"
-			})
-			.html("Ask NetSage...")
-			.on("click",function(){ window.location.href="main.html"});
-		goBack.append("span")
-			.attrs({
-			  "class":"ui-icon ui-icon-arrowthick-1-e arrowGoBack"
-			 })
-			.on("click",function(){ window.location.href="main.html"});
-		queryForm=querySelector.append("form")
+		var queryForm=querySelector.append("form")
 			.attrs({
 				"id":"queryForm"
 			});
-		fieldset = queryForm.append("fieldset")
+		var fieldset = queryForm.append("fieldset")
 							.attrs({
 								"id":"fieldset"
 							});
