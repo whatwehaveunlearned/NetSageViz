@@ -15,7 +15,7 @@ var logoHeight = 90;
 function main (){
 	$(".applicationRegion").remove()
 	queryFormFunction();
-	$("#queryForm").remove();
+	$("#queryForm").hide();
 }
 
 //Query Object Prototype
@@ -88,11 +88,16 @@ function queryFormFunction(){
 			"class":"dashboardTitle"
 		})
 		.html("NetSage Dashboard");
-		querySelector.append("span")
+		var goBack = querySelector.append("span")
 			.attrs({
 				"class":"goBack"
 			})
-			.html("Ask NetSage")
+			.html("Ask NetSage...")
+			.on("click",function(){ window.location.href="main.html"});
+		goBack.append("span")
+			.attrs({
+			  "class":"ui-icon ui-icon-arrowthick-1-e arrowGoBack"
+			 })
 			.on("click",function(){ window.location.href="main.html"});
 		queryForm=querySelector.append("form")
 			.attrs({

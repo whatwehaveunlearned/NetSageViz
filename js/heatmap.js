@@ -228,6 +228,7 @@ function periodicPattern(data){
 		var type;
 		//Time formats definitions
 		var monthFormat = d3.timeFormat("%B");
+		var abbrebiatedMonthDayFormat = d3.timeFormat('%b-%d')
 		var monthDayFormat = d3.timeFormat('%B-%d');
 		var monthDayYearFormat = d3.timeFormat('%B-%d-%Y');
 		var monthYearFormat = d3.timeFormat('%B-%Y');
@@ -263,17 +264,20 @@ function periodicPattern(data){
 			heatmapDates.push(new Date("1" + monthYearFormat(dateRange[0])));
 			heatmapDates.push(new Date ( (dateRange[0].getMonth()+2) + "-1-" + getYear(dateRange[0])));
 			ticks=d3.timeDay;
-			ticksFormat = monthDayFormat;
-		}else if(d3.timeYear.count(dateRange[0], dateRange[1]) === 0){//less than a year
+			ticksFormat = abbrebiatedMonthDayFormat;
+		/*}else if(d3.timeYear.count(dateRange[0], dateRange[1]) === 0){//less than a year
 			//create year heatmap
 			type='year';
 			heatmapDates.push(new Date("1 January" + getYear(dateRange[0])));
 			heatmapDates.push(new Date((endDate.getMonth()+2) + "-30-" + getYear(dateRange[1])));
 			var lastMonth = endDate.getMonth()+2;
 			ticks=d3.timeMonth.every(1);
-			ticksFormat = monthFormat;
+			ticksFormat = monthFormat;*/
 		}else{//more than a year
-			//Todo
+			heatmapDates.push(dateRange[0]);
+			heatmapDates.push(dateRange[1]);
+			ticks=20;
+			ticksFormat = abbrebiatedMonthDayFormat;
 		}
 		//Scales
 		var x = d3.scaleTime().domain([heatmapDates[0], heatmapDates[1]]).range([0, w]);
@@ -344,8 +348,8 @@ function periodicPattern(data){
 			      .call(xAxis)
 			      .selectAll("text")
 			      .attrs({
-			      	'dx': 30,
-			      	'dy':180,
+			      	'dx': -25,
+			      	'dy':10,
 			      	'transform': function(d) { return 'rotate(-65)';}
 			      })
 		}

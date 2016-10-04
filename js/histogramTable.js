@@ -406,17 +406,34 @@ function histogramTableGraph(queryData){
 	    			   .text(function(d,i){
 	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)");
 	    				});
-	    	/*histoLegend.append("tspan")
-	    			   .attrs({
-	    			   		class: tableName + " min",
-	    			   		id: function(d,i){ return i;},
-	    			   		x:10,
-	    			   		dy: 15
-	    				})
-	    			   .text(function(d,i){
-	    						return "Min: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.min.toFixed(2)");
-	    				});
-	    				*/
+	    	var lineGuides = graph.append("g")
+	    	 	.attrs({
+	    	 		"class":"lineGuides"
+	    	 	});
+	    	lineGuides.append("line")
+	    	 	.attrs({
+	    	 		"class":"maxGuide",
+	    	 		"x1":function(d,i){return x(eval("data[i].data."+ type +".max"))},
+	    	 		"y1":height,
+	    	 		"x2":function(d,i){return x(eval("data[i].data."+ type +".max"))},
+	    	 		"y2":0
+	    	 	})
+	    	 	.styles({
+	    	 		"stroke":"red",
+	    	 		"stroke-width":1
+	    	 	})
+	    	lineGuides.append("line")
+	    		.attrs({
+	    			"class":"minGuide",
+	    			"x1":function(d,i){return x(eval("data[i].data."+ type +".avg"))},
+	    	 		"y1":height,
+	    	 		"x2":function(d,i){return x(eval("data[i].data."+ type +".avg"))},
+	    	 		"y2":0,
+	    		})
+	    		.styles({
+	    	 		"stroke":"green",
+	    	 		"stroke-width":1
+	    	 	})
 		}
 		var svg=d3.selectAll(colName).append("svg")
 	   		.attrs({
@@ -459,7 +476,6 @@ function histogramTableGraph(queryData){
 	      	"transform": "translate(0," + height + ")"
 	      })
 	      .call(xAxis);
-
 	    createLegend(tableName,legend,data);
 	}
 	//#################################### END AUX FUNCTIONS ###########################

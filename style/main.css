@@ -147,9 +147,9 @@ body{
 }
 
 .goBack{
-  position: relative;
-  float:right;
-  border:;
+  position: absolute;
+  top:4em;
+  left:6.6em;
 }
 .mainInfo{
   position: absolute;
@@ -159,9 +159,14 @@ body{
 
 .mainInFoText{
   position:absolute;
-  top: -4em;
-  left: 17em;
+  top: 1.4em;
+  left: 32em;
   width:60em;
+}
+
+.arrowGoBack{
+  position: relative;
+  float:right;
 }
 
 /*************************** END query Style *****************************/

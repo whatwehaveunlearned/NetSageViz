@@ -67,12 +67,17 @@ function queryForm(){
 				"width":logoWidth,
 				"height":logoHeight
 			});
-		querySelector.append("span")
+		var goBack = querySelector.append("span")
 			.attrs({
 				"class":"goBack"
 			})
-			.html("NetSage Dashboard")
+			.html("Dashboard...")
 			.on("click",function(){ window.location.href="dashboard.html"});
+		goBack.append("span")
+			  .attrs({
+			  	"class":"ui-icon ui-icon-arrowthick-1-e arrowGoBack"
+			  })
+			  .on("click",function(){ window.location.href="main.html"});
 		queryForm=querySelector.append("form")
 			.attrs({
 				"id":"queryForm"
@@ -105,7 +110,7 @@ function queryForm(){
 								"class": "mainInFoText",
 								"id":"mainInFoText"
 							})
-							.html("This is the main Page for the NetSage Project. <p>From here you can customize your query by simply clicking on the different dropdown menus.</p><p> Firstly select the question you want to get an answer to, secondly select the type of measurement you want to get, thirdly select the elements you want the measurements from and lastly select from the fast time range selector or your own customized range.</p><p>After you create your first query the following queries open in a new browser tab, this way we allow users to make different queries and visualize them side by side by undocking the tabs and arranging them in the screen</p><p>click the info button to hide this text and press it again to make it appear</p>")
+							.html("<p>From this page you can customize your query by simply clicking on the different dropdown menus.</p><p> Firstly select the question you want to get an answer to, secondly select the type of measurement you want to get, thirdly select the elements you want the measurements from and lastly select from the fast time range selector or your own customized range.</p><p>After you create your first query the following queries open in a new browser tab, this way we allow users to make different queries and visualize them side by side by undocking the tabs and arranging them in the screen.</p>")
 						}else{
 							$("#mainInFoText").remove();
 						}

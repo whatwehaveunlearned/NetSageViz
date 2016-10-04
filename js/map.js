@@ -5,16 +5,22 @@ function mapGraph(data){
   var nodes = data.nodes;
   //#################################### AUX FUNCTIONS ############################
   function handleMouseOver(d,i){
-    //Eliminate events on lines enhaces interaction with nodes
-    //d3.selectAll(".links")
-    //  .attrs("pointer-events","none")
+    var xPos;
+    var yPos;
+    if(window.location.pathname==="/dashboard.html"){
+      xPos =d3.event.pageX-230;
+      yPos =d3.event.pageY-100;
+    }else{
+      xPos =d3.event.pageX - 230;
+      ypos =d3.event.pageY - 340;
+    }
     div = d3.select("#mapTooltip");
     div.transition()
        .duration(500)
        .style("opacity", .9);
     var nodeLinks="";
     //If mouseoverNode
-    if(this.classList[0]==="nodes"){
+    if(this.classList[0]==="nodes" || this.classList[0]==="nodesPlaceholder"){
       //Change size of node
       d3.select(this)
         .transition()
@@ -25,21 +31,33 @@ function mapGraph(data){
       for (var each in d.links){
         nodeLinks = nodeLinks + ("<p>" + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].node") + "- " + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].intf") + "</p>")
       }
-      div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
-         .style("left", (d3.event.pageX - 230) + "px")
-         .style("top", (d3.event.pageY - 340) + "px");
-    }else{
+      if(this.classList[0]==="nodes"){
+          div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
+            .style("left", xPos + "px")
+            .style("top", yPos + "px");
+      }else{
+        div.html("<p id ='mapTooltipname'>" + d.node + "</p>")
+            .style("left", xPos + "px")
+            .style("top", yPos + "px");
+      }
+    }else if(this.classList[0]==="links" || this.classList[0]==="linksPlaceholder"){
       //If MouseoverLink
-      div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Gb" )
-         .style("left", (d3.event.pageX - 230) + "px")
-         .style("top", (d3.event.pageY - 340) + "px");
+      if(this.classList[0]==="links"){
+        div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Gb" )
+           .style("left", xPos + "px")
+           .style("top", yPos + "px");
+      }else{
+        div.html("<p id ='mapTooltipname'>" + d.name)
+           .style("left", xPos + "px")
+           .style("top", yPos + "px");
+      }
     }
   }
   function handleMouseOut(d,i){
     //return events on lines
     //d3.selectAll(".links")
     //  .attrs("pointer-events","auto")
-    if(this.classList[0]==="nodes"){
+    if(this.classList[0]==="nodes" || this.classList[0]==="nodesPlaceholder"){
       d3.select(this)
         .transition()
         .duration(500)
@@ -200,18 +218,20 @@ function mapGraph(data){
          .enter()
          .append("path")
          .datum( function(d){
-            return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]]};
+            return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]],name:d.node};
          })
          .attrs({
             class:"linksPlaceholder",
             d:path,
             id: function (d,i) {
-              return "linksPlaceholder-"+ counter+ i ; }
+              return "linksPlaceholder-"+ d.node ; }
             })
          .styles({
             "stroke-width": function(d,i){
               return ((linkValues[i].max_bandwidth/10000000000) + 2 )}, //Transform to Terabyte and adjust size
          })
+         .on("mouseover",handleMouseOver)
+         .on("mouseout",handleMouseOut);
 
       //After we create the Real Links so they render on top
       map.selectAll(".links")
