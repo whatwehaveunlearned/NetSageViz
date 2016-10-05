@@ -36,96 +36,6 @@ function Query(query,date,avgOver,queryType){
 	return this;
 }
 
-function queryComposer(date,fromURL,queryFromTab){
-	var dayFormat = d3.timeFormat("%m/%d/%Y");
-		var timeFormat = d3.timeFormat("%H:%M:%S");
-		//variables to hold type,name,measure,value and timeframe from query, either from the previous tab or from the elements in the actual form.
-		var queryType;
-		var queryName;
-		var queryMeasure;
-		var queryValue;
-		var timeFrame;
-		var queryDate;
-		var queryDateLocalTime;
-		//Add Giff image while loading it replaces the text in the button. The giff is replaced back to the text at the end of the query. I do that in the main function (TOP)
-		d3.select("#submit").append("span")
-			.append("img")
-			.attrs({
-				"id":"whiteButtonImg",
-				"src":"whiteSquareButton.jpeg",
-				"width":"25em",
-				"height":"25em"
-			})
-		d3.select("#submit").append("span")
-			.append("img")
-			.attrs({
-				"id":"queryButtonImg",
-				"src":"opc-ajax-loader.gif",
-				"width":"35em",
-				"height":"35em"
-			})
-		//Increase counter
-		counter=counter+1;
-		//Read query type
-		if(queryFromTab !== undefined && fromURL === true){
-			queryType = queryFromTab.queryType;
-			queryName = queryFromTab.queryName;
-			queryValue = queryFromTab.queryValue;
-			queryMeasure = queryFromTab.queryMeasure;
-		}else{
-			queryType = $("#queryType")[0].value;
-			queryName = $("#queryTypeDiv option:selected").html();
-			queryMeasure = $("#queryMeasureDiv option:selected").html();
-			queryValue = $("#queryValueDiv option:selected").html()
-		}
-		//Read TimeFrame
-		timeFrame = $("#queryTimeFrame")[0].value
-		//Read Dates
-		if(getUrlParameter("avgOver")!=undefined && fromURL===true) var avgOver = parseInt(getUrlParameter("avgOver"),10);
-		else var avgOver = 900;
-		//UTC date
-		var UTCDateStart;
-		var UTCDateStop;
-		queryDateLocalTime = [d3.select("#datePickerStart")._groups[0][0].value + " at " + d3.select("#timeStart")._groups[0][0].value , d3.select("#datePickerEnd")._groups[0][0].value + " at " + d3.select("#timeStop")._groups[0][0].value]
-		UTCDateStart = new Date(d3.select("#datePickerStart")._groups[0][0].value + " " + d3.select("#timeStart")._groups[0][0].value )
-		UTCDateStart = new Date(UTCDateStart.getUTCFullYear(), UTCDateStart.getUTCMonth(), UTCDateStart.getUTCDate(),  UTCDateStart.getUTCHours(), UTCDateStart.getUTCMinutes(), UTCDateStart.getUTCSeconds());
-		UTCDateStop = new Date(d3.select("#datePickerEnd")._groups[0][0].value + " " + d3.select("#timeStop")._groups[0][0].value )
-		UTCDateStop = new Date(UTCDateStop.getUTCFullYear(), UTCDateStop.getUTCMonth(), UTCDateStop.getUTCDate(),  UTCDateStop.getUTCHours(), UTCDateStop.getUTCMinutes(), UTCDateStop.getUTCSeconds());
-		console.log(UTCDateStart);
-		console.log(UTCDateStop);
-		if (timeFrame === "time frame") {
-			avgOver = 3600; //get avg per each hour. This is the data format the heatmaps are expecting.
-			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
-		}else if (timeFrame === "this year"){
-			avgOver = 3600;
-			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
-		} else if (timeFrame === "this month"){
-			if(queryType==="1") avgOver = 3600;
-			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
-		} else if (timeFrame === "last 7 days"){
-			if(queryType==="1") avgOver = 3600;
-			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
-		}
-		else if (timeFrame === "today"){
-			if(queryType==="1") avgOver = 3600;
-			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
-		} else if (timeFrame === "now"){
-			if(queryType==="1") avgOver = 3600;
-			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
-		}
-		queryObjects.push(new Query(queryName + " " + queryMeasure + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1], queryDate, avgOver, queryType))
-		//when we make a second query in the same page we open a new tab.
-		if($("#query0")[0]!==undefined){
-			$("#whiteButtonImg").remove();
-			$("#queryButtonImg").remove();
-			url = getQuery(queryDate,avgOver,queryType,queryName,queryMeasure,queryValue);
-			myWindow = window.open(url,'_blank');
-			myWindow.focus();
-		}else{
-			LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver,queryObjects[counter].queryType);
-		}
-}
-
 //Function to fill up and create the necesarry datePickers depending on the selected TimeFrame
 function createDatePickers(startDate,stopDate,isNow){
 	var dayFormat = d3.timeFormat("%m/%d/%Y");
@@ -449,7 +359,96 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 				"height":"50em"
 			})
 }
-//Function that reads the query
+//Function that manages the Mouseclick on the play button
 function handleOnClick(date,fromURL,queryFromTab){
 	queryComposer(date,fromURL,queryFromTab);
+}//Function that reads the query
+function queryComposer(date,fromURL,queryFromTab){
+	var dayFormat = d3.timeFormat("%m/%d/%Y");
+		var timeFormat = d3.timeFormat("%H:%M:%S");
+		//variables to hold type,name,measure,value and timeframe from query, either from the previous tab or from the elements in the actual form.
+		var queryType;
+		var queryName;
+		var queryMeasure;
+		var queryValue;
+		var timeFrame;
+		var queryDate;
+		var queryDateLocalTime;
+		//Add Giff image while loading it replaces the text in the button. The giff is replaced back to the text at the end of the query. I do that in the main function (TOP)
+		d3.select("#submit").append("span")
+			.append("img")
+			.attrs({
+				"id":"whiteButtonImg",
+				"src":"whiteSquareButton.jpeg",
+				"width":"25em",
+				"height":"25em"
+			})
+		d3.select("#submit").append("span")
+			.append("img")
+			.attrs({
+				"id":"queryButtonImg",
+				"src":"opc-ajax-loader.gif",
+				"width":"35em",
+				"height":"35em"
+			})
+		//Increase counter
+		counter=counter+1;
+		//Read query type
+		if(queryFromTab !== undefined && fromURL === true){
+			queryType = queryFromTab.queryType;
+			queryName = queryFromTab.queryName;
+			queryValue = queryFromTab.queryValue;
+			queryMeasure = queryFromTab.queryMeasure;
+		}else{
+			queryType = $("#queryType")[0].value;
+			queryName = $("#queryTypeDiv option:selected").html();
+			queryMeasure = $("#queryMeasureDiv option:selected").html();
+			queryValue = $("#queryValueDiv option:selected").html()
+		}
+		//Read TimeFrame
+		timeFrame = $("#queryTimeFrame")[0].value
+		//Read Dates
+		if(getUrlParameter("avgOver")!=undefined && fromURL===true) var avgOver = parseInt(getUrlParameter("avgOver"),10);
+		else var avgOver = 900;
+		//UTC date
+		var UTCDateStart;
+		var UTCDateStop;
+		queryDateLocalTime = [d3.select("#datePickerStart")._groups[0][0].value + " at " + d3.select("#timeStart")._groups[0][0].value , d3.select("#datePickerEnd")._groups[0][0].value + " at " + d3.select("#timeStop")._groups[0][0].value]
+		UTCDateStart = new Date(d3.select("#datePickerStart")._groups[0][0].value + " " + d3.select("#timeStart")._groups[0][0].value )
+		UTCDateStart = new Date(UTCDateStart.getUTCFullYear(), UTCDateStart.getUTCMonth(), UTCDateStart.getUTCDate(),  UTCDateStart.getUTCHours(), UTCDateStart.getUTCMinutes(), UTCDateStart.getUTCSeconds());
+		UTCDateStop = new Date(d3.select("#datePickerEnd")._groups[0][0].value + " " + d3.select("#timeStop")._groups[0][0].value )
+		UTCDateStop = new Date(UTCDateStop.getUTCFullYear(), UTCDateStop.getUTCMonth(), UTCDateStop.getUTCDate(),  UTCDateStop.getUTCHours(), UTCDateStop.getUTCMinutes(), UTCDateStop.getUTCSeconds());
+		console.log(UTCDateStart);
+		console.log(UTCDateStop);
+		if (timeFrame === "time frame") {
+			avgOver = 3600; //get avg per each hour. This is the data format the heatmaps are expecting.
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
+		}else if (timeFrame === "this year"){
+			avgOver = 3600;
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
+		} else if (timeFrame === "this month"){
+			if(queryType==="1") avgOver = 3600;
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
+		} else if (timeFrame === "last 7 days"){
+			if(queryType==="1") avgOver = 3600;
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
+		}
+		else if (timeFrame === "today"){
+			if(queryType==="1") avgOver = 3600;
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
+		} else if (timeFrame === "now"){
+			if(queryType==="1") avgOver = 3600;
+			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
+		}
+		queryObjects.push(new Query(queryName + " " + queryMeasure + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1], queryDate, avgOver, queryType))
+		//when we make a second query in the same page we open a new tab.
+		if($("#query0")[0]!==undefined){
+			$("#whiteButtonImg").remove();
+			$("#queryButtonImg").remove();
+			url = getQuery(queryDate,avgOver,queryType,queryName,queryMeasure,queryValue);
+			myWindow = window.open(url,'_blank');
+			myWindow.focus();
+		}else{
+			LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver,queryObjects[counter].queryType);
+		}
 }
