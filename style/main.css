@@ -22,7 +22,7 @@ body{
 #fieldset {
   padding: 0em;
   position: relative;
-  top:4em;
+  top:4.35em;
   width:30em;
   left: -2.1em;
   border: 0;
@@ -30,7 +30,7 @@ body{
 
 .fieldsetTitle{
   position: absolute;
-  top: -1.5em;
+  top: -1.85em;
   left: 1.5em;
   font-size: 1.8em;
 }

@@ -3,11 +3,11 @@ setInterval(main, 60000);
 function main (){
 	$(".querySelector").remove();
 	$(".applicationRegion").remove()
-	dashboardFormFunction();
+	dashboardForm();
 	$("#queryForm").remove();
 }
 
-function dashboardFormFunction(){
+function dashboardForm(){
 	//We put the logo and links between Dashboard and Main
 	var logoWidth = 90;
 	var logoHeight = 90;
