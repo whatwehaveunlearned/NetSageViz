@@ -7,13 +7,14 @@ var queryObjects = [];
 var counter=-1;
 
 //Query Object Prototype
-function Query(query,date,avgOver,queryType){
+function Query(query,date,avgOver,queryType,queryMeasure){
 	this.queryText = query;
 	this.date = date;
 	this.links = 0;
 	this.nodes = 0;
 	this.avgOver = avgOver;
 	this.queryType = queryType;
+	this.queryMeasure = queryMeasure;
 	this.graphs = ({
 		"table" : 	({
 						"links":null,
@@ -370,6 +371,7 @@ function queryComposer(date,fromURL,queryFromTab){
 		var queryType;
 		var queryName;
 		var queryMeasure;
+		var queryMeasureText;
 		var queryValue;
 		var timeFrame;
 		var queryDate;
@@ -402,7 +404,8 @@ function queryComposer(date,fromURL,queryFromTab){
 		}else{
 			queryType = $("#queryType")[0].value;
 			queryName = $("#queryTypeDiv option:selected").html();
-			queryMeasure = $("#queryMeasureDiv option:selected").html();
+			queryMeasure = $("#queryMeasureDiv option:selected")[0].value;
+			queryMeasureText = $("#queryMeasureDiv option:selected").html();
 			queryValue = $("#queryValueDiv option:selected").html()
 		}
 		//Read TimeFrame
@@ -440,7 +443,7 @@ function queryComposer(date,fromURL,queryFromTab){
 			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
-		queryObjects.push(new Query(queryName + " " + queryMeasure + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1], queryDate, avgOver, queryType))
+		queryObjects.push(new Query(queryName + " " + queryMeasureText + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1], queryDate, avgOver, queryType,queryMeasure))
 		//when we make a second query in the same page we open a new tab.
 		if($("#query0")[0]!==undefined){
 			$("#whiteButtonImg").remove();
@@ -449,6 +452,6 @@ function queryComposer(date,fromURL,queryFromTab){
 			myWindow = window.open(url,'_blank');
 			myWindow.focus();
 		}else{
-			LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver,queryObjects[counter].queryType);
+			LoadData(queryObjects[counter].date,queryObjects[counter].queryText,queryObjects[counter].avgOver,queryObjects[counter].queryType,queryObjects[counter].queryMeasure);
 		}
 }

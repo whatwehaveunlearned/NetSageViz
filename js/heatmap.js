@@ -1,92 +1,123 @@
-function periodicPattern(data){
+function periodicPattern(data,queryMeasure){
 	var heatmapData;
-	//First we extract the max value for the color scale. To use the same scale accross all heatmaps. We also need to extract maximun date so that all normal day heatmaps end at the same date and scales are aligned.
-	//We then calculate the weekdata per each element and calculate max values for the scales of weekdata so that all weekheatmaps graphs share the same scale.
-	var maxValueLinks = [];
-	var maxValueNodes = [];
-	var maxWeekDataLinks = [];
-	var maxWeekDataNodes = [];
-	var maxDate = [];
-	data.links.forEach(function(d){
-		//Extract Normal heatmap Max per each element
-		maxValueLinks.push(d.data.input.max);
-		maxValueLinks.push(d.data.output.max);
-		d.data.input.values.forEach(function(d){
-			maxDate.push(d[0])
-		})
-		d.data.output.values.forEach(function(d){
-			maxDate.push(d[0])
-		})
-		//Calculate Weekday Data per each element
-		d.data.input.weekData = calculateWeekData(d.data.input.values);
-		d.data.output.weekData = calculateWeekData(d.data.output.values);
-		//Extract Max of each WeekdayData
-		maxWeekDataLinks.push(d3.max(d.data.input.weekData.arrayOfValues));
-		maxWeekDataLinks.push(d3.max(d.data.output.weekData.arrayOfValues));
-	});
-	data.nodes.forEach(function(d){
-		////Extract Normal heatmap Max per each element
-		maxValueNodes.push(d.data.input.max);
-		maxValueNodes.push(d.data.output.max);
-		d.data.input.values.forEach(function(d){
-			maxDate.push(d[0])
-		})
-		d.data.output.values.forEach(function(d){
-			maxDate.push(d[0])
-		})
-		//Calculate Weekday Data per each element
-		d.data.input.weekData = calculateWeekData(d.data.input.values);
-		d.data.output.weekData = calculateWeekData(d.data.output.values);
-		//Extract Max of each WeekdayData
-		maxWeekDataNodes.push(d3.max(d.data.input.weekData.arrayOfValues));
-		maxWeekDataNodes.push(d3.max(d.data.output.weekData.arrayOfValues));
-	});
-	//Calculate Max values
-	maxValueLinks = d3.max(maxValueLinks);
-	maxValueNodes = d3.max(maxValueNodes);
-	maxWeekDataLinks = d3.max(maxWeekDataLinks);
-	maxWeekDataNodes = d3.max(maxWeekDataNodes);
-	maxDate = d3.max(maxDate);
-
-	//we draw a heatmap per input and output for each of the links and then each of the nodes.
-	var arrayIndexLinks = 0;
-	var arrayIndexNodes = 0;
-	for(var element in data.links){
-		setTimeout(function(){
-			var start = new Date().getTime();
-			drawElementText("Input: " + data.links[arrayIndexLinks].node);
-			heatmapData = data.links[arrayIndexLinks].data.input.values;
-			heatmap(heatmapData,maxValueLinks,maxDate);
-			weekHeatmap(data.links[arrayIndexLinks].data.input.weekData,maxWeekDataLinks);
-			drawElementText("Output: " + data.links[arrayIndexLinks].node);
-			heatmapData = data.links[arrayIndexLinks].data.output.values;
-			heatmap(heatmapData,maxValueLinks,maxDate);
-			weekHeatmap(data.links[arrayIndexLinks].data.output.weekData,maxWeekDataLinks);
-			arrayIndexLinks++;
-			var end = new Date().getTime();
-			var time = end - start;
-			console.log('Element: ' + arrayIndexLinks+ ' Execution time: ' + time);
-		},element*4000)
-	}
-	setTimeout(function(){
-		for(var element in data.nodes){
+	var dates = [];
+	var minDate,maxDate;
+	if(queryMeasure==="0"){
+		//First we extract the max value for the color scale. To use the same scale accross all heatmaps. We also need to extract maximun date so that all normal day heatmaps end at the same date and scales are aligned.
+		//We then calculate the weekdata per each element and calculate max values for the scales of weekdata so that all weekheatmaps graphs share the same scale.
+		var maxValueLinks = [];
+		var maxValueNodes = [];
+		var maxWeekDataLinks = [];
+		var maxWeekDataNodes = [];
+		data.links.forEach(function(d){
+			//Extract Normal heatmap Max per each element
+			maxValueLinks.push(d.data.input.max);
+			maxValueLinks.push(d.data.output.max);
+			d.data.input.values.forEach(function(d){
+				dates.push(d[0])
+			})
+			d.data.output.values.forEach(function(d){
+				dates.push(d[0])
+			})
+			//Calculate Weekday Data per each element
+			d.data.input.weekData = calculateWeekData(d.data.input.values);
+			d.data.output.weekData = calculateWeekData(d.data.output.values);
+			//Extract Max of each WeekdayData
+			maxWeekDataLinks.push(d3.max(d.data.input.weekData.arrayOfValues));
+			maxWeekDataLinks.push(d3.max(d.data.output.weekData.arrayOfValues));
+		});
+		if(data.nodes){
+			data.nodes.forEach(function(d){
+				////Extract Normal heatmap Max per each element
+				maxValueNodes.push(d.data.input.max);
+				maxValueNodes.push(d.data.output.max);
+				d.data.input.values.forEach(function(d){
+					dates.push(d[0]);
+				})
+				d.data.output.values.forEach(function(d){
+					dates.push(d[0]);
+				})
+				//Calculate Weekday Data per each element
+				d.data.input.weekData = calculateWeekData(d.data.input.values);
+				d.data.output.weekData = calculateWeekData(d.data.output.values);
+				//Extract Max of each WeekdayData
+				maxWeekDataNodes.push(d3.max(d.data.input.weekData.arrayOfValues));
+				maxWeekDataNodes.push(d3.max(d.data.output.weekData.arrayOfValues));
+			});
+		}
+		//Calculate Max values
+		maxValueLinks = d3.max(maxValueLinks);
+		maxValueNodes = d3.max(maxValueNodes);
+		maxWeekDataLinks = d3.max(maxWeekDataLinks);
+		maxWeekDataNodes = d3.max(maxWeekDataNodes);
+		maxDate = d3.max(dates);
+		minDate = d3.min(dates);
+		//we draw a heatmap per input and output for each of the links and then each of the nodes.
+		var arrayIndexLinks = 0;
+		var arrayIndexNodes = 0;
+		for(var element in data.links){
 			setTimeout(function(){
 				var start = new Date().getTime();
-				drawElementText("Input: " + data.nodes[arrayIndexNodes].node);
-				heatmapData = data.nodes[arrayIndexNodes].data.input.values;
-				heatmap(heatmapData,maxValueNodes,maxDate);
-				weekHeatmap(data.nodes[arrayIndexNodes].data.input.weekData,maxWeekDataNodes);
-				drawElementText("Output: " + data.nodes[arrayIndexNodes].node);
-				heatmapData = data.nodes[arrayIndexNodes].data.output.values;
-				heatmap(heatmapData,maxValueNodes,maxDate);
-				weekHeatmap(data.nodes[arrayIndexNodes].data.output.weekData,maxWeekDataNodes);
-				arrayIndexNodes++;
+				drawElementText("Input: " + data.links[arrayIndexLinks].node);
+				heatmapData = data.links[arrayIndexLinks].data.input.values;
+				heatmap(heatmapData,maxValueLinks,maxDate,minDate,queryMeasure);
+				weekHeatmap(data.links[arrayIndexLinks].data.input.weekData,maxWeekDataLinks);
+				drawElementText("Output: " + data.links[arrayIndexLinks].node);
+				heatmapData = data.links[arrayIndexLinks].data.output.values;
+				heatmap(heatmapData,maxValueLinks,maxDate,minDate,queryMeasure);
+				weekHeatmap(data.links[arrayIndexLinks].data.output.weekData,maxWeekDataLinks);
+				arrayIndexLinks++;
 				var end = new Date().getTime();
 				var time = end - start;
-				console.log('Element: ' + arrayIndexNodes+ ' Execution time: ' + time);
+				console.log('Element: ' + arrayIndexLinks+ ' Execution time: ' + time);
 			},element*4000)
 		}
-	},(data.links.length*4000)+1000)
+		setTimeout(function(){
+			for(var element in data.nodes){
+				setTimeout(function(){
+					var start = new Date().getTime();
+					drawElementText("Input: " + data.nodes[arrayIndexNodes].node);
+					heatmapData = data.nodes[arrayIndexNodes].data.input.values;
+					heatmap(heatmapData,maxValueNodes,maxDate,minDate,queryMeasure);
+					weekHeatmap(data.nodes[arrayIndexNodes].data.input.weekData,maxWeekDataNodes);
+					drawElementText("Output: " + data.nodes[arrayIndexNodes].node);
+					heatmapData = data.nodes[arrayIndexNodes].data.output.values;
+					heatmap(heatmapData,maxValueNodes,maxDate,minDate,queryMeasure);
+					weekHeatmap(data.nodes[arrayIndexNodes].data.output.weekData,maxWeekDataNodes);
+					arrayIndexNodes++;
+					var end = new Date().getTime();
+					var time = end - start;
+					console.log('Element: ' + arrayIndexNodes+ ' Execution time: ' + time);
+				},element*4000)
+			}
+		},(data.links.length*4000)+1000)
+	}else if(queryMeasure==="1" || queryMeasure==="2"){
+		var maxValue =[];
+		data.links.forEach(function(d){
+			maxValue.push(d3.max(d.histogram));
+			d.values.forEach(function(d){
+				dates.push(d[0])
+			})
+		})
+		maxValue = d3.max(maxValue);
+		maxDate = d3.max(dates);
+		minDate = d3.min(dates);
+		var arrayIndex=0;
+		for(var element in data.links){
+			setTimeout(function(){
+				var start = new Date().getTime();
+				drawElementText("Link: " + data.links[arrayIndex].source +  " - " + data.links[arrayIndex].destination + " Max Loss: " + data.links[arrayIndex].max_loss);
+				heatmapData = data.links[arrayIndex].values;
+				heatmap(heatmapData,maxValue,maxDate,minDate,queryMeasure);
+				//weekHeatmap(data.links[arrayIndex].weekData,maxWeekDataLinks);
+				arrayIndexLinks++;
+				var end = new Date().getTime();
+				var time = end - start;
+				console.log('Element: ' + arrayIndex+ ' Execution time: ' + time);
+				arrayIndex++;
+			},element*4000)
+		}
+	}
 	d3.select('body')
 	  .append('div')
 	  .attrs({
@@ -97,8 +128,8 @@ function periodicPattern(data){
 	function calculateWeekData(data){
 		var values = [];
 		var arrayOfValues = [];
-		var weekDaydata = {Mon:{"00":0,"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0},Tue:{"00":0,"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0},Wed:{"00":0,"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0},Thu:{"00":0,"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0},Fri:{"00":0,"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0},Sat:{"00":0,"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0},Sun:{"00":0,"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0}};
-		var hoursInDay = ["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23"];
+		var weekDaydata = {Mon:{"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"00":0},Tue:{"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"00":0},Wed:{"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"00":0},Thu:{"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"00":0},Fri:{"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"00":0},Sat:{"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"00":0},Sun:{"01":0,"02":0,"03":0,"04":0,"05":0,"06":0,"07":0,"08":0,"09":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"00":0}};
+		var hoursInDay = ["01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","00"];
 		//Time formats definitions
 		getDayOfWeek=d3.timeFormat('%a');
 		getHour=d3.timeFormat('%H');
@@ -140,54 +171,108 @@ function periodicPattern(data){
        	   .duration(500)
            .style("opacity", 0);
 	}
+	function handleMouseOverSmallValues(d,i){
+		d3.select(this)
+		.styles({
+			"stroke-width":1
+		})
+		div = d3.select('.tooltip')
+		div.transition()
+       	   .duration(500)
+           .style("opacity", .9);
+        if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".8f")(d[1]) + "</p>" );
+        else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
+        div.style("position","absolute")
+           .style("left", (d3.event.pageX + 15) + "px")
+           .style("top", (d3.event.pageY ) + "px");
+	}
 	function drawElementText(text){
 		d3.select("#AppRegion"+counter)
 		.append("p")
 		.html(text);
 	}
 
-	function createLegend(svgGroup,colorScale,maxData,width){
-	    //Create gradients the id assigned has to be the same that appears in the fill parameter of the rectangle
-	    createGradient("Gradient",svgGroup,colorScale(0),colorScale(maxData));
-	    var legend = svgGroup.append('g')
-	                         .attrs({
-	                            "class":"heatMapLegend",
-	                            "transform": "translate(" + (width+15) + "," + 20 + ")",
-	                         })
-	    legend.append("rect")
-	            .attrs({
-	              "class": "legend",
-	              "height": 75,
-	              "width": 13,
-	              "fill": "url(#Gradient)",
-	              "stroke":"rgb(0,0,0)",
-	              "stroke-width":0.5
-	            });
-	    //Add max and minimum value to Legend
-	    legend.append("text")
-	            .attrs({
-	              "transform": "translate(" + (-7) + "," + (-5) + ")"
-	            })
-	            .styles({
-	            	'font-size':"0.75em"
-	            })
-	            .text(Math.ceil(maxData))
-	    legend.append("text")
-	            .attrs({
-	              "transform": "translate(" + (15) + "," + (45) + ")"
-	            })
-	            .styles({
-	            	'font-size':"0.75em"
-	            })
-	            .text("Mb/s")
-	    legend.append("text")
-	            .attrs({
-	              "transform": "translate(" + (2) + "," + 90 + ")"
-	            })
-	            .styles({
-	            	'font-size':"0.75em"
-	            })
-	            .text("0")
+	function createLegend(svgGroup,colorScale,maxData,width,queryMeasure){
+		//Create gradients the id assigned has to be the same that appears in the fill parameter of the rectangle
+		createGradient("Gradient",svgGroup,colorScale(0),colorScale(maxData));
+		var legend = svgGroup.append('g')
+		                         .attrs({
+		                            "class":"heatMapLegend",
+		                            "transform": "translate(" + (width+15) + "," + 20 + ")",
+		                         })
+		legend.append("rect")
+		            .attrs({
+		              "class": "legend",
+		              "height": 75,
+		              "width": 13,
+		              "fill": "url(#Gradient)",
+		              "stroke":"rgb(0,0,0)",
+		              "stroke-width":0.5
+		            });
+		if(queryMeasure==="2")
+		{
+		    //Add max and minimum value to Legend
+		    legend.append("text")
+		            .attrs({
+		              "transform": "translate(" + (-3) + "," + (-5) + ")"
+		            })
+		            .styles({
+		            	'font-size':"0.75em"
+		            })
+		            .text(Math.ceil(maxData));
+		    legend.append("text")
+		            .attrs({
+		              "transform": "translate(" + (15) + "," + (45) + ")"
+		            })
+		            .styles({
+		            	'font-size':"0.75em"
+		            })
+		            .text("seconds");
+		}else if(queryMeasure==="1"){
+			//Add max and minimum value to Legend
+		    legend.append("text")
+		            .attrs({
+		              "transform": "translate(" + (-15) + "," + (-5) + ")"
+		            })
+		            .styles({
+		            	'font-size':"0.75em"
+		            })
+		            .text(d3.format(".5f")(maxData));
+		    legend.append("text")
+		            .attrs({
+		              "transform": "translate(" + (14) + "," + (45) + ")"
+		            })
+		            .styles({
+		            	'font-size':"0.75em"
+		            })
+		            .text("% of Loss");
+		}else if(queryMeasure==="0"){
+		    //Add max and minimum value to Legend
+		    legend.append("text")
+		            .attrs({
+		              "transform": "translate(" + (-7) + "," + (-5) + ")"
+		            })
+		            .styles({
+		            	'font-size':"0.75em"
+		            })
+		            .text(Math.ceil(maxData))
+		    legend.append("text")
+		            .attrs({
+		              "transform": "translate(" + (15) + "," + (45) + ")"
+		            })
+		            .styles({
+		            	'font-size':"0.75em"
+		            })
+		            .text("Mb/s");
+		}
+		    legend.append("text")
+		            .attrs({
+		              "transform": "translate(" + (2) + "," + 90 + ")"
+		            })
+		            .styles({
+		            	'font-size':"0.75em"
+		            })
+		            .text("0");
 	    //Aux function to create an svg vertical Gradient for Legends
 		function createGradient(id,svgGroup,startColor,endColor){
 		    //Append a defs (for definition) element to your SVG
@@ -220,7 +305,7 @@ function periodicPattern(data){
 		}
 	}
 
-	function heatmap(data,maxValue,maxDate){
+	function heatmap(data,maxValue,maxDate,minDate,queryMeasure){
 		//Margins and size
 		var m = [20, 40, 40, 80];
 		var w = 1000 - m[1] - m[3];
@@ -251,12 +336,13 @@ function periodicPattern(data){
 		  });
 		var endDate = maxDate;
 		//We get the range of dates and values for scales.
-		var dateRange = d3.extent(dates);
+		//var dateRange = [minDate.setDate(minDate.getDate()-1),maxDate.setDate(maxDate.getDate()+1)];
+		var dateRange= [minDate,maxDate];
 		var valueRange = d3.extent(values);
 		var heatmapDates = [];
 		var ticks;
 		var ticksFormat;
-		//Check range to make a weekly or monthly or yearly viz depending on the range. We create 3 type of heatmaps weekly, monthly, yearly
+		//Check range to make a monthly or custom viz depending on the range. We create 3 type of heatmaps weekly, monthly, yearly
 		if(d3.timeMonth.count(dateRange[0], dateRange[1]) === 0){//less than a month
 			//create month heatmap
 			type='month';
@@ -265,15 +351,7 @@ function periodicPattern(data){
 			heatmapDates.push(new Date ( (dateRange[0].getMonth()+2) + "-1-" + getYear(dateRange[0])));
 			ticks=d3.timeDay;
 			ticksFormat = abbrebiatedMonthDayFormat;
-		/*}else if(d3.timeYear.count(dateRange[0], dateRange[1]) === 0){//less than a year
-			//create year heatmap
-			type='year';
-			heatmapDates.push(new Date("1 January" + getYear(dateRange[0])));
-			heatmapDates.push(new Date((endDate.getMonth()+2) + "-30-" + getYear(dateRange[1])));
-			var lastMonth = endDate.getMonth()+2;
-			ticks=d3.timeMonth.every(1);
-			ticksFormat = monthFormat;*/
-		}else{//more than a year
+		}else{//more than a month
 			heatmapDates.push(dateRange[0]);
 			heatmapDates.push(dateRange[1]);
 			ticks=20;
@@ -304,55 +382,19 @@ function periodicPattern(data){
 		  			  .tickFormat(ticksFormat);
 		var yAxis = d3.axisLeft()
 				      .scale(y);
-		//because the rotation of the axis is weird for positioning the tiks dates I need to do different types of scales
-		if(type==='year'){
-			graph.append("g")
-			      .attrs({
-			      	'class': 'xAxis heatmap',
-			      	'transform': "translate(" + m[1]+ "," + h + ")"
-			      })
-			      .call(xAxis)
-			      .selectAll("text")
-			      .attrs({
-			      	'dx': -20,
-			      	'dy': 40,
-			      	'transform': function(d) { return 'rotate(-65)';},
-			      	fill: function(d,i){ //I need to add the first day of the next month so that the last column is not in the air. Here I make that text white so you dont see it.
-			      		if(i==31) return 'white';
-			      		else return '#000'
-			      	}
-			      })
-		}else if(type==='month'){
-			graph.append("g")
-			      .attrs({
-			      	'class': 'xAxis',
-			      	'transform': "translate(" + m[1]+ "," + h + ")"
-			      })
-			      .call(xAxis)
-			      .selectAll("text")
-			      .attrs({
-			      	'dx': -26,
-			      	'dy':15,
-			      	'transform': function(d) { return 'rotate(-65)';},
-			      	fill: function(d,i){ //I need to add the first day of the next month so that the last column is not in the air. Here I make that text white so you dont see it.
-			      		if(i==31) return 'white';
-			      		else return '#000'
-			      	}
-			      })
-		}else{
-			graph.append("g")
-			      .attrs({
-			      	'class': 'xAxis',
-			      	'transform': "translate(" + m[1]+ "," + h + ")"
-			      })
-			      .call(xAxis)
-			      .selectAll("text")
-			      .attrs({
-			      	'dx': -25,
-			      	'dy':10,
-			      	'transform': function(d) { return 'rotate(-65)';}
-			      })
-		}
+		//xAxis Text
+		graph.append("g")
+		      .attrs({
+		      	'class': 'xAxis',
+		      	'transform': "translate(" + m[1]+ "," + h + ")"
+		      })
+		      .call(xAxis)
+		      .selectAll("text")
+		      .attrs({
+		      	'dx': -25,
+		      	'dy':10,
+		      	'transform': function(d) { return 'rotate(-65)';}
+		})
 	  	graph.append("g")
 			  .attrs({
 			  	"class": "yAxis",
@@ -378,7 +420,31 @@ function periodicPattern(data){
 		 	 })
 		     .text("Time of day")
 		//Append Squares
-		graph.append('g')
+		if(queryMeasure==="1" || queryMeasure==="2"){
+			graph.append('g')
+			.attrs({
+				'transform': "translate(" + (m[1]+2) + ",0)"
+			})
+			.selectAll("rect")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attrs({
+				'id': function(d,i){ return i;},
+				'x': function(d) {
+					return x(d3.timeDay.floor(d[0]))},
+				'y': function(d) {return y(getHour(d[0]))},
+				'height': function(d){return cellHeight},
+				'width': function(d){return cellWidth},
+				'stroke': function(){ return "black"},
+				'stroke-width': function(){return 0},
+				'fill': function(d){return colorScale(d[1])}
+
+			})
+			.on("mouseover", handleMouseOverSmallValues)
+      		.on("mouseout",handleMouseOut);
+		}else{
+			graph.append('g')
 			.attrs({
 				'transform': "translate(" + (m[1]+1) + ",0)"
 			})
@@ -400,7 +466,8 @@ function periodicPattern(data){
 			})
 			.on("mouseover", handleMouseOver)
       		.on("mouseout",handleMouseOut);
-      		createLegend(graph, colorScale,maxValue,w+m[3]/2);
+		}
+      		createLegend(graph, colorScale,maxValue,w+m[3]/2,queryMeasure);
 		function addDays(date, days) {
 	    	var result = new Date(date);
 	    	result.setDate(result.getDate() + days);
@@ -507,6 +574,6 @@ function periodicPattern(data){
 			})
 			.on("mouseover", handleMouseOver)
       		.on("mouseout",handleMouseOut);
-      	createLegend(graph, colorScale,maxValue,w + m[3]/2);
+      	createLegend(graph, colorScale,maxValue,w + m[3]/2,queryMeasure);
 	}
 }

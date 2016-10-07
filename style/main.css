@@ -43,6 +43,10 @@ body{
    outline:0;
 }
 
+.ui-menu-item{
+  background:rgba(220, 230, 246, 1.0);
+}
+
 #queryTypeDiv{
   left:0em;
   top:-2px;
@@ -179,8 +183,8 @@ body{
 
 #infoDiv{
   position: absolute;
-  top: 22.3em;
-  width: 15em;
+  top: 21.3em;
+  width: 13em;
 }
 
 #infoDashboardDiv{

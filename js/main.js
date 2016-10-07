@@ -17,7 +17,7 @@ function mainQueryForm(){
 	var queryFromTab;
 	if(hasParameters===false){
 		queryTypes = ["What was the min, max, average ","What is the duration and are there any periodic patterns or peak periods ", "More to come... "];
-		queryMeasures = ["in Bandwidth use"," in Losses"];
+		queryMeasures = ["in Bandwidth use"," in Losses","in Latency"];
 		queryValues = ["across the IRNC Network","across the IRNC Links","across the IRNC Nodes"];
 		timeFrames = ["now","today","last 7 days","this month","this year","time frame"];
 		drawQueryForm();
