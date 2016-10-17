@@ -166,12 +166,28 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 			dataPoint.output.histogram = outputClean;
 			dataPoint.input.values = inputValues;
 			dataPoint.output.values = outputValues;
-		}else if(queryMeasure==="1"||queryMeasure==="2"){
+		}else if(queryMeasure==="1"){//losses
 			var dataClean=[];
 			var values=[];
 			for(each in dataPoint.values){
 				if(dataPoint.values[each][1]!=null){
-					dataPoint.values[each][1] = dataPoint.values[each][1]
+					dataPoint.values[each][1] = dataPoint.values[each][1]*100;
+					dataClean.push(dataPoint.values[each][1]);
+				}else{
+					dataPoint.values[each][1] = 0;
+					dataClean.push(0);
+				}
+				values.push([new Date (dataPoint.values[each][0]*1000),dataPoint.values[each][1]]);
+			}
+			//Save the cleaned scaled values in the data
+			dataPoint.histogram = dataClean;
+			dataPoint.values = values;
+		} else if(queryMeasure==="2"){//latency
+			var dataClean=[];
+			var values=[];
+			for(each in dataPoint.values){
+				if(dataPoint.values[each][1]!=null){
+					dataPoint.values[each][1] = dataPoint.values[each][1];
 					dataClean.push(dataPoint.values[each][1]);
 				}else{
 					dataPoint.values[each][1] = 0;
@@ -382,8 +398,8 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 		var avgOver = avgOver;
 		var links;
 		var nodes = [];
-		if (queryMeasure==="1")var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get source, destination, aggregate(values.loss,3600, average) as values, max(values.loss) as max_loss between( "' + date[0] + '", "' + date[1] + '" ) by source, from ps_owamp having max_loss >0 limit 1000 offset 0 ordered by max_loss desc';
-		if(queryMeasure==="2") var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get source, destination, aggregate(values.latency_avg,3600, average) as values, max(values.latency_avg) as max_loss between( "' + date[0] + '", "' + date[1] + '" ) by source, from ps_owamp having max_loss >0 limit 1000 offset 0 ordered by max_loss desc';
+		if (queryMeasure==="1")var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get source, destination, aggregate(values.loss,3600, average) as values, max(aggregate(values.loss,3600, average)) as max_loss between( "' + date[0] + '", "' + date[1] + '" ) by source, from ps_owamp having max_loss >0 limit 1000 offset 0 ordered by max_loss desc';
+		if(queryMeasure==="2") var url = 'https://netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get source, destination, aggregate(values.latency_avg,3600, average) as values, max(aggregate(values.latency_avg,3600, average)) as max_lat between( "' + date[0] + '", "' + date[1] + '" ) by source, from ps_owamp having max_lat >0 limit 1000 offset 0 ordered by max_lat desc';
 		d3.json(url)
 			.on("beforesend", function (request) {request.withCredentials = true;})
 			.get(function(error,data)

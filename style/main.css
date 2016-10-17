@@ -44,7 +44,7 @@ body{
 }
 
 .ui-menu-item{
-  background:rgba(220, 230, 246, 1.0);
+  background:rgba(255, 153, 0, 0.4);
 }
 
 #queryTypeDiv{
@@ -123,18 +123,24 @@ body{
   background: #f6f6f6;
   border: 0;
   border-radius: 0;
-  background-color: rgba(82, 135, 206, 0.2);
+  /*background-color: rgba(82, 135, 206, 0.2);*/
+  background-color:rgba(255, 153, 0, 0.4);
   font-size: 0.8em;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 
 }
+
+/*.querySelector .ui-menu-item .ui-state-focus{
+  background-color:rgba(255, 153, 0, 1.0);
+}*/
 
 .querySelector .timePicker{
   position:relative;
   background: #f6f6f6;
   border: 0;
   border-radius: 0;
-  background-color: rgba(82, 135, 206, 0.2);
+  /*background-color: rgba(82, 135, 206, 0.2);*/
+  background-color:rgba(255, 153, 0, 0.4);
   font-size: 0.8em;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   -webkit-appearance: none;
@@ -164,7 +170,7 @@ body{
 .mainInFoText{
   position:absolute;
   top: 1.4em;
-  left: 32em;
+  left: 35em;
   width:60em;
 }
 
@@ -181,6 +187,10 @@ body{
   left:15em;
 }
 
+.queryTextAppRegion{
+  width:80em;
+}
+
 #infoDiv{
   position: absolute;
   top: 21.3em;
@@ -189,8 +199,8 @@ body{
 
 #infoDashboardDiv{
   position: absolute;
-  top: 7em;
-  width: 15em;
+  top: 6.2em;
+  width: 14.5em;
 }
 
 /*************************** END Application Region Style *****************************/

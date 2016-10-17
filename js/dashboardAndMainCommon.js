@@ -179,7 +179,7 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":7
 				})
 		var queryTypeSelect = fieldset.append("div")
 									  .attrs({
@@ -210,7 +210,7 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":7
 				})
 		//Create Query Measure Select
 		var queryMeasureSelect = fieldset.append("div")
@@ -242,7 +242,7 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":7
 				})
 		//Create Query Values Select
 		var queryValueSelect = fieldset.append("div")
@@ -274,7 +274,7 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 				.attrs({
 					"cx":20,
 					"cy":20,
-					"r":10
+					"r":7
 				})
 		//Create queryTimeFrames Select
 		var queryTimeFrame = fieldset.append("div")
@@ -443,7 +443,7 @@ function queryComposer(date,fromURL,queryFromTab){
 			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
-		queryObjects.push(new Query(queryName + " " + queryMeasureText + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1], queryDate, avgOver, queryType,queryMeasure))
+		queryObjects.push(new Query(queryName + " " + queryMeasureText + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1] + " (" + new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1] + ") ", queryDate, avgOver, queryType,queryMeasure))
 		//when we make a second query in the same page we open a new tab.
 		if($("#query0")[0]!==undefined){
 			$("#whiteButtonImg").remove();

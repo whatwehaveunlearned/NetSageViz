@@ -91,7 +91,7 @@ function periodicPattern(data,queryMeasure){
 				},element*4000)
 			}
 		},(data.links.length*4000)+1000)
-	}else if(queryMeasure==="1" || queryMeasure==="2"){
+	}else if(queryMeasure==="1"){
 		var maxValue =[];
 		data.links.forEach(function(d){
 			maxValue.push(d3.max(d.histogram));
@@ -106,7 +106,33 @@ function periodicPattern(data,queryMeasure){
 		for(var element in data.links){
 			setTimeout(function(){
 				var start = new Date().getTime();
-				drawElementText("Link: " + data.links[arrayIndex].source +  " - " + data.links[arrayIndex].destination + " Max Loss: " + data.links[arrayIndex].max_loss);
+				drawElementText("Link: " + data.links[arrayIndex].source +  " - " + data.links[arrayIndex].destination + ". <b>Max:</b> " + d3.format(".0f")(data.links[arrayIndex].max) + "% <b>Average:</b> " + d3.format(".2f")(data.links[arrayIndex].avg)+ "%");
+				heatmapData = data.links[arrayIndex].values;
+				heatmap(heatmapData,maxValue,maxDate,minDate,queryMeasure);
+				//weekHeatmap(data.links[arrayIndex].weekData,maxWeekDataLinks);
+				arrayIndexLinks++;
+				var end = new Date().getTime();
+				var time = end - start;
+				console.log('Element: ' + arrayIndex+ ' Execution time: ' + time);
+				arrayIndex++;
+			},element*4000)
+		}
+	}else if(queryMeasure==="2"){
+		var maxValue =[];
+		data.links.forEach(function(d){
+			maxValue.push(d3.max(d.histogram));
+			d.values.forEach(function(d){
+				dates.push(d[0])
+			})
+		})
+		maxValue = d3.max(maxValue);
+		maxDate = d3.max(dates);
+		minDate = d3.min(dates);
+		var arrayIndex=0;
+		for(var element in data.links){
+			setTimeout(function(){
+				var start = new Date().getTime();
+				drawElementText("Link: " + data.links[arrayIndex].source +  " - " + data.links[arrayIndex].destination + " <b>Max:</b> " + d3.format(".0f")(data.links[arrayIndex].max) + " seconds" + "<b> Average:</b> " + d3.format(".0f")(data.links[arrayIndex].avg) + " seconds");
 				heatmapData = data.links[arrayIndex].values;
 				heatmap(heatmapData,maxValue,maxDate,minDate,queryMeasure);
 				//weekHeatmap(data.links[arrayIndex].weekData,maxWeekDataLinks);
@@ -171,7 +197,7 @@ function periodicPattern(data,queryMeasure){
        	   .duration(500)
            .style("opacity", 0);
 	}
-	function handleMouseOverSmallValues(d,i){
+	function handleMouseOverLosses(d,i,queryMeasure){
 		d3.select(this)
 		.styles({
 			"stroke-width":1
@@ -180,8 +206,23 @@ function periodicPattern(data,queryMeasure){
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
-        if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".8f")(d[1]) + "</p>" );
-        else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
+    	if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " % of loss</p>" );
+    	else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
+        div.style("position","absolute")
+           .style("left", (d3.event.pageX + 15) + "px")
+           .style("top", (d3.event.pageY ) + "px");
+	}
+	function handleMouseOverLatency(d,i,queryMeasure){
+		d3.select(this)
+		.styles({
+			"stroke-width":1
+		})
+		div = d3.select('.tooltip')
+		div.transition()
+       	   .duration(500)
+           .style("opacity", .9);
+    	if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " secs</p>" );
+    	else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
         div.style("position","absolute")
            .style("left", (d3.event.pageX + 15) + "px")
            .style("top", (d3.event.pageY ) + "px");
@@ -232,12 +273,12 @@ function periodicPattern(data,queryMeasure){
 			//Add max and minimum value to Legend
 		    legend.append("text")
 		            .attrs({
-		              "transform": "translate(" + (-15) + "," + (-5) + ")"
+		              "transform": "translate(" + (1.2) + "," + (-5) + ")"
 		            })
 		            .styles({
 		            	'font-size':"0.75em"
 		            })
-		            .text(d3.format(".5f")(maxData));
+		             .text(Math.ceil(maxData));
 		    legend.append("text")
 		            .attrs({
 		              "transform": "translate(" + (14) + "," + (45) + ")"
@@ -420,7 +461,7 @@ function periodicPattern(data,queryMeasure){
 		 	 })
 		     .text("Time of day")
 		//Append Squares
-		if(queryMeasure==="1" || queryMeasure==="2"){
+		if(queryMeasure==="1"){
 			graph.append('g')
 			.attrs({
 				'transform': "translate(" + (m[1]+2) + ",0)"
@@ -441,9 +482,9 @@ function periodicPattern(data,queryMeasure){
 				'fill': function(d){return colorScale(d[1])}
 
 			})
-			.on("mouseover", handleMouseOverSmallValues)
+			.on("mouseover", handleMouseOverLosses)
       		.on("mouseout",handleMouseOut);
-		}else{
+		}else if(queryMeasure==="0"){
 			graph.append('g')
 			.attrs({
 				'transform': "translate(" + (m[1]+1) + ",0)"
@@ -466,8 +507,30 @@ function periodicPattern(data,queryMeasure){
 			})
 			.on("mouseover", handleMouseOver)
       		.on("mouseout",handleMouseOut);
-		}
-      		createLegend(graph, colorScale,maxValue,w+m[3]/2,queryMeasure);
+		}else if(queryMeasure==="2"){
+			graph.append('g')
+			.attrs({
+				'transform': "translate(" + (m[1]+2) + ",0)"
+			})
+			.selectAll("rect")
+			.data(data)
+			.enter()
+			.append("rect")
+			.attrs({
+				'id': function(d,i){ return i;},
+				'x': function(d) {
+					return x(d3.timeDay.floor(d[0]))},
+				'y': function(d) {return y(getHour(d[0]))},
+				'height': function(d){return cellHeight},
+				'width': function(d){return cellWidth},
+				'stroke': function(){ return "black"},
+				'stroke-width': function(){return 0},
+				'fill': function(d){return colorScale(d[1])}
+
+			})
+			.on("mouseover", handleMouseOverLatency)
+      		.on("mouseout",handleMouseOut);
+      	}createLegend(graph, colorScale,maxValue,w+m[3]/2,queryMeasure);
 		function addDays(date, days) {
 	    	var result = new Date(date);
 	    	result.setDate(result.getDate() + days);
