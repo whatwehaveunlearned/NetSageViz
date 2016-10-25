@@ -43,5 +43,15 @@
 		"latitude":-33.8866667,
 		"longitude":151.2288889,
 		"node":"Sydney"
+	},
+	{
+		"latitude":38.907192,
+		"longitude":-77.036871,
+		"node":"Washington DC"
+	},
+	{
+		"latitude":50.1109,
+		"longitude":8.6821,
+		"node":"Frankfurt"
 	}
 ]

@@ -12,8 +12,8 @@ function lineChart(data){
 	createLineCharts(nodes);
 	function createLineCharts(data){
 		var margin = {top: 40, right: 10, bottom: 30, left: 40},
-	    	width = 1200 - margin.left - margin.right,
-	    	height = 500 - margin.top - margin.bottom;
+	    	width = 610 - margin.left - margin.right,
+	    	height = 450 - margin.top - margin.bottom;
 
 		//Scales and Colors
 		////Calculate Max values for scales
@@ -176,8 +176,8 @@ function lineChart(data){
 	           .style("opacity", .9);
 	        div.html("<p id ='mapTooltipname'> name: " + d.node + "</p>");
 	        div.style("position","absolute")
-	           .style("left", (d3.event.pageX - 250) + "px")
-	           .style("top", (d3.event.pageY -1500) + "px");
+	           .style("left", (d3.event.pageX - 50) + "px")
+	           .style("top", (d3.event.pageY -1750) + "px");
 		}
 		function handleMouseOut(d,i){
 			div = d3.select('#tooltip')

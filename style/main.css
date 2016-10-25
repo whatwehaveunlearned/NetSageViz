@@ -172,6 +172,8 @@ body{
   top: 1.4em;
   left: 35em;
   width:60em;
+  background-color:rgba(255, 153, 0, 0.4);
+  padding:5px;
 }
 
 .arrowGoBack{
@@ -184,7 +186,7 @@ body{
 /***************************Application Region Style **********************************/
 .applicationRegion{
   position: relative;
-  left:15em;
+  left:2em;
 }
 
 .queryTextAppRegion{
@@ -193,19 +195,28 @@ body{
 
 #infoDiv{
   position: absolute;
-  top: 21.3em;
-  width: 13em;
+  top: 24.5em;
+  width: 1205px;
+  left: 2.5em;
+  background: rgba(232, 157, 77, 0.9);
+  border: 1px solid black;
+  padding:5px;
 }
 
 #infoDashboardDiv{
   position: absolute;
-  top: 6.2em;
-  width: 14.5em;
+  top: 9.2em;
+  width: 1205px;
+  left: 2.5em;
+  background: rgba(232, 157, 77, 0.9);
+  border: 1px solid black;
+  padding:5px;
 }
 
 /*************************** END Application Region Style *****************************/
 /*************************** Histogram Style *****************************/
 .multipleHistogram{
+    min-width:1215px;
     border: 1px solid black;
 	  font-size: 10px;
     position: relative;
@@ -214,6 +225,10 @@ body{
     display: inline-block;
     padding-left: 1px;
     text-align: center;
+}
+
+.multipleHistogram table{
+  min-width:1215px;
 }
 .multipleHistogram .xAxis{
 	font-size: 8px;
@@ -289,7 +304,7 @@ body{
 /*************************** Map Style *****************************/
 .map{
   border: 1px solid black;
-  width:1197px;
+  width:1215px;
   height:500px;
   display: inline-block;
 }
@@ -307,13 +322,13 @@ body{
 .map .linksPlaceholder{
   fill:none;
   stroke:lightgrey;
+  stroke-width:4px;
 }
 
 #mapTooltip {
     position: absolute;
     text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding:5px;
     font-size: 10px;
     background: rgba(232, 157, 77, 0.8);
     border: 0px;
@@ -342,6 +357,11 @@ body{
 /*************************** Heatmap Style *****************************/
 .heatmap .yAxisLabel{
   font-size: 0.8em;
+}
+
+.heatmapTooltip{
+  background: rgba(232, 157, 77, 0.8);
+  padding:5px;
 }
 
 /*************************** END Heatmap Style *****************************/

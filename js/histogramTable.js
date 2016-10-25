@@ -6,9 +6,9 @@ function histogramTableGraph(queryData){
 	var numberBins;
 	var columns;
 	// Create margins
-    var margin = {top: 2, right: 15, bottom: 16, left: 30, nameLeft:30, histogramLeft: 0},
-    	width = 350 - margin.left - margin.right,
-   		height = 80 - margin.top - margin.bottom;
+    var margin = {top: 5, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
+    	width = 380 - margin.left - margin.right,
+   		height = 100 - margin.top - margin.bottom;
 	//Order the data and launch tables
 	sortObjects(queryData.links,".data.input.avg");
 	sortObjects(queryData.nodes,".data.input.avg");
@@ -239,25 +239,17 @@ function histogramTableGraph(queryData){
 
 	    var svg=d3.selectAll("." + tableName + "-" + group + "-col" + "3").append("svg")
 	   		.attrs({
-	      		"width": width + margin.left * 1.5 + margin.right,
+	      		"width": width + margin.left *3  + margin.right,
 	      		"height": height + margin.top + margin.bottom,
 	    	})
 	    var graph = svg.append("g")
 	        .attrs({
 	        	"class": "graph",
-	        	"transform": "translate(" + margin.left * 1.5 + "," + margin.top + ")"
+	        	"transform": "translate(" + 50 + "," + margin.top + ")"
 	        });
 	    //totalInput
 	    var totalInput = graph.append("g")
 	        .attr("class", tableName + " totalInput");
-	    //Creates totalData input Bar
-	    totalInput.append("rect")
-	    	.attrs({
-	    		"transform": "translate(0," + position.position1 + ")",
-			  	"height": barwidth,
-			  	"class":"totalDataBar",
-			  	"width": function(d){ return x(totalDataIn); }
-			})
 		//Fills up the totalDatabar input for each individual element
 	    totalInput.append("rect")
 	    	.attrs({
@@ -270,6 +262,14 @@ function histogramTableGraph(queryData){
 			  })
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
+		//Creates totalData input Bar
+	    totalInput.append("rect")
+	    	.attrs({
+	    		"transform": "translate(0," + position.position1 + ")",
+			  	"height": barwidth,
+			  	"class":"totalDataBar",
+			  	"width": function(d){ return x(totalDataIn); }
+			})
 		totalInput.append("text")
 	      	.attrs({
 	      		"x": -42,
@@ -279,7 +279,7 @@ function histogramTableGraph(queryData){
 	      	.text(function(d) { return "Incoming"; });
 	    totalInput.append("text")
 	      	.attrs({
-	      		"x": x(totalDataIn) - margin.right,
+	      		"x": x(totalDataIn) - 3 * margin.right,
 	      		"y": position.position1 - barwidth,
 	      		"dy": barwidth/2
 	      	})
@@ -287,14 +287,6 @@ function histogramTableGraph(queryData){
 		//totalOutput
 		var totalOutput = graph.append("g")
 	        .attr("class", "totalOuput")
-	    //Creates totalData input Bar
-	    totalOutput.append("rect")
-	    	.attrs({
-	    		"transform": "translate(0," + position.position2+ ")",
-				"height": barwidth,
-				"class": "totalDataBar",
-				"width": function(d){ return x(totalDataOut);}
-			})
 		//Fills up the totalDatabar input for each individual element
 	    totalOutput.append("rect")
 	    	.attrs({
@@ -306,6 +298,14 @@ function histogramTableGraph(queryData){
 			})
 			.on("mouseover",handleMouseOver)
 			.on("mouseout",handleMouseOut)
+		//Creates totalData input Bar
+	    totalOutput.append("rect")
+	    	.attrs({
+	    		"transform": "translate(0," + position.position2+ ")",
+				"height": barwidth,
+				"class": "totalDataBar",
+				"width": function(d){ return x(totalDataOut);}
+			})
 		totalOutput.append("text")
 	      	.attrs({
 	      		"x": -42,
@@ -315,7 +315,7 @@ function histogramTableGraph(queryData){
 	      .text(function(d) { return "Outgoing"; });
 	    totalOutput.append("text")
 	    	.attrs({
-	      		"x": x(totalDataOut) - 2.5 * margin.right,
+	      		"x": x(totalDataOut) - 3 * margin.right,
 	      		"y": position.position2 - barwidth,
 	      		"dy": barwidth/2
 	     	})

@@ -81,7 +81,7 @@ function mainQueryForm(){
 			.on("click",function(){ window.location.href="dashboard.html"});
 		goBack.append("span")
 			  .attrs({
-			  	"class":"ui-icon ui-icon-arrowthick-1-e arrowGoBack"
+			  	"class":"ui-icon ui-icon-triangle-1-e arrowGoBack"
 			  })
 			  .on("click",function(){ window.location.href=".html"});
 

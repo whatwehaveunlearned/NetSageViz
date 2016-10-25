@@ -5,6 +5,7 @@ function main (){
 	$(".applicationRegion").remove()
 	dashboardForm();
 	$("#queryForm").remove();
+	$("#infoDashboardDiv").remove();
 }
 
 function dashboardForm(){
@@ -34,7 +35,7 @@ function dashboardForm(){
 				.on("click",function(){ window.location.href="main.html"});
 			goBack.append("span")
 				.attrs({
-				  "class":"ui-icon ui-icon-arrowthick-1-e arrowGoBack"
+				  "class":"ui-icon ui-icon-triangle-1-e arrowGoBack"
 				 })
 				.on("click",function(){ window.location.href="main.html"});
 	//QueryFormVariables Array of Options

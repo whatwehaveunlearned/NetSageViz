@@ -132,7 +132,7 @@ function periodicPattern(data,queryMeasure){
 		for(var element in data.links){
 			setTimeout(function(){
 				var start = new Date().getTime();
-				drawElementText("Link: " + data.links[arrayIndex].source +  " - " + data.links[arrayIndex].destination + " <b>Max:</b> " + d3.format(".0f")(data.links[arrayIndex].max) + " seconds" + "<b> Average:</b> " + d3.format(".0f")(data.links[arrayIndex].avg) + " seconds");
+				drawElementText("Link: " + data.links[arrayIndex].source +  " - " + data.links[arrayIndex].destination + " <b>Max:</b> " + d3.format(".0f")(data.links[arrayIndex].max) + " ms" + "<b> Average:</b> " + d3.format(".0f")(data.links[arrayIndex].avg) + " ms");
 				heatmapData = data.links[arrayIndex].values;
 				heatmap(heatmapData,maxValue,maxDate,minDate,queryMeasure);
 				//weekHeatmap(data.links[arrayIndex].weekData,maxWeekDataLinks);
@@ -147,7 +147,7 @@ function periodicPattern(data,queryMeasure){
 	d3.select('body')
 	  .append('div')
 	  .attrs({
-	  	class:'tooltip'
+	  	class:'heatmapTooltip'
 	  })
 	  .style("opacity", 0);
 	//Function to calculate weekData each hour from data each day
@@ -177,7 +177,7 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":1
 		})
-		div = d3.select('.tooltip')
+		div = d3.select('.heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
@@ -192,7 +192,7 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":0
 		})
-		div = d3.select('.tooltip')
+		div = d3.select('.heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", 0);
@@ -202,7 +202,7 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":1
 		})
-		div = d3.select('.tooltip')
+		div = d3.select('.heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
@@ -217,11 +217,11 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":1
 		})
-		div = d3.select('.tooltip')
+		div = d3.select('.heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
-    	if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " secs</p>" );
+    	if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " ms</p>" );
     	else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
         div.style("position","absolute")
            .style("left", (d3.event.pageX + 15) + "px")
@@ -268,7 +268,7 @@ function periodicPattern(data,queryMeasure){
 		            .styles({
 		            	'font-size':"0.75em"
 		            })
-		            .text("seconds");
+		            .text("ms");
 		}else if(queryMeasure==="1"){
 			//Add max and minimum value to Legend
 		    legend.append("text")

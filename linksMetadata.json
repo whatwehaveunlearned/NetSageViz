@@ -36,18 +36,6 @@
 		"z_endpoint.name":"Mauna Lani"
 	},
 	{
-		"a_endpoint.latitude":34.048198,
-		"a_endpoint.longitude":-118.256335,
-		"a_endpoint.name":"Miami",
-		"description":"TransPAC Los Angeles <-> Tokyo 10GE",
-		"intf":"xe-0/0/0",
-		"max_bandwidth":10000000000,
-		"node":"rtr.losa.transpac.org",
-		"z_endpoint.latitude":35.687872,
-		"z_endpoint.longitude":139.764433,
-		"z_endpoint.name":"Tokyo"
-	},
-	{
 		"a_endpoint.latitude":47.614457,
 		"a_endpoint.longitude":-122.338413,
 		"a_endpoint.name":"Seattle",
@@ -106,5 +94,17 @@
 		"z_endpoint.latitude":-23.560604,
 		"z_endpoint.longitude":-46.640396,
 		"z_endpoint.name":"Sao Paulo"
+	},
+	{
+		"a_endpoint.latitude":38.907192,
+		"a_endpoint.longitude":-77.036871,
+		"a_endpoint.name":"Washington DC",
+		"description":"GEANT",
+		"intf":"LAG1",
+		"max_bandwidth":30000000000,
+		"node":"sw.net.wix.internet2.edu",
+		"z_endpoint.latitude":50.1109,
+		"z_endpoint.longitude":8.6821,
+		"z_endpoint.name":"Frankfurt"
 	}
 ]

@@ -8,10 +8,10 @@ function mapGraph(data){
     var xPos;
     var yPos;
     if(window.location.pathname==="/dashboard.html"){
-      xPos =d3.event.pageX-230;
+      xPos =d3.event.pageX-130;
       yPos =d3.event.pageY-100;
     }else{
-      xPos =d3.event.pageX - 230;
+      xPos =d3.event.pageX - 130;
       yPos =d3.event.pageY - 340;
     }
     div = d3.select("#mapTooltip");
@@ -27,12 +27,8 @@ function mapGraph(data){
         .duration(500)
         .style('stroke-width','2')
         .attr('r',10)
-      //Get the text for the links
-      for (var each in d.links){
-        nodeLinks = nodeLinks + ("<p>" + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].node") + "- " + eval("queryObjects["+this.id.split("-")[1][0]+"].links[d.links[each]].intf") + "</p>")
-      }
       if(this.classList[0]==="nodes"){
-          div.html("<p id ='mapTooltipname'>" + d.node + "</p>"+ nodeLinks )
+          div.html("<p id ='mapTooltipname'>" + d.node + "</p>")
             .style("left", xPos + "px")
             .style("top", yPos + "px");
       }else{
@@ -43,7 +39,7 @@ function mapGraph(data){
     }else if(this.classList[0]==="links" || this.classList[0]==="linksPlaceholder"){
       //If MouseoverLink
       if(this.classList[0]==="links"){
-        div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Gb" )
+        div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Gb/s" )
            .style("left", xPos + "px")
            .style("top", yPos + "px");
       }else{
@@ -79,7 +75,7 @@ function mapGraph(data){
     var legend = svgGroup.append('g')
                          .attrs({
                             "class":"mapLegend",
-                            "transform": "translate(" + (width - 130) + "," + (height - 110) + ")",
+                            "transform": "translate(" + (width - 150) + "," + (height - 110) + ")",
                          })
     legend.append("rect")
             .attrs({
@@ -93,7 +89,7 @@ function mapGraph(data){
     //Add max and minimum value to link Legend
     legend.append("text")
             .attrs({
-              "transform": "translate(" + (-60) + "," + 10 + ")"
+              "transform": "translate(" + (-65) + "," + 10 + ")"
             })
             .text(Math.ceil(maxDataLinks) + " Mb/s")
     legend.append("text")
@@ -161,8 +157,8 @@ function mapGraph(data){
       "id": "mapTooltip"
     })
     .style("opacity", 0);
-  var margin = {top: 0, right: 0, bottom: 0, left: 0},
-        width = 1197 - margin.left - margin.right,
+  var margin = {top: 0, right: 0, bottom: 0, left: 60},
+        width = 1215 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
   var svgMap = d3.select("#AppRegion"+counter)
       .append("div")
@@ -184,8 +180,8 @@ function mapGraph(data){
     if (error) return console.error(error);
     var subunits = topojson.feature(world, world.objects.subunits);
     var projection = d3.geoMercator()
-    	  .scale(240)
-    	  .rotate([-220,-5]);
+    	  .scale(215)
+    	  .rotate([-240,-1]);
     var path = d3.geoPath()
     	  .projection(projection);
     map.append("path")
@@ -228,7 +224,7 @@ function mapGraph(data){
             })
          .styles({
             "stroke-width": function(d,i){
-              return ((linkValues[i].max_bandwidth/10000000000) + 2 )}, //Transform to Terabyte and adjust size
+              return ((linkValues[i].max_bandwidth/10000000000) + 2 + 3 )}, //Transform to Terabyte and adjust size. We add a few extra pixels so that a border appears around the links.
          })
          .on("mouseover",handleMouseOver)
          .on("mouseout",handleMouseOut);
