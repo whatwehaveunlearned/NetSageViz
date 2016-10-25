@@ -7,7 +7,7 @@ function histogramTableGraph(queryData){
 	var columns;
 	// Create margins
     var margin = {top: 5, right: 15, bottom: 16, left: 15, nameLeft:30, histogramLeft: 0},
-    	width = 380 - margin.left - margin.right,
+    	width = 320 - margin.left - margin.right,
    		height = 100 - margin.top - margin.bottom;
 	//Order the data and launch tables
 	sortObjects(queryData.links,".data.input.avg");
