@@ -5,7 +5,9 @@ function main (){
 	$(".applicationRegion").remove()
 	dashboardForm();
 	$("#queryForm").remove();
-	$("#infoDashboardDiv").remove();
+	$("#infoDashboardDiv-map").remove();
+	$("#infoDashboardDiv-table").remove();
+	$("#infoDashboardDiv-line").remove();
 }
 
 function dashboardForm(){

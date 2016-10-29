@@ -193,24 +193,54 @@ body{
   width:80em;
 }
 
-#infoDiv{
+#infoDiv-map{
   position: absolute;
   top: 24.5em;
-  width: 1205px;
+  width: 26em;
   left: 2.5em;
   background: rgba(232, 157, 77, 0.9);
   border: 1px solid black;
   padding:5px;
 }
 
-#infoDashboardDiv{
+#infoDiv-table{
+  position: absolute;
+  top: 56em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(232, 157, 77, 0.9);
+  border: 1px solid black;
+  padding: 5px;
+}
+
+#infoDashboardDiv-map{
   position: absolute;
   top: 9.2em;
-  width: 1205px;
+  width: 26em;
   left: 2.5em;
   background: rgba(232, 157, 77, 0.9);
   border: 1px solid black;
   padding:5px;
+}
+
+#infoDashboardDiv-table{
+  position: absolute;
+  top: 40.8em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(232, 157, 77, 0.9);
+  border: 1px solid black;
+  padding: 5px;
+}
+
+#infoDashboardDiv-line{
+  position: absolute;
+  top: 126em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(232, 157, 77, 0.9);
+  border: 1px solid black;
+  padding: 5px;
 }
 
 /*************************** END Application Region Style *****************************/

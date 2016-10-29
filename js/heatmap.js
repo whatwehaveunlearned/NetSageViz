@@ -388,8 +388,11 @@ function periodicPattern(data,queryMeasure){
 			//create month heatmap
 			type='month';
 			var numbOfDays= new Date(getYear(dateRange[0]), getMonthInNumber(dateRange[0]), 0).getDate();
-			heatmapDates.push(new Date("1" + monthYearFormat(dateRange[0])));
-			heatmapDates.push(new Date ( (dateRange[0].getMonth()+2) + "-1-" + getYear(dateRange[0])));
+			//For other browsers I need to set the second time this way
+			var lastDate = new Date(dateRange[0]);
+			lastDate.setMonth(lastDate.getMonth()+1);
+			heatmapDates.push(new Date(monthFormat(dateRange[0]) + " 1 " + getYear(dateRange[0])));
+			heatmapDates.push(new Date ( monthFormat(lastDate) + " 1 " + getYear(dateRange[0])));
 			ticks=d3.timeDay;
 			ticksFormat = abbrebiatedMonthDayFormat;
 		}else{//more than a month
