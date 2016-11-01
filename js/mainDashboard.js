@@ -1,5 +1,5 @@
 //Every 60 seconds we execute the query again
-setInterval(main, 60000);
+setInterval(main, 300000);
 function main (){
 	$(".querySelector").remove();
 	$(".applicationRegion").remove()

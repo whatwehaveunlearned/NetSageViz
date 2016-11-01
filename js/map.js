@@ -7,11 +7,11 @@ function mapGraph(data){
   function handleMouseOver(d,i){
     var xPos;
     var yPos;
-    if(window.location.pathname==="/dashboard.html"){
-      xPos =d3.event.pageX-130;
+    if(window.location.pathname==="/dashboard.html" || window.location.pathname==="/netsage/dashboard"){
+      xPos =d3.event.pageX-100;
       yPos =d3.event.pageY-100;
     }else{
-      xPos =d3.event.pageX - 130;
+      xPos =d3.event.pageX - 100;
       yPos =d3.event.pageY - 340;
     }
     div = d3.select("#mapTooltip");
@@ -26,24 +26,24 @@ function mapGraph(data){
         .transition()
         .duration(500)
         .style('stroke-width','2')
-        .attr('r',10)
+        .attr('r',15)
       if(this.classList[0]==="nodes"){
-          div.html("<p id ='mapTooltipname'>" + d.node + "</p>")
+          div.html("<p class ='mapTooltipname'>" + d.node + "</p> <p> Total Data : " + d3.format(".2f")((d.data.totalData[0] + d.data.totalData[1])/1024/1024/8) + " TB </p>")
             .style("left", xPos + "px")
             .style("top", yPos + "px");
       }else{
-        div.html("<p id ='mapTooltipname'>" + d.node + "</p>")
+        div.html("<p class ='mapTooltipname'>" + d.node + "</p>")
             .style("left", xPos + "px")
             .style("top", yPos + "px");
       }
     }else if(this.classList[0]==="links" || this.classList[0]==="linksPlaceholder"){
       //If MouseoverLink
       if(this.classList[0]==="links"){
-        div.html("<p id ='mapTooltipname'>" + data.links[i].description + "</p> Max        bandwidth: "+ data.links[i].max_bandwidth/1000000000 + "Gb/s" )
+        div.html("<p class ='mapTooltipname'>" + data.links[i].description + "</p> <p> Link Maximum Capacity: "+ data.links[i].max_bandwidth/1000000000 + "Gb/s </p> <p> Total Data : " + d3.format(".2f")((data.links[i].data.totalData[0] + data.links[i].data.totalData[1])/1024/1024/8) + " TB </p>" )
            .style("left", xPos + "px")
            .style("top", yPos + "px");
       }else{
-        div.html("<p id ='mapTooltipname'>" + d.name)
+        div.html("<p class ='mapTooltipname'>" + d.name + "</p> <p> Max bandwidth: "+ d.size/1000000000 + "Gb/s </p>")
            .style("left", xPos + "px")
            .style("top", yPos + "px");
       }
@@ -59,7 +59,7 @@ function mapGraph(data){
         .duration(500)
         .style('stroke','black')
         .style('stroke-width','1')
-        .attr('r',5)
+        .attr('r',10)
       var nodeLinks="";
     }
     div = d3.select("#mapTooltip");
@@ -174,8 +174,6 @@ function mapGraph(data){
   var map = svgMap.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  //var active = d3.select(null);
-
   d3.json("world.json", function(error, world) {
     if (error) return console.error(error);
     var subunits = topojson.feature(world, world.objects.subunits);
@@ -214,7 +212,7 @@ function mapGraph(data){
          .enter()
          .append("path")
          .datum( function(d){
-            return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]],name:d.node};
+            return {type: "LineString", coordinates: [[d["a_endpoint.longitude"], d["a_endpoint.latitude"]], [d["z_endpoint.longitude"],d["z_endpoint.latitude"]]],name:d.description,size:d.max_bandwidth};
          })
          .attrs({
             class:"linksPlaceholder",
@@ -262,7 +260,7 @@ function mapGraph(data){
                 cx: function (d) {
                   return projection([d.longitude, d.latitude])[0]; },
                 cy: function (d) { return projection([d.longitude, d.latitude])[1]; },
-                r: 5,
+                r: 10,
                 class: "nodesPlaceholder"
              })
              .styles({
@@ -281,7 +279,7 @@ function mapGraph(data){
                 cx: function (d) {
                   return projection([d.lon, d.lat])[0]; },
                 cy: function (d) { return projection([d.lon, d.lat])[1]; },
-                r: 5,
+                r: 10,
                 class: "nodes",
                 id: function (d,i) { return "nodes-"+ counter + i; }
              })

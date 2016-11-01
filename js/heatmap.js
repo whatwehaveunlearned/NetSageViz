@@ -58,11 +58,11 @@ function periodicPattern(data,queryMeasure){
 		for(var element in data.links){
 			setTimeout(function(){
 				var start = new Date().getTime();
-				drawElementText("Input: " + data.links[arrayIndexLinks].node);
+				drawElementText("Input: " + data.links[arrayIndexLinks].description);
 				heatmapData = data.links[arrayIndexLinks].data.input.values;
 				heatmap(heatmapData,maxValueLinks,maxDate,minDate,queryMeasure);
 				weekHeatmap(data.links[arrayIndexLinks].data.input.weekData,maxWeekDataLinks);
-				drawElementText("Output: " + data.links[arrayIndexLinks].node);
+				drawElementText("Output: " + data.links[arrayIndexLinks].description);
 				heatmapData = data.links[arrayIndexLinks].data.output.values;
 				heatmap(heatmapData,maxValueLinks,maxDate,minDate,queryMeasure);
 				weekHeatmap(data.links[arrayIndexLinks].data.output.weekData,maxWeekDataLinks);
@@ -113,7 +113,7 @@ function periodicPattern(data,queryMeasure){
 				arrayIndexLinks++;
 				var end = new Date().getTime();
 				var time = end - start;
-				console.log('Element: ' + arrayIndex+ ' Execution time: ' + time);
+				//console.log('Element: ' + arrayIndex+ ' Execution time: ' + time);
 				arrayIndex++;
 			},element*4000)
 		}
@@ -139,7 +139,7 @@ function periodicPattern(data,queryMeasure){
 				arrayIndexLinks++;
 				var end = new Date().getTime();
 				var time = end - start;
-				console.log('Element: ' + arrayIndex+ ' Execution time: ' + time);
+				//console.log('Element: ' + arrayIndex+ ' Execution time: ' + time);
 				arrayIndex++;
 			},element*4000)
 		}
@@ -147,7 +147,7 @@ function periodicPattern(data,queryMeasure){
 	d3.select('body')
 	  .append('div')
 	  .attrs({
-	  	class:'heatmapTooltip'
+	  	id:'heatmapTooltip'
 	  })
 	  .style("opacity", 0);
 	//Function to calculate weekData each hour from data each day
@@ -177,12 +177,12 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":1
 		})
-		div = d3.select('.heatmapTooltip')
+		div = d3.select('#heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
-        if(d.val !== undefined) div.html("<p id ='mapTooltipname'>" + d.day + " at " + d.hour + ":</p><p>" + d3.format(".2f")(d.val/1024) + " Gb/s</p>" );
-        else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
+        if(d.val !== undefined) div.html("<p class ='heatmapTooltipname'>" + d.day + " at " + d.hour + ":</p><p>" + d3.format(".2f")(d.val/1024) + " Gb/s</p>" );
+        else div.html("<p class ='heatmapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]/1024) + " Gb/s</p>");
         div.style("position","absolute")
            .style("left", (d3.event.pageX + 15) + "px")
            .style("top", (d3.event.pageY ) + "px");
@@ -192,7 +192,7 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":0
 		})
-		div = d3.select('.heatmapTooltip')
+		div = d3.select('#heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", 0);
@@ -202,12 +202,12 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":1
 		})
-		div = d3.select('.heatmapTooltip')
+		div = d3.select('#heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
-    	if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " % of loss</p>" );
-    	else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
+    	if(d[1] !== undefined) div.html("<p class ='heatmapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " % of loss</p>" );
+    	//else div.html("<p class ='heatmapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
         div.style("position","absolute")
            .style("left", (d3.event.pageX + 15) + "px")
            .style("top", (d3.event.pageY ) + "px");
@@ -217,12 +217,12 @@ function periodicPattern(data,queryMeasure){
 		.styles({
 			"stroke-width":1
 		})
-		div = d3.select('.heatmapTooltip')
+		div = d3.select('#heatmapTooltip')
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
-    	if(d[1] !== undefined) div.html("<p id ='mapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " ms</p>" );
-    	else div.html("<p id ='mapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
+    	if(d[1] !== undefined) div.html("<p class ='heatmapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " ms</p>" );
+    	//else div.html("<p class ='heatmapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
         div.style("position","absolute")
            .style("left", (d3.event.pageX + 15) + "px")
            .style("top", (d3.event.pageY ) + "px");

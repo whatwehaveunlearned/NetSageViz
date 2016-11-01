@@ -76,7 +76,7 @@ function histogramTableGraph(queryData){
 			      .transition()
 			      .duration(500)
 			      .style('stroke-width','2')
-			      .attr('r',10)
+			      .attr('r',15)
 			    div = d3.select("#mapTooltip");
 			    div.transition()
 			       .duration(500)
@@ -106,7 +106,7 @@ function histogramTableGraph(queryData){
 			      .transition()
 			      .duration(500)
 			      .style('stroke-width','1')
-			      .attr('r',5)
+			      .attr('r',10)
 			    var nodeLinks="";
 			    div = d3.select("#mapTooltip");
 			    div.transition()

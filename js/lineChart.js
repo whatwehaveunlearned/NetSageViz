@@ -177,7 +177,7 @@ function lineChart(data){
 	        div.html("<p id ='mapTooltipname'> name: " + d.node + "</p>");
 	        div.style("position","absolute")
 	           .style("left", (d3.event.pageX - 50) + "px")
-	           .style("top", (d3.event.pageY -1750) + "px");
+	           .style("top", (d3.event.pageY -2000) + "px");
 		}
 		function handleMouseOut(d,i){
 			div = d3.select('#tooltip')
