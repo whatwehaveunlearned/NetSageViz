@@ -313,7 +313,7 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 						mapGraph(queryObjects[counter]);
 						//Create Table
 						histogramTableGraph(queryObjects[counter]);
-						if(window.location.pathname==="/dashboard.html" || window.location.pathname==="/netsage/dashboard") lineChart(queryObjects[counter]);
+						if(window.location.pathname==="/dashboard.html" || window.location.pathname==="/netsage/dashboard.html") lineChart(queryObjects[counter]);
 					}else if(queryObjects[counter].queryType==="1"){//Periodic Patterns
 						periodicPattern(queryObjects[counter],queryMeasure);
 					}
@@ -356,7 +356,7 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 			}
 			if(this.classList[2]==="showInfo")
 			{
-				if(window.location.pathname==="/dashboard.html" || window.location.pathname==="/netsage/dashboard"){
+				if(window.location.pathname==="/dashboard.html" || window.location.pathname==="/netsage/dashboard.html"){
 					text = createInfoText("0");
 					d3.select("body").append("div")
 				  		.attrs({

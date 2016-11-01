@@ -7,7 +7,7 @@ function mapGraph(data){
   function handleMouseOver(d,i){
     var xPos;
     var yPos;
-    if(window.location.pathname==="/dashboard.html" || window.location.pathname==="/netsage/dashboard"){
+    if(window.location.pathname==="/dashboard.html" || window.location.pathname==="/netsage/dashboard.html"){
       xPos =d3.event.pageX-100;
       yPos =d3.event.pageY-100;
     }else{
