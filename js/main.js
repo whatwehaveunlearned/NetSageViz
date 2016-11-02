@@ -85,10 +85,10 @@ function mainQueryForm(){
 			  })
 			  .on("click",function(){ window.location.href=".html"});
 
-		var querySelector = d3.select("body").append("div")
-			.attrs({
-				class:"querySelector"
-			});
+		// var querySelector = d3.select("body").append("div")
+		// 	.attrs({
+		// 		class:"querySelector"
+		// 	});
 		queryForm=querySelector.append("form")
 			.attrs({
 				"id":"queryForm"

@@ -201,7 +201,7 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 		}
 	}
 	//Function to calculate Important Statistical values
-	function calculateStatistics (dataPoint,sizeInterval,queryMeasure){
+	function calculateStatistics (dataPoint,sizeInterval,queryMeasure,queryDate){
 		if(queryMeasure==="0")
 		{
 			//Create other helper Statistical values
@@ -217,9 +217,6 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 			dataPoint.output.percentile75 = percentile(dataPoint.output.histogram,75);
 			dataPoint.output.max = d3.max(dataPoint.output.histogram);
 			dataPoint.output.min = d3.min(dataPoint.output.histogram);
-			//min and max dates (dates are the same for all and are the same for input and output)
-			dataPoint.minDate = dataPoint.input.values[0][0];
-			dataPoint.maxDate = dataPoint.input.values[dataPoint.input.values.length-1][0];
 
 			if(dataPoint.input.histogram.length == 0){
 				dataPoint.input.max = 0;
@@ -249,9 +246,6 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 			dataPoint.median = median(dataPoint.histogram);
 			dataPoint.percentile25 = percentile(dataPoint.histogram,25);
 			dataPoint.percentile75 = percentile(dataPoint.histogram,75);
-			//min and max dates (dates are the same for all and are the same for input and output)
-			dataPoint.minDate = dataPoint.values[0][0];
-			dataPoint.maxDate = dataPoint.values[dataPoint.values.length-1][0];
 
 			if(dataPoint.histogram.length == 0){
 				dataPoint.max = 0;
@@ -262,6 +256,10 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 				dataPoint.percentile75 = 0;
 			}
 		}
+		//min and max dates (dates are the same for all and are the same for input and output)
+		console.log(dataPoint);
+		dataPoint.minDate = new Date(queryDate[0]);
+		dataPoint.maxDate = new Date(queryDate[1]);
 	}
 
 	//Function to retrieve Dynamic Metadata on Start and fill up the first Overview. Sets the links and nodes to be visualized and parses data for the mapgraph and histogramTable.
@@ -298,13 +296,13 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 						//Add the data to the links object
 						queryObjects[counter].links[element].data = elementResult[0];
 						scaleAndClean(queryObjects[counter].links[element].data,queryMeasure);
-						calculateStatistics(queryObjects[counter].links[element].data,sizeIntervalSeconds,queryMeasure);
+						calculateStatistics(queryObjects[counter].links[element].data,sizeIntervalSeconds,queryMeasure,queryDate);
 					}
 					//Create the nodes from the links
 					nodes = createNodes(nodes,links,queryMeasure);
 					queryObjects[counter].nodes = nodes;
 					for (var element in queryObjects[counter].nodes){
-						calculateStatistics(queryObjects[counter].nodes[element].data,sizeIntervalSeconds,queryMeasure);
+						calculateStatistics(queryObjects[counter].nodes[element].data,sizeIntervalSeconds,queryMeasure,queryDate);
 					}
 					//Create query text
 					drawQueryText(queryText);
@@ -447,7 +445,7 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 			for (var element in queryObjects[counter].links){
 				//Add the data to the links object
 				scaleAndClean(queryObjects[counter].links[element],queryMeasure);
-				calculateStatistics(queryObjects[counter].links[element],sizeIntervalSeconds,queryMeasure);
+				calculateStatistics(queryObjects[counter].links[element],sizeIntervalSeconds,queryMeasure,date);
 			}
 			queryObjects[counter].links = data.results;
 		/*	//Create the nodes from the links

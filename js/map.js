@@ -12,7 +12,7 @@ function mapGraph(data){
       yPos =d3.event.pageY-100;
     }else{
       xPos =d3.event.pageX - 100;
-      yPos =d3.event.pageY - 340;
+      yPos =d3.event.pageY - 100;
     }
     div = d3.select("#mapTooltip");
     div.transition()
