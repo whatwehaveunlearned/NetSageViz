@@ -185,8 +185,6 @@ body{
 
 /***************************Application Region Style **********************************/
 .applicationRegion{
-  position: relative;
-  left:2em;
 }
 
 .queryTextAppRegion{

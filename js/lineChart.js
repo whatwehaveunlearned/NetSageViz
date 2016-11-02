@@ -22,7 +22,9 @@ function lineChart(data){
 	    		maxX.push(data[element].data.input.max);
 	    		maxX.push(data[element].data.output.max);
 	    }
-	    maxX = d3.max(maxX)+1000;
+	    //This max value might need to change depending on what scale is the bigest number in the scale I tried to based in on a percentage so that it aligns but not sure about it.
+	    maxX = d3.max(maxX);
+	    maxX = maxX + Math.ceil(0.01 * maxX);
 	    var x = d3.scaleTime().domain([data[0].data.minDate,data[0].data.maxDate]).range([0, width]);
 		var y = d3.scaleLinear().domain([0,maxX]).range([height, 0]);
 		var color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -58,7 +60,7 @@ function lineChart(data){
 		   			.attr("class","lineChartTitle")
 		   			.attr("transform","translate("+ 10 +", " + 10 + ")")
 		   			.append("text")
-		   			.text("Input for the last 3 hours (Mb/s)")
+		   			.text("Input for the last 3 hours (Gb/s)")
 
 		  svgInput.append("g")
 		      .attr("class", "x axis")
@@ -118,7 +120,7 @@ function lineChart(data){
 		   			.attr("class","lineChartTitle")
 		   			.attr("transform","translate("+ 10 +", " + 10 + ")")
 		   			.append("text")
-		   			.text("Output for the last 3 hours (Mb/s)")
+		   			.text("Output for the last 3 hours (Gb/s)")
 
 		  svgOutput.append("g")
 		      .attr("class", "x axis")

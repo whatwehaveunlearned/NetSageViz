@@ -181,8 +181,8 @@ function periodicPattern(data,queryMeasure){
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
-        if(d.val !== undefined) div.html("<p class ='heatmapTooltipname'>" + d.day + " at " + d.hour + ":</p><p>" + d3.format(".2f")(d.val/1024) + " Gb/s</p>" );
-        else div.html("<p class ='heatmapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]/1024) + " Gb/s</p>");
+        if(d.val !== undefined) div.html("<p class ='heatmapTooltipname'>" + d.day + " at " + d.hour + ":</p><p>" + d3.format(".2f")(d.val) + " Gb/s</p>" );
+        else div.html("<p class ='heatmapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Gb/s</p>");
         div.style("position","absolute")
            .style("left", (d3.event.pageX + 15) + "px")
            .style("top", (d3.event.pageY ) + "px");
@@ -206,7 +206,7 @@ function periodicPattern(data,queryMeasure){
 		div.transition()
        	   .duration(500)
            .style("opacity", .9);
-    	if(d[1] !== undefined) div.html("<p class ='heatmapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".0f")(d[1]) + " % of loss</p>" );
+    	if(d[1] !== undefined) div.html("<p class ='heatmapTooltipname'>" + d[0] + ":</p><p>" + d3.format(".2f")(d[1]) + " % of loss</p>" );
     	//else div.html("<p class ='heatmapTooltipname'>" + String(d[0]).split(" ")[0] + " " + String(d[0]).split(" ")[1] + " " + String(d[0]).split(" ")[2] + " " + String(d[0]).split(" ")[3] + " at " + String(d[0]).split(" ")[4] + "</p><p>" + d3.format(".2f")(d[1]) + " Mb/s</p>");
         div.style("position","absolute")
            .style("left", (d3.event.pageX + 15) + "px")
@@ -273,7 +273,7 @@ function periodicPattern(data,queryMeasure){
 			//Add max and minimum value to Legend
 		    legend.append("text")
 		            .attrs({
-		              "transform": "translate(" + (1.2) + "," + (-5) + ")"
+		              "transform": "translate(" + (3) + "," + (-5) + ")"
 		            })
 		            .styles({
 		            	'font-size':"0.75em"
@@ -291,7 +291,7 @@ function periodicPattern(data,queryMeasure){
 		    //Add max and minimum value to Legend
 		    legend.append("text")
 		            .attrs({
-		              "transform": "translate(" + (-7) + "," + (-5) + ")"
+		              "transform": "translate(" + (0) + "," + (-5) + ")"
 		            })
 		            .styles({
 		            	'font-size':"0.75em"
@@ -304,11 +304,11 @@ function periodicPattern(data,queryMeasure){
 		            .styles({
 		            	'font-size':"0.75em"
 		            })
-		            .text("Mb/s");
+		            .text("Gb/s");
 		}
 		    legend.append("text")
 		            .attrs({
-		              "transform": "translate(" + (2) + "," + 90 + ")"
+		              "transform": "translate(" + (3) + "," + 90 + ")"
 		            })
 		            .styles({
 		            	'font-size':"0.75em"
@@ -490,7 +490,7 @@ function periodicPattern(data,queryMeasure){
 		}else if(queryMeasure==="0"){
 			graph.append('g')
 			.attrs({
-				'transform': "translate(" + (m[1]+1) + ",0)"
+				'transform': "translate(" + (m[1]+2) + ",0)"
 			})
 			.selectAll("rect")
 			.data(data)

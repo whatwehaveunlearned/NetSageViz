@@ -14,9 +14,9 @@ function histogramTableGraph(queryData){
 	sortObjects(queryData.nodes,".data.input.avg");
 	queryData.graphs.table.links = queryData.links;
 	queryData.graphs.table.nodes = queryData.nodes;
-	columns = ["Links","Incoming Bandwidth (Mb/s)", "Outgoing Bandwidth (Mb/s)","Total Data (TB)"];
+	columns = ["Links","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
     startTable("links-"+counter,queryData.graphs.table.links);
-    columns = ["Nodes","Incoming Bandwidth (Mb/s)", "Outgoing Bandwidth (Mb/s)","Total Data (TB)"];
+    columns = ["Nodes","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
     startTable("nodes-"+counter,queryData.graphs.table.nodes);
 	//Convert to dragtable
 	$('table').dragtable();
@@ -202,11 +202,11 @@ function histogramTableGraph(queryData){
    				.duration(200)
    				.style("opacity", .9);
    			if(this.classList[1]=="iData"){
-   				div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/1024/1024/8).toFixed(1) +" TB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
+   				div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/1024/8).toFixed(1) +" TB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[0]")/totalDataIn).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }else{
-		   		div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/1024/1024/8).toFixed(1) +" TB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
+		   		div.html("<p>"+ (eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/1024/8).toFixed(1) +" TB</p> <p>"+ (100 * eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id.split("-")[3] + "].data.totalData[1]")/totalDataOut).toFixed(2) + " %" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		   }
@@ -283,7 +283,7 @@ function histogramTableGraph(queryData){
 	      		"y": position.position1 - barwidth,
 	      		"dy": barwidth/2
 	      	})
-	      	.text(function(d,i) { return (totalDataIn/1024/1024/8).toFixed(1) + " TB"; } );
+	      	.text(function(d,i) { return (totalDataIn/1024/8).toFixed(1) + " TB"; } );
 		//totalOutput
 		var totalOutput = graph.append("g")
 	        .attr("class", "totalOuput")
@@ -319,7 +319,7 @@ function histogramTableGraph(queryData){
 	      		"y": position.position2 - barwidth,
 	      		"dy": barwidth/2
 	     	})
-	     	.text(function(d,i) { return (totalDataOut/1024/1024/8).toFixed(1) + " TB"; });
+	     	.text(function(d,i) { return (totalDataOut/1024/8).toFixed(1) + " TB"; });
 	}
 	//############### Function to create the histogram ###############
 	function createHistogram(tableName,group,data,numberBins){
@@ -369,7 +369,7 @@ function histogramTableGraph(queryData){
 			div.transition()
 					.duration(200)
 					.style("opacity", .9);
-		   	div.html("<p>"+ d3.mean(d).toFixed(2) +" Mb/s</p> <p>"+ d.length + " elements" )
+		   	div.html("<p>"+ d3.mean(d).toFixed(2) +" Gb/s</p> <p>"+ d.length + " elements" )
 		       .style("left", (d3.event.pageX + 5) + "px")
 		       .style("top", (d3.event.pageY - 28) + "px");
 		}

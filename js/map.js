@@ -28,7 +28,7 @@ function mapGraph(data){
         .style('stroke-width','2')
         .attr('r',15)
       if(this.classList[0]==="nodes"){
-          div.html("<p class ='mapTooltipname'>" + d.node + "</p> <p> Total Data : " + d3.format(".2f")((d.data.totalData[0] + d.data.totalData[1])/1024/1024/8) + " TB </p>")
+          div.html("<p class ='mapTooltipname'>" + d.node + "</p> <p> Total Data : " + d3.format(".2f")((d.data.totalData[0] + d.data.totalData[1])/1024/8) + " TB </p>")
             .style("left", xPos + "px")
             .style("top", yPos + "px");
       }else{
@@ -39,7 +39,7 @@ function mapGraph(data){
     }else if(this.classList[0]==="links" || this.classList[0]==="linksPlaceholder"){
       //If MouseoverLink
       if(this.classList[0]==="links"){
-        div.html("<p class ='mapTooltipname'>" + data.links[i].description + "</p> <p> Link Maximum Capacity: "+ data.links[i].max_bandwidth/1000000000 + "Gb/s </p> <p> Total Data : " + d3.format(".2f")((data.links[i].data.totalData[0] + data.links[i].data.totalData[1])/1024/1024/8) + " TB </p>" )
+        div.html("<p class ='mapTooltipname'>" + data.links[i].description + "</p> <p> Link Maximum Capacity: "+ data.links[i].max_bandwidth/1000000000 + "Gb/s </p> <p> Total Data : " + d3.format(".2f")((data.links[i].data.totalData[0] + data.links[i].data.totalData[1])/1024/8) + " TB </p>" )
            .style("left", xPos + "px")
            .style("top", yPos + "px");
       }else{

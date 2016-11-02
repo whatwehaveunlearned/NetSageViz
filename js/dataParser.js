@@ -145,14 +145,14 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 			//change this to the d3 assignment forEach
 			for (each in dataPoint.input){
 				if(dataPoint.input[each][1]!=null){
-					dataPoint.input[each][1] = dataPoint.input[each][1]/1024/1024 // bit/Kbs/Mbs/
+					dataPoint.input[each][1] = dataPoint.input[each][1]/1024/1024/1024 // bit/Kbs/Mbs/Gbs
 					inputClean.push(dataPoint.input[each][1]);
 				}else{
 					dataPoint.input[each][1] = 0;
 					inputClean.push(0);
 				}
 				if(dataPoint.output[each][1]!=null){
-					dataPoint.output[each][1] = dataPoint.output[each][1]/1024/1024;
+					dataPoint.output[each][1] = dataPoint.output[each][1]/1024/1024/1024;
 					outputClean.push(dataPoint.output[each][1]);
 				} else{
 					dataPoint.output[each][1] = 0;
