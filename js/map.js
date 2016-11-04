@@ -89,7 +89,7 @@ function mapGraph(data){
     //Add max and minimum value to link Legend
     legend.append("text")
             .attrs({
-              "transform": "translate(" + (-65) + "," + 10 + ")"
+              "transform": "translate(" + (-40) + "," + 10 + ")"
             })
             .text(Math.ceil(maxDataLinks) + " Mb/s")
     legend.append("text")
