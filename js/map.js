@@ -91,23 +91,23 @@ function mapGraph(data){
             .attrs({
               "transform": "translate(" + (-40) + "," + 10 + ")"
             })
-            .text(Math.ceil(maxDataLinks) + " Mb/s")
+            .text(Math.ceil(maxDataLinks) + " Gb/s")
     legend.append("text")
             .attrs({
               "transform": "translate(" + (-40) + "," + 98 + ")"
             })
-            .text("0 Mb/s")
+            .text("0 Gb/s")
     //Add max and minimum value to link Legend
     legend.append("text")
             .attrs({
               "transform": "translate(" + 65 + "," + 10 + ")"
             })
-            .text(Math.ceil(maxDataNodes) + " Mb/s")
+            .text(Math.ceil(maxDataNodes) + " Gb/s")
     legend.append("text")
             .attrs({
               "transform": "translate(" + 65 + "," + 98 + ")"
             })
-            .text("0 Mb/s")
+            .text("0 Gb/s")
     legend.append("rect")
             .attrs({
               "class": "mapLegend2",
