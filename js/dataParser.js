@@ -274,7 +274,7 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 		//Query to retrieve metadata values
 		var url = 'https://netsage-demo:d3m0!d3m0!@netsage-archive.grnoc.iu.edu/tsds/services-basic/query.cgi?method=query;query=get node, intf, description, a_endpoint.name, a_endpoint.latitude, a_endpoint.longitude, z_endpoint.name, z_endpoint.latitude, z_endpoint.longitude, max_bandwidth between( "' + date[0] + '", "' + date[1] + '" ) by node, intf from interface where a_endpoint != null and z_endpoint != null'
 		d3.json(url)
-			.on("beforesend", function (request) {request.withCredentials = true;})
+			//.on("beforesend", function (request) {request.withCredentials = true;})
 			.get(function(error,data)
 			{
 				links = data.results;
@@ -285,7 +285,7 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 					else url = url + '( node = "' + links[each].node + '" and intf = "' + links[each].intf + '") )';
 				}
 				d3.json(url)
-				.on("beforesend", function (request) {request.withCredentials = true;})
+				//.on("beforesend", function (request) {request.withCredentials = true;})
 				.get(function(error,data)
 				{
 					for (var element in queryObjects[counter].links){
