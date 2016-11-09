@@ -256,7 +256,9 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 									  });
 		for (var i in queryValues){
 			queryValueSelect.append("option")
-				.attrs({"value":i})
+				.attrs({
+					"value":i
+				})
 				.html(queryValues[i]);
 		}
 		//Insert svg Circle as bullet for list
@@ -295,7 +297,9 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 			change: function( event, data ) {
 				var day = new Date();
 				var timeFrames = ["now","today","last 7 days","this month","this year","time frame"];
-				if(data.item.value==="1"){
+				if(data.item.value==="1"){ //Question 1
+					//enable measure selection if question is one
+					$("#queryMeasure").selectmenu("option","disabled",false);
 					var queryTimeFrame = $("#queryTimeFrame");
 					queryTimeFrame.empty();
 					queryTimeFrame.append('<option>this month</option><option>this year</option><option>time frame</option>')
@@ -303,7 +307,16 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 					//Refresh menu to put first day of the month
 					var monthFirst = new Date(day.getFullYear(), day.getMonth(), 1);
 					createDatePickers(monthFirst,day,false);
-				}else{
+				}else{ //Other questions
+					//delete menu create again and disable measure selection if question is not one
+					$("#queryMeasure").empty();
+					for (var i in queryMeasures){
+						queryMeasureSelect.append("option")
+							.attrs({"value":i})
+							.html(queryMeasures[i]);
+					}
+					$("#queryMeasure").selectmenu("refresh");
+					$("#queryMeasure").selectmenu("option","disabled",true);
 					var queryTimeFrame = d3.select("#queryTimeFrame");
 					$("#queryTimeFrame").empty();
 					for (var i in timeFrames){
@@ -315,8 +328,14 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 			},
 			width : 'auto'
 		});
-		$("#queryMeasure").selectmenu({ width : 'auto'});
-		$("#queryValue").selectmenu({ width : 'auto'});
+		$("#queryMeasure").selectmenu({
+			disabled:true,
+			width : 'auto'
+		});
+		$("#queryValue").selectmenu({
+			disabled:true,
+			width : 'auto'
+		});
 		$("#queryTimeFrame").selectmenu({
 	      change: function( event, data ) {
 			var day = new Date();
