@@ -224,7 +224,10 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 									  });
 		for (var i in queryMeasures){
 			queryMeasureSelect.append("option")
-				.attrs({"value":i})
+				.attrs({
+					"value":i,
+					"id":"measureOption" + i
+				})
 				.html(queryMeasures[i]);
 		}
 		//Insert svg Circle as bullet for list
@@ -257,7 +260,8 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 		for (var i in queryValues){
 			queryValueSelect.append("option")
 				.attrs({
-					"value":i
+					"value":i,
+					"id": "valueOption" +i
 				})
 				.html(queryValues[i]);
 		}
@@ -298,8 +302,9 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 				var day = new Date();
 				var timeFrames = ["now","today","last 7 days","this month","this year","time frame"];
 				if(data.item.value==="1"){ //Question 1
-					//enable measure selection if question is one
-					$("#queryMeasure").selectmenu("option","disabled",false);
+					//Enable losse and latency measures when we select question 1
+					$("#measureOption1").attr("disabled",false);
+					$("#measureOption2").attr("disabled",false);
 					var queryTimeFrame = $("#queryTimeFrame");
 					queryTimeFrame.empty();
 					queryTimeFrame.append('<option>this month</option><option>this year</option><option>time frame</option>')
@@ -308,15 +313,20 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 					var monthFirst = new Date(day.getFullYear(), day.getMonth(), 1);
 					createDatePickers(monthFirst,day,false);
 				}else{ //Other questions
-					//delete menu create again and disable measure selection if question is not one
+					///Disable losse and latency measures when we select question 1
+					//The menu is redrawn because there was a bug that when you selected latency and losses and changed to question one you could be able to question the app with that measure even though it was disabled.
 					$("#queryMeasure").empty();
 					for (var i in queryMeasures){
 						queryMeasureSelect.append("option")
-							.attrs({"value":i})
+							.attrs({
+								"value":i,
+								"id":"measureOption" + i
+							})
 							.html(queryMeasures[i]);
 					}
-					$("#queryMeasure").selectmenu("refresh");
-					$("#queryMeasure").selectmenu("option","disabled",true);
+					//$("#queryMeasure").selectmenu("option","disabled",true);
+					$("#measureOption1").attr("disabled",true);
+					$("#measureOption2").attr("disabled",true);
 					var queryTimeFrame = d3.select("#queryTimeFrame");
 					$("#queryTimeFrame").empty();
 					for (var i in timeFrames){
@@ -325,17 +335,21 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 					}
 					$("#queryTimeFrame").selectmenu("refresh");
 				}
+				$("#queryMeasure").selectmenu("refresh");
 			},
 			width : 'auto'
 		});
 		$("#queryMeasure").selectmenu({
-			disabled:true,
 			width : 'auto'
 		});
+		//On start we dont allow to select measures for the first question its not on place jet.
+		$("#valueOption1").attr("disabled",true);
+		$("#valueOption2").attr("disabled",true);
 		$("#queryValue").selectmenu({
-			disabled:true,
 			width : 'auto'
 		});
+		//On start we disable the other queryValue options until we add the part of the code to process them.
+		$("#measureOption1").attr("disabled",true);
 		$("#queryTimeFrame").selectmenu({
 	      change: function( event, data ) {
 			var day = new Date();
