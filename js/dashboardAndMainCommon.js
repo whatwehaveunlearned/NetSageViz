@@ -192,7 +192,10 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 									  })
 		for (var i in queryTypes){
 			queryTypeSelect.append("option")
-				.attrs({"value":i})
+				.attrs({
+					"value":i,
+					"id":"typeOption"+i
+				})
 				.html(queryTypes[i]);
 		}
 		//Insert svg Circle as bullet for list
@@ -339,6 +342,8 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 			},
 			width : 'auto'
 		});
+		//Disable question that is not acive
+		$("#typeOption2").attr("disabled",true);
 		$("#queryMeasure").selectmenu({
 			width : 'auto'
 		});
