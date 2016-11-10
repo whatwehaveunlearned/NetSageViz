@@ -342,14 +342,15 @@ function drawQueryFormCommon(queryForm,fieldset,queryTypes,queryMeasures,queryVa
 		$("#queryMeasure").selectmenu({
 			width : 'auto'
 		});
-		//On start we dont allow to select measures for the first question its not on place jet.
-		$("#valueOption1").attr("disabled",true);
-		$("#valueOption2").attr("disabled",true);
+		//On start we disable the other queryValue options until we add the part of the code to process them.
+		$("#measureOption1").attr("disabled",true);
+		$("#measureOption2").attr("disabled",true);
 		$("#queryValue").selectmenu({
 			width : 'auto'
 		});
-		//On start we disable the other queryValue options until we add the part of the code to process them.
-		$("#measureOption1").attr("disabled",true);
+		//On start we dont allow to select measures for the first question its not on place jet.
+		$("#valueOption1").attr("disabled",true);
+		$("#valueOption2").attr("disabled",true);
 		$("#queryTimeFrame").selectmenu({
 	      change: function( event, data ) {
 			var day = new Date();
