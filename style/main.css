@@ -289,7 +289,7 @@ body{
   shape-rendering: crispEdges;
 }
 .multipleHistogram .totalDataBar{
-  fill: none;
+  fill: rgba(204 ,204, 204, 0.3);;
   stroke:#000;
   stroke-width: 0.5px;
 }
