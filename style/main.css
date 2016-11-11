@@ -291,7 +291,7 @@ body{
 .multipleHistogram .totalDataBar{
   fill: rgba(204 ,204, 204, 0.3);;
   stroke:#000;
-  stroke-width: 0.5px;
+  stroke-width: 1px;
 }
 
 .tableTooltip {
