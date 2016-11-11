@@ -250,18 +250,6 @@ function histogramTableGraph(queryData){
 	    //totalInput
 	    var totalInput = graph.append("g")
 	        .attr("class", tableName + " totalInput");
-		//Fills up the totalDatabar input for each individual element
-	    totalInput.append("rect")
-	    	.attrs({
-	    		"class": tableName + " iData",
-	    		"id": function(d,i){
-	    			return this.classList[0] + "-totalIn-" + i;},
-				"transform": "translate(0," + position.position1 + ")",
-				"height": barwidth,
-				"width": function(d,i){ return x(eval("queryObjects[" + this.classList[0].split("-")[1] + "]." + this.classList[0].split("-")[0]+"[i].data.totalData[0]")); }
-			  })
-			.on("mouseover",handleMouseOver)
-			.on("mouseout",handleMouseOut)
 		//Creates totalData input Bar
 	    totalInput.append("rect")
 	    	.attrs({
@@ -284,20 +272,21 @@ function histogramTableGraph(queryData){
 	      		"dy": barwidth/2
 	      	})
 	      	.text(function(d,i) { return (totalDataIn/1024/8).toFixed(1) + " TB"; } );
+	      	//Fills up the totalDatabar input for each individual element
+	    	totalInput.append("rect")
+	    	.attrs({
+	    		"class": tableName + " iData",
+	    		"id": function(d,i){
+	    			return this.classList[0] + "-totalIn-" + i;},
+				"transform": "translate(0," + position.position1 + ")",
+				"height": barwidth,
+				"width": function(d,i){ return x(eval("queryObjects[" + this.classList[0].split("-")[1] + "]." + this.classList[0].split("-")[0]+"[i].data.totalData[0]")); }
+			  })
+			.on("mouseover",handleMouseOver)
+			.on("mouseout",handleMouseOut)
 		//totalOutput
 		var totalOutput = graph.append("g")
 	        .attr("class", "totalOuput")
-		//Fills up the totalDatabar input for each individual element
-	    totalOutput.append("rect")
-	    	.attrs({
-	    	  	"class": tableName + " oData ",
-	    	  	"id": function(d,i){ return this.classList[0] + "-totalOut-" + i;},
-			  	"transform": "translate(0," + position.position2 + ")",
-			  	"height": barwidth,
-			  	"width": function(d,i){ return x(eval("queryObjects[" + this.classList[0].split("-")[1] + "]." + this.classList[0].split("-")[0]+"[i].data.totalData[1]")); }
-			})
-			.on("mouseover",handleMouseOver)
-			.on("mouseout",handleMouseOut)
 		//Creates totalData input Bar
 	    totalOutput.append("rect")
 	    	.attrs({
@@ -320,6 +309,17 @@ function histogramTableGraph(queryData){
 	      		"dy": barwidth/2
 	     	})
 	     	.text(function(d,i) { return (totalDataOut/1024/8).toFixed(1) + " TB"; });
+	     	//Fills up the totalDatabar output for each individual element
+	    	totalOutput.append("rect")
+	    	.attrs({
+	    	  	"class": tableName + " oData ",
+	    	  	"id": function(d,i){ return this.classList[0] + "-totalOut-" + i;},
+			  	"transform": "translate(0," + position.position2 + ")",
+			  	"height": barwidth,
+			  	"width": function(d,i){ return x(eval("queryObjects[" + this.classList[0].split("-")[1] + "]." + this.classList[0].split("-")[0]+"[i].data.totalData[1]")); }
+			})
+			.on("mouseover",handleMouseOver)
+			.on("mouseout",handleMouseOut)
 	}
 	//############### Function to create the histogram ###############
 	function createHistogram(tableName,group,data,numberBins){
