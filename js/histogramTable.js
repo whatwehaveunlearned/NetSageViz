@@ -260,8 +260,8 @@ function histogramTableGraph(queryData){
 			})
 		totalInput.append("text")
 	      	.attrs({
-	      		"x": -42,
-	      		"y": position.position1,
+	      		"x": -48,
+	      		"y": position.position1 + 1,
 	      		"dy": barwidth/2
 	      	})
 	      	.text(function(d) { return "Incoming"; });
@@ -297,20 +297,20 @@ function histogramTableGraph(queryData){
 			})
 		totalOutput.append("text")
 	      	.attrs({
-	      		"x": -42,
-	      		"y": position.position2,
+	      		"x": -48,
+	      		"y": position.position2 + 1,
 	      		"dy": barwidth/1.5
 	      	})
 	      .text(function(d) { return "Outgoing"; });
 	    totalOutput.append("text")
 	    	.attrs({
-	      		"x": x(totalDataOut) - 3 * margin.right,
-	      		"y": position.position2 - barwidth,
+	      		"x": x(totalDataOut) - 1 * margin.right,
+	      		"y": position.position2 - barwidth + 2,
 	      		"dy": barwidth/2
 	     	})
 	     	.text(function(d,i) { return (totalDataOut/1024/8).toFixed(1) + " TB"; });
 	     	//Fills up the totalDatabar output for each individual element
-	    	totalOutput.append("rect")
+	    totalOutput.append("rect")
 	    	.attrs({
 	    	  	"class": tableName + " oData ",
 	    	  	"id": function(d,i){ return this.classList[0] + "-totalOut-" + i;},
