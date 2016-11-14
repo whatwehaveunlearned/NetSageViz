@@ -1,7 +1,7 @@
 function lineChart(data){
 	var links = data.links;
 	var nodes = data.nodes;
-	createLineCharts(links);
+	createLineCharts(links,"links");
 	//I need to create one of this for all linecharts.
 		d3.select("#lineChart")
 		  .append('div')
@@ -9,8 +9,8 @@ function lineChart(data){
 		  	id:'tooltip'
 		  })
 		  .style("opacity", 0);
-	createLineCharts(nodes);
-	function createLineCharts(data){
+	createLineCharts(nodes,"nodes");
+	function createLineCharts(data,type){
 		var margin = {top: 40, right: 10, bottom: 30, left: 40},
 	    	width = 610 - margin.left - margin.right,
 	    	height = 450 - margin.top - margin.bottom;
@@ -164,25 +164,41 @@ function lineChart(data){
 		                            "transform": "translate(" + (width) + "," + 20 + ")",
 		                         })
 		    //Add max and minimum value to Legend
-		    legend.selectAll(".lineChartLegendNames")
-		      .data(data)
-		      .enter().append("text")
-		            .attrs({
-		              "transform": function(d,i){ return "translate(" + (-100)  + "," + (i*15) + ")"},
-		              "class": "lineChartLegendNames"
-		            })
-		            .styles({
-		            	'font-size':"0.75em",
-		            	'stroke': function(d,i){ return colorScale(i);}
-		            })
-		            .text(function(d){return d.node;});
+		    if(type=="links"){
+			    legend.selectAll(".lineChartLegendNames")
+			      .data(data)
+			      .enter().append("text")
+			            .attrs({
+			              "transform": function(d,i){ return "translate(" + (-150)  + "," + (i*15) + ")"},
+			              "class": "lineChartLegendNames"
+			            })
+			            .styles({
+			            	'font-size':"0.75em",
+			            	'stroke': function(d,i){ return colorScale(i);}
+			            })
+			            .text(function(d){return d.description;});
+			}else{
+				legend.selectAll(".lineChartLegendNames")
+			      .data(data)
+			      .enter().append("text")
+			            .attrs({
+			              "transform": function(d,i){ return "translate(" + (-100)  + "," + (i*15) + ")"},
+			              "class": "lineChartLegendNames"
+			            })
+			            .styles({
+			            	'font-size':"0.75em",
+			            	'stroke': function(d,i){ return colorScale(i);}
+			            })
+			            .text(function(d){return d.node;});
+			}
 		}
 		function handleMouseOver(d,i){
 			div = d3.select('#tooltip')
 			div.transition()
 	       	   .duration(500)
 	           .style("opacity", .9);
-	        div.html("<p id ='mapTooltipname'> name: " + d.node + "</p>");
+	        if(type=="links") div.html("<p id ='mapTooltipname'> name: " + d.description + "</p>");
+	        else div.html("<p id ='mapTooltipname'> name: " + d.node + "</p>");
 	        div.style("position","absolute")
 	           .style("left", (d3.event.pageX - 50) + "px")
 	           .style("top", (d3.event.pageY -2000) + "px");
