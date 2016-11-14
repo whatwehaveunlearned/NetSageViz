@@ -169,7 +169,7 @@ function histogramTableGraph(queryData){
 	        	"class": function(d,i){return tableName + "-" + group + "-col" + i;}, //class: tableName-group-column
 	        	"id": function(d,i){ return tableName + "-" + group + this.parentElement.id + "-" + i;} //id: tableName-group-column-cell
 	        })
-	        .styles({"min-width":"11.3em"}) //I Fix this min-width so that the cells are aligned (node names are smaller than links)
+	        .styles({"width":"11.3em"}) //I Fix this min-width so that the cells are aligned (node names are smaller than links)
 		var selector = d3.selectAll(".col" + group + "-" + 0)
 		    .append("input")
 		    .attrs({
