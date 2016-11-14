@@ -178,10 +178,17 @@ function histogramTableGraph(queryData){
 	    		"value": function(d,i) { return (i)},
 	    		"checked":"checked"
 	    	})
-		var names = d3.selectAll("." + tableName + "-" + group + "-col" + 0)
-	    	.append("text")
-	    	.text(function(d,i){
-	    		return data[i].node});
+	    if(tableName.split("-")[0]=="links"){
+			var names = d3.selectAll("." + tableName + "-" + group + "-col" + 0)
+		    	.append("text")
+		    	.text(function(d,i){
+		    		return data[i].description});
+		}else{
+			var names = d3.selectAll("." + tableName + "-" + group + "-col" + 0)
+		    	.append("text")
+		    	.text(function(d,i){
+		    		return data[i].node});
+		}
 	    //FillTable
 	   	fillTable(tableName,group,data,numberBins,columns);
 	}
