@@ -401,7 +401,7 @@ function histogramTableGraph(queryData){
 	    			   		id: function(d,i){ return i;}
 	    				})
 	    				.text(function(d,i){
-	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.max.toFixed(2)");
+	    						return "Max: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data." + type + ".max.toFixed(2)");
 	    				});
 	    	histoLegend.append("tspan")
 	    			   .attrs({
@@ -411,7 +411,7 @@ function histogramTableGraph(queryData){
 	    			   		dy: 15
 	    				})
 	    			   .text(function(d,i){
-	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data.input.avg.toFixed(2)");
+	    						return "Avg: " + eval("queryObjects[" + this.classList[0].split("-")[1] + "].graphs.table." + this.classList[0].split("-")[0]+"[" + this.id + "].data." + type + ".avg.toFixed(2)");
 	    				});
 	    	var lineGuides = graph.append("g")
 	    	 	.attrs({
