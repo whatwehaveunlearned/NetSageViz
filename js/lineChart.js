@@ -80,8 +80,11 @@ function lineChart(data){
 		  var inputNode = svgInput.selectAll(".inputLine")
 		      .data(data)
 		    .enter().append("g")
-		      .attr("class",function(d,i){ return "inputLine" + i + " node";})
-		      .attr("id", function(d,i){ return "input"+i });
+		    .attrs({
+		    	class: function(d,i){ return "inputLine" + i + " node";},
+		    	"id": function(d,i){ return "input"+i },
+		    	"transform": "translate(" + margin.left + ",0)"
+		    })
 
 		  inputNode.append("path")
 		      .attr("class", function(d,i){ return "line " + "line" + i})
@@ -140,8 +143,11 @@ function lineChart(data){
 		  var outputNode = svgOutput.selectAll(".outputLine")
 	      .data(data)
 		    .enter().append("g")
-		      .attr("class",function(d,i){ return "outputLine" + i + " node";})
-		      .attr("id", function(d,i){ return "output"+i });
+		    .attrs({
+		    	class: function(d,i){ return "outputLine" + i + " node";},
+		    	"id": function(d,i){ return "output"+i},
+		    	"transform": "translate(" + margin.left + ",0)"
+		    })
 
 		  outputNode.append("path")
 		      .attr("class", function(d,i){ return "line " + "line" + i})

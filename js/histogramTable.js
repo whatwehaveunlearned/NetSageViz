@@ -311,7 +311,7 @@ function histogramTableGraph(queryData){
 	      .text(function(d) { return "Outgoing"; });
 	    totalOutput.append("text")
 	    	.attrs({
-	      		"x": x(totalDataOut) - 1 * margin.right,
+	      		"x": x(totalDataOut) - 2.6 * margin.right,
 	      		"y": position.position2 - barwidth + 2,
 	      		"dy": barwidth/2
 	     	})
