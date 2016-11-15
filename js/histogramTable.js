@@ -16,13 +16,13 @@ function histogramTableGraph(queryData){
 	queryData.graphs.table.nodes = queryData.nodes;
 	columns = ["Links","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
     startTable("links-"+counter,queryData.graphs.table.links);
-    columns = ["Nodes","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
-    startTable("nodes-"+counter,queryData.graphs.table.nodes);
+    //columns = ["Nodes","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
+    //startTable("nodes-"+counter,queryData.graphs.table.nodes);
 	//Convert to dragtable
 	$('table').dragtable();
 	//Create static header
 	staticHeader("#multipleHistogram-links-"+counter);
-	staticHeader("#multipleHistogram-nodes-"+counter);
+	//staticHeader("#multipleHistogram-nodes-"+counter);
 
 	//#################################### AUX FUNCTIONS ###########################
 	//Create a static header for a table
