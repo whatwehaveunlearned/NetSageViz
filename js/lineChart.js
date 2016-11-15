@@ -9,7 +9,7 @@ function lineChart(data){
 		  	id:'tooltip'
 		  })
 		  .style("opacity", 0);
-	createLineCharts(nodes,"nodes");
+	//createLineCharts(nodes,"nodes");
 	function createLineCharts(data,type){
 		var margin = {top: 40, right: 10, bottom: 30, left: 40},
 	    	width = 610 - margin.left - margin.right,
@@ -201,7 +201,7 @@ function lineChart(data){
 	        else div.html("<p id ='mapTooltipname'> name: " + d.node + "</p>");
 	        div.style("position","absolute")
 	           .style("left", (d3.event.pageX - 50) + "px")
-	           .style("top", (d3.event.pageY -2000) + "px");
+	           .style("top", (d3.event.pageY -1200) + "px");
 		}
 		function handleMouseOut(d,i){
 			div = d3.select('#tooltip')
