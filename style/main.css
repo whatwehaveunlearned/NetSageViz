@@ -3,79 +3,149 @@ body{
 }
 
 /*************************** query Style *****************************/
-.querySelector{
-  font: 15px;
-}
-
-select {
-  border-radius: 0px;
-}
-
-.querySelector #queryForm{
-    position: relative;
-    top: 0.7em;
+.bullets{
+  position:relative;
+  /*Top and left specified inline because each has a specific position (main.js)*/
+  fill:rgba(255, 153, 0, 1.0);
+  /*rgba(230, 108, 0, 1.0) same color as logo bu button is different*/
 }
 
 .querySelector img{
   float:left;
 }
-.querySelector fieldset{
+/* Set up width of the queries (except query type that is done in line in main.js)*/
+
+#queryTimeFrame-button{
+  float:left;
+}
+
+#fieldset {
+  padding: 0em;
+  position: relative;
+  top:4.35em;
+  width:30em;
+  left: -2.1em;
   border: 0;
 }
 
-.querySelector #query{
-  width:800px;
-  margin: 5px;
-  margin-right: 5px;
+.fieldsetTitle{
+  position: absolute;
+  top: -1.85em;
+  left: 1.5em;
+  font-size: 1.8em;
+}
+
+#fieldset > div{
+  position:relative;
+}
+
+#fieldset *:focus{
+   outline:0;
+}
+
+.ui-menu-item{
+  background:rgba(255, 153, 0, 0.4);
+}
+
+#queryTypeDiv{
+  left:0em;
+  top:-2px;
+}
+
+#queryMeasureDiv{
+  left:0em;
+  top:-2.7em;
+}
+
+#queryValueDiv{
+  left:0em;
+  top:-5.2em;
+}
+
+#queryTimeFrameDiv{
+  left:0em;
+  top:-7.5em;
+}
+
+#dateHourDiv{
+  top:-7.2em;
+  left:0em;
+  width:40em;
+  padding: 0em;
+  height: 0em;
+  border: 0;
+}
+
+#playbuttonImg{
+  position:relative;
+  left: -0.5em;
+  top: -0.3em;
+}
+
+#whiteButtonImg{
+  position: relative;
+  left: 0.5em;
+  top: -2.7em;
+}
+
+#queryButtonImg{
+  position: relative;
+  top: -4.5em;
 }
 
 .querySelector #submit{
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  font-size: 1.4em;
-  background-color: rgba(232, 157, 77, 0.9);
+  font-size: 1em;
+  background-color:white;
   position: relative;
-  left: 61em;
-  padding: 10px;
-  top: -2.7em;
   border-style: solid;
+  top: -3em;
+  left: 1.2em;
+  border-radius: 100%;
+  height: 3em;
+  width: 3em;
 }
 
 .querySelector .ui-selectmenu-button{
-  margin-left: 5px;
-  border-radius: 0;
+  border:none;
+  background: white;
 }
 
 .querySelector .ui-selectmenu-text{
+  font-size: 1em;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
 .querySelector .datePicker{
-  position: relative;
-  top: -1.2em;
-  height: 2.8em;
-  text-align: left;
-  padding: 0.2em 1.2em 0.2em 0.5em;
-  width: 70px;
+  position:relative;
+  width: 5.5em;
+  padding: 0.4em;
   background: #f6f6f6;
-  margin: 0px 0px 0px 15px;
-  border: 1px solid #c5c5c5;
+  border: 0;
   border-radius: 0;
+  /*background-color: rgba(82, 135, 206, 0.2);*/
+  background-color:rgba(255, 153, 0, 0.4);
+  font-size: 0.8em;
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 
 }
 
-.querySelector .timePicker{
-  position: relative;
-  top: -1.2em;
-  height: 3.5em;
-  text-align: left;
-  padding: 0.2em 1.2em 0.2em 0.5em;
-  width: 75px;
-  background: #f6f6f6;s
-  border-radius: 0;
-  margin-left: 2px;
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+/*.querySelector .ui-menu-item .ui-state-focus{
+  background-color:rgba(255, 153, 0, 1.0);
+}*/
 
+.querySelector .timePicker{
+  position:relative;
+  background: #f6f6f6;
+  border: 0;
+  border-radius: 0;
+  /*background-color: rgba(82, 135, 206, 0.2);*/
+  background-color:rgba(255, 153, 0, 0.4);
+  font-size: 0.8em;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
+  padding: 0.4em;
 }
 
 .saveButton{
@@ -86,17 +156,107 @@ select {
   background-color: rgba(232, 157, 77, 0.9);
 }
 
+.goBack{
+  position: absolute;
+  top:4em;
+  left:6.6em;
+}
+.mainInfo{
+  position: absolute;
+  top: -3em;
+  left: 14em;
+}
+
+.mainInFoText{
+  position:absolute;
+  top: 1.4em;
+  left: 35em;
+  width:60em;
+  background-color:rgba(255, 153, 0, 0.4);
+  padding:5px;
+}
+
+.arrowGoBack{
+  position: relative;
+  float:right;
+}
+
 /*************************** END query Style *****************************/
+
+/***************************Application Region Style **********************************/
+.applicationRegion{
+}
+
+.queryTextAppRegion{
+  width:80em;
+}
+
+#infoDiv-map{
+  position: absolute;
+  top: 24.5em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(247, 201, 132, 1);
+  border: 1px solid black;
+  padding:5px;
+}
+
+#infoDiv-table{
+  position: absolute;
+  top: 56em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(247, 201, 132, 1);
+  border: 1px solid black;
+  padding: 5px;
+}
+
+#infoDashboardDiv-map{
+  position: absolute;
+  top: 9.2em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(247, 201, 132, 1);
+  border: 1px solid black;
+  padding:5px;
+}
+
+#infoDashboardDiv-table{
+  position: absolute;
+  top: 40.8em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(247, 201, 132, 1);
+  border: 1px solid black;
+  padding: 5px;
+}
+
+#infoDashboardDiv-line{
+  position: absolute;
+  top: 126em;
+  width: 26em;
+  left: 2.5em;
+  background: rgba(247, 201, 132, 1);
+  border: 1px solid black;
+  padding: 5px;
+}
+
+/*************************** END Application Region Style *****************************/
 /*************************** Histogram Style *****************************/
 .multipleHistogram{
+    /*min-width:1215px;*/
     border: 1px solid black;
 	  font-size: 10px;
     position: relative;
-    height: 503px;
-    overflow-y: scroll;
+    /*min-height: 20em;*/
+    /*overflow-y: scroll;*/
     display: inline-block;
     padding-left: 1px;
     text-align: center;
+}
+
+.multipleHistogram table{
+  min-width:1215px;
 }
 .multipleHistogram .xAxis{
 	font-size: 8px;
@@ -129,26 +289,28 @@ select {
   shape-rendering: crispEdges;
 }
 .multipleHistogram .totalDataBar{
-  fill: none;
+  fill: rgba(204 ,204, 204, 0.3);;
   stroke:#000;
+  stroke-width: 1px;
 }
 
 .tableTooltip {
     position: absolute;
     text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 10px;
-    background: rgba(232, 157, 77, 0.8);
+    padding:5px;
+    padding-left:15px;
+    padding-right:15px;
+    font-size: 1em;
+    background: rgba(247, 201, 132, 1);
     border: 0px;
     pointer-events: none;
+    font-weight: bold;
 }
 /*************************** END Histogram Style *****************************/
 /*************************** LineChart Style *****************************/
 #lineChart {
-  border: 1px solid black;
-  font-size: 10px;
-  display: inline-block;
+  position:relative;
+  float:left;
 }
 
 #lineChart .axis path,
@@ -160,8 +322,11 @@ select {
 
 #lineChart .line {
   fill: none;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+  stroke-width: 0.2em;
+  stroke-opacity:0.4;
+}
+
+.lineChartLegendNames{
   stroke-opacity:0.4;
 }
 /*************************** END Histogram Style *****************************/
@@ -169,10 +334,9 @@ select {
 /*************************** Map Style *****************************/
 .map{
   border: 1px solid black;
-  width:800px;
+  width:1215px;
   height:500px;
   display: inline-block;
-  /*background: #F8F8FF;*/
 }
 .map path {
   stroke: black;
@@ -185,23 +349,33 @@ select {
 	stroke: blue;
 }
 
+.map .linksPlaceholder{
+  fill:none;
+  stroke:lightgrey;
+  stroke-width:4px;
+}
+
 #mapTooltip {
     position: absolute;
     text-align: center;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 10px;
-    background: rgba(232, 157, 77, 0.8);
+    padding:5px;
+    padding-left:15px;
+    padding-right:15px;
+    font-size: 1em;
+    background: rgba(247, 201, 132, 1);
     border: 0px;
     pointer-events: none;
 }
 
-#mapTooltipname{
-  font-size: 10px;
+.mapTooltipname{
   font-weight: bold;
 }
 
 .map .nodes{
+  stroke: black;
+}
+
+.map .nodesPlaceholder{
   stroke: black;
 }
 
@@ -210,3 +384,36 @@ select {
 }
 
 /*************************** END Histogram Style *****************************/
+
+/*************************** Heatmap Style *****************************/
+.heatmap .yAxisLabel{
+  font-size: 0.8em;
+}
+
+#heatmapTooltip {
+    position: absolute;
+    text-align: center;
+    padding:5px;
+    padding-left:15px;
+    padding-right:15px;
+    font-size: 1em;
+    background: rgba(247, 201, 132, 1);
+    border: 0px;
+    pointer-events: none;
+}
+
+.heatmapTooltipname{
+  font-weight: bold;
+}
+
+/*************************** END Heatmap Style *****************************/
+
+/*************************** Dashboard Style *****************************/
+.dashboardTitle{
+  position: absolute;
+  top: 1em;
+  left: 3.7em;
+  font-size: 1.8em;
+}
+
+/*************************** END Dashboard Style *****************************/
