@@ -322,7 +322,7 @@ body{
 
 #lineChart .line {
   fill: none;
-  stroke-width: 0.2em;
+  stroke-width: 0.06em;
   stroke-opacity:0.4;
 }
 
