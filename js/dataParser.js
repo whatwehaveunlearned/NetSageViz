@@ -149,14 +149,14 @@ function LoadData(queryDate,queryText,avgOver,queryType,queryMeasure){
 					inputClean.push(dataPoint.input[each][1]);
 				}else{
 					dataPoint.input[each][1] = 0;
-					inputClean.push(0);
+					//inputClean.push(0);
 				}
 				if(dataPoint.output[each][1]!=null){
 					dataPoint.output[each][1] = dataPoint.output[each][1]/1024/1024/1024;
 					outputClean.push(dataPoint.output[each][1]);
 				} else{
 					dataPoint.output[each][1] = 0;
-					outputClean.push(0);
+					//outputClean.push(0);
 				}
 				inputValues.push([new Date (dataPoint.input[each][0]*1000),dataPoint.input[each][1]]);
 				outputValues.push([new Date (dataPoint.output[each][0]*1000),dataPoint.output[each][1]]);

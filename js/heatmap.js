@@ -392,7 +392,7 @@ function periodicPattern(data,queryMeasure){
 			var lastDate = new Date(dateRange[0]);
 			lastDate.setMonth(lastDate.getMonth()+1);
 			heatmapDates.push(new Date(monthFormat(dateRange[0]) + " 1 " + getYear(dateRange[0])));
-			heatmapDates.push(new Date ( monthFormat(lastDate) + " 1 " + getYear(dateRange[0])));
+			heatmapDates.push(new Date ( monthFormat(lastDate) + " 1 " + lastDate.getFullYear()));
 			ticks=d3.timeDay;
 			ticksFormat = abbrebiatedMonthDayFormat;
 		}else{//more than a month

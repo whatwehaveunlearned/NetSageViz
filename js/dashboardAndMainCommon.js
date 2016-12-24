@@ -472,14 +472,17 @@ function queryComposer(date,fromURL,queryFromTab){
 			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "last 7 days"){
+			if(queryType==="0") avgOver = 60;
 			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
 		else if (timeFrame === "today"){
+			if(queryType==="0") avgOver = 1;
 			if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		} else if (timeFrame === "now"){
-			if(queryType==="1") avgOver = 3600;
+			if(queryType==="0") avgOver = 1;
+			else if(queryType==="1") avgOver = 3600;
 			queryDate = [dayFormat(UTCDateStart) + " " + timeFormat(UTCDateStart) + " UTC" ,dayFormat(UTCDateStop) + " " + timeFormat(UTCDateStop) + " UTC"];
 		}
 		queryObjects.push(new Query(queryName + " " + queryMeasureText + " " + queryValue + " " + timeFrame + ": From " + queryDateLocalTime[0] + ", to " + queryDateLocalTime[1] + " (" + new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1] + ") ", queryDate, avgOver, queryType,queryMeasure))
