@@ -289,7 +289,7 @@ body{
   shape-rendering: crispEdges;
 }
 .multipleHistogram .totalDataBar{
-  fill: rgba(204 ,204, 204, 0.3);;
+  fill: rgba(204 ,204, 204, 0.3);
   stroke:#000;
   stroke-width: 1px;
 }
@@ -305,6 +305,19 @@ body{
     border: 0px;
     pointer-events: none;
     font-weight: bold;
+}
+
+.multipleHistogram .lineChartHistogram .line{
+  fill: none;
+  stroke:rgba(52, 100, 222, 1);
+  stroke-width: 0.05em;
+}
+
+.multipleHistogram .lineChartHistogram .axis{
+  stroke-width:0em;
+}
+.multipleHistogram .lineChartHistogram .ticks{
+  stroke-width:0.1em;
 }
 /*************************** END Histogram Style *****************************/
 /*************************** LineChart Style *****************************/
