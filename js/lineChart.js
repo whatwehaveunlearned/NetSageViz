@@ -70,6 +70,12 @@ function lineChart(data){
 		  svgInput.append("g")
 		      .attr("class", "y axis")
 		      .call(yAxis)
+		    .append("text")
+		      .attr("transform", "rotate(-90)")
+		      .attr("y", 6)
+		      .attr("dy", ".71em")
+		      .style("text-anchor", "end")
+		      .text("Gb/s");
 
 		  var inputNode = svgInput.selectAll(".inputLine")
 		      .data(data)
@@ -84,7 +90,25 @@ function lineChart(data){
 		      .attr("class", function(d,i){ return "line " + "line" + i})
 		      .attr("d", function(d) { return line(d.data.input.values); })
 		      .style("stroke", function(d,i) { return color(i);})
+		      .on("mouseover", handleMouseOver)
+	      	  //.on("mouseout",handleMouseOut);
 			  createLegend(svgInput, color,data,width-margin.left);
+		  // svgInput.selectAll(".inputLine")
+		  //     .data(data)
+		  //   .enter().append("g")
+			 //  		.attrs({
+			 //  			"class": "dataCircles"
+			 //  		})
+			 //  		.data(data)
+				// 	.append("circle")
+			 //      	.attrs({
+			 //      		"class":"inputDataPoints",
+			 //      		"id": function(d,i){ return "inputDataPoints"+i },
+			 //      		cx: function (d,i) {
+	   //                		return x(d.data.input.values[i][0]); },
+	   //              	cy: function (d,i) { return y(d.data.input.values[i][1]); },
+	   //              	r: 5
+			 //      	})
 
 
 		//OUTPUT
@@ -109,6 +133,12 @@ function lineChart(data){
 		  svgOutput.append("g")
 		      .attr("class", "y axis")
 		      .call(yAxis)
+		    .append("text")
+		      .attr("transform", "rotate(-90)")
+		      .attr("y", 6)
+		      .attr("dy", ".71em")
+		      .style("text-anchor", "end")
+		      .text("Gb/s");
 
 		  var outputNode = svgOutput.selectAll(".outputLine")
 	      .data(data)
@@ -124,6 +154,7 @@ function lineChart(data){
 		      .attr("d", function(d,i) { return line(d.data.output.values); })
 		      .style("stroke", function(d,i) { return color(i); })
 		      .on("mouseover", handleMouseOver)
+	      	  //.on("mouseout",handleMouseOut);
 			  createLegend(svgOutput, color,data,width-margin.left);
 		function createLegend(svgGroup,colorScale,data,width){
 		    //Create gradients the id assigned has to be the same that appears in the fill parameter of the rectangle

@@ -13,7 +13,7 @@ function histogramTableGraph(queryData){
 	sortObjects(queryData.nodes,".data.input.avg");
 	queryData.graphs.table.links = queryData.links;
 	queryData.graphs.table.nodes = queryData.nodes;
-	columns = ["Links","Bandwidth Distribution (Gb/s)","Evolution in time","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
+	columns = ["Links","Bandwidth Distribution (Gb/s)","Evolution in time (Gb/s)","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
     startTable("links-"+counter,queryData.graphs.table.links);
     //columns = ["Nodes","Incoming Bandwidth (Gb/s)", "Outgoing Bandwidth (Gb/s)","Total Data (TB)"];
     //startTable("nodes-"+counter,queryData.graphs.table.nodes);
@@ -307,6 +307,59 @@ function histogramTableGraph(queryData){
 	}
 	//############### Function to draw line charts column ##############
 	function lineChartColumn(tableName,group,data){
+		function handleMouseOver(d,i){
+    		div = d3.select(".tableTooltip");
+    		d3.selectAll("." + this.classList[0]).transition()
+    			.duration(200)
+    			.attr("r","0.5em")
+    			.style("fill","rgba(247, 201, 132, 1)")
+			div.transition()
+   				.duration(200)
+   				.style("opacity", .9);
+   			div.html("<p>"+ d[0] + " , " + d[1] + " Gb/s" )
+		       .style("left", (d3.event.pageX + 5) + "px")
+		       .style("top", (d3.event.pageY - 28) + "px");
+    	}
+    	function handleMouseOut(d,i){
+    		div = d3.select(".tableTooltip");
+    		d3.selectAll("." + this.classList[0]).transition()
+    			.duration(200)
+    			.attr("r","0.05em")
+    			.style("fill","none")
+			div.transition()
+   				.duration(200)
+   				.style("opacity", 0);
+    	}
+
+    	function handleMouse2(d,i){
+    		var bisectDate = d3.bisector(function(d) { return d[0]; }).left;
+			var x0 = x.invert(d3.mouse(this)[0]);
+			var index = [];
+			var d0 = [];
+			var d1 = [];
+			var d = [];
+			//Calculate all dates Positions
+			for (var j=0;j<queryObjects[0].links.length;j++){
+				index.push(bisectDate(queryObjects[0].links[j],x0,1));
+				d0.push(queryObjects[0].links[j].data.input[index[j]-1]);
+				d1.push(queryObjects[0].links[j].data.input[index[j]]);
+				d.push(x0 - d0[0] > d1[0] - x0 ? d1 :d0);
+			}
+			d3.select(this)
+			.data(d)
+			.enter().append("circle")
+			.attrs({
+				"class": "y",
+				"r":2,
+				"transform": function(d,i) { 
+					return "translate(" + x(d[0]) + "," + yIncoming(d[1])+ ")"}
+			})
+			.styles({
+				"fill":"none",
+				"stroke": "blue"
+			})
+    	}
+		//var data = data;
 		//Calculate Max values for scales
 		var maxIncoming = [];
 		var maxOutgoing = [];
@@ -346,6 +399,7 @@ function histogramTableGraph(queryData){
 	      		"width": width + margin.left * 3  + margin.right,
 	      		"height": height/2 + margin.top + margin.bottom,
 	    	})
+	    	//.on("mouseover",handleMouse2)
 	   	var graph = svg.append("g")
 	        .attrs({
 	        	"class": "lineChartHistogram",
@@ -354,6 +408,7 @@ function histogramTableGraph(queryData){
 		graph.append("g")
 		      .attr("class", "y axis")
 		      .call(yAxisIncoming)
+		//Create Lines
 		var inputNode = graph.selectAll(".inputLine")
 		      .data(function(d,i){
 		      	//Important to add the [] to form array if not it doesnt work properly.
@@ -362,12 +417,37 @@ function histogramTableGraph(queryData){
 		      .enter().append("g")
 		      .attrs({
 		    	class: function(d,i){ return "inputLine " + "inputLine" + i + " node";},
-		    	"id": function(d,i){ return "input"+i },
+		    	"id": function(d,i){ return "input" + i },
 		    	"transform": "translate(" + 0 + ",0)"
 		      })
 		inputNode.append("path")
 		      .attr("class", function(d,i){ return "line " + "line" + i})
-		      .attr("d", function(d) { return lineIncoming(d); })
+		      .attr("d", function(d) { return lineIncoming(d); });
+		//Create Circles
+		var inputDataPoints = graph.selectAll(".inputDataPoints")
+			.data(function(d,i){
+		      	//Important to add the [] to form array if not it doesnt work properly.
+	        	return eval([data[i].data.input.values]);
+	          })
+		      .enter().append("g")
+		      .attrs({
+		    	class: function(d,i){ return "inputDataPoints " + "inputDataPoints" + i;},
+		    	"id": function(d,i){ return "inputDataPoints" + i },
+		    	"transform": "translate(" + 0 + ",0)"
+		      })
+		      .data(function(d,i){
+	        	return eval(data[i].data.input.values);
+	          })
+		      .enter().append("circle")
+		      .attrs({
+                cx: function (d,i) {return x(d[0]); },
+                cy: function (d,i) { return yIncoming(d[1]); },
+                class: function(d,i){ return "dataPlaceholder-" + i;},
+                id: function(d,i){ return "inputDataPlaceholder" + i;},
+                "r":"0.05em"
+             })
+		      .on("mouseover",handleMouseOver)
+		      .on("mouseout",handleMouseOut)
 		//Output Graph
 		var svg=d3.selectAll("." + tableName + "-" + group + "-col" + "2").append("svg")
 	   		.attrs({
@@ -379,14 +459,15 @@ function histogramTableGraph(queryData){
 	        	"class": "lineChartHistogram",
 	        	"transform": "translate(" + (margin.left + 15) + "," + margin.top + ")"
 	        });
-		//We only add one xAxis at the bottom for both graphs
+		//We only add one xAxis at the middle of both graphs
 		graph.append("g")
 		      .attr("class", "x axis")
-		      .attr("transform", "translate(0," + height/2 + ")")
+		      .attr("transform", "translate(0," + (-14) + ")")
 		      .call(xAxis);
 		graph.append("g")
 		      .attr("class", "y axis")
 		      .call(yAxisOutgoing)
+		//Create Lines
 		var outputNode = graph.selectAll(".outputLine")
 		      .data(function(d,i){
 		      	//Important to add the [] to form array if not it doesnt work properly.
@@ -402,6 +483,31 @@ function histogramTableGraph(queryData){
 		outputNode.append("path")
 		      .attr("class", function(d,i){ return "line " + "line" + i})
 		      .attr("d", function(d) { return lineOutgoing(d); })
+		//Create Circles
+		var inputDataPoints = graph.selectAll(".inputDataPoints")
+			.data(function(d,i){
+		      	//Important to add the [] to form array if not it doesnt work properly.
+	        	return eval([data[i].data.output.values]);
+	          })
+		      .enter().append("g")
+		      .attrs({
+		    	class: function(d,i){ return "outputDataPoints " + "outputDataPoints" + i;},
+		    	"id": function(d,i){ return "outputDataPoints" + i },
+		    	"transform": "translate(" + 0 + ",0)"
+		      })
+		      .data(function(d,i){
+	        	return eval(data[i].data.output.values);
+	          })
+		      .enter().append("circle")
+		      .attrs({
+                cx: function (d,i) { return x(d[0]); },
+                cy: function (d,i) { return yOutgoing(d[1]); },
+                class: function(d,i){ return "dataPlaceholder-" + i;},
+                id: function(d,i){ return "outputDataPlaceholder" + i;},
+                "r":"0.05em"
+             })
+		     .on("mouseover",handleMouseOver)
+		     .on("mouseout",handleMouseOut)
 	}
 	//############### Function to draw total data column ###############
 	function createTotalData(tableName,group,data){

@@ -319,6 +319,10 @@ body{
 .multipleHistogram .lineChartHistogram .ticks{
   stroke-width:0.1em;
 }
+.multipleHistogram .lineChartHistogram circle{
+  fill: none;
+  stroke:rgba(52, 100, 222, 1);
+}
 /*************************** END Histogram Style *****************************/
 /*************************** LineChart Style *****************************/
 #lineChart {
